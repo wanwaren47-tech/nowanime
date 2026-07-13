@@ -32,8 +32,8 @@ const InAppBrowserSheet = ({ open, onOpenChange, url, title }: Props) => {
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="h-[92vh] p-0 bg-[#0a0a0a] border-white/10 text-white flex flex-col">
-        <div className="flex items-center gap-2 px-3 h-11 border-b border-white/10 bg-[#0a0a0a]">
+      <SheetContent side="bottom" className="h-[92vh] p-0 bg-[#0e0b18] border-white/10 text-white flex flex-col">
+        <div className="flex items-center gap-2 px-3 h-11 border-b border-white/10 bg-[#0e0b18]">
           <button onClick={() => onOpenChange(false)} className="p-1.5 rounded-full hover:bg-white/10">
             <X className="w-4 h-4" />
           </button>
@@ -50,15 +50,15 @@ const InAppBrowserSheet = ({ open, onOpenChange, url, title }: Props) => {
           <a
             href={url} target="_blank" rel="noopener noreferrer"
             className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10.5px] font-semibold text-white"
-            style={{ background: "#E50914" }}
+            style={{ background: "#ffbade" }}
           >
             Open <ExternalLink className="w-3 h-3" />
           </a>
         </div>
-        <div className="flex-1 relative bg-[#0a0a0a]">
+        <div className="flex-1 relative bg-[#0e0b18]">
           {!loaded && !blocked && (
             <div className="absolute inset-0 grid place-items-center">
-              <Loader2 className="w-6 h-6 animate-spin text-[#E50914]" />
+              <Loader2 className="w-6 h-6 animate-spin text-[#ffbade]" />
             </div>
           )}
           <iframe

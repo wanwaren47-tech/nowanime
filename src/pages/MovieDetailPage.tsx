@@ -128,7 +128,7 @@ const MovieDetailPage = () => {
                 <Link
                   to={`/watch/movie/${data.id}`}
                   className="flex items-center gap-2 font-bold px-7 py-3 rounded-lg text-sm transition-transform hover:scale-105 shadow-xl"
-                  style={{ background: "#E50914", color: "#fff" }}
+                  style={{ background: "#ffbade", color: "#fff" }}
                 >
                   <Play className="w-4 h-4 fill-current" /> Watch Now
                 </Link>

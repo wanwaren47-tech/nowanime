@@ -118,7 +118,7 @@ const TvWatchPage = () => {
                           )}
                           <span className="absolute top-1 left-1 text-[9px] font-extrabold text-white">E{ep.episode_number}</span>
                           {isPlaying && (
-                            <span className="absolute bottom-1 right-1 grid place-items-center w-4 h-4 rounded-full bg-[#E50914]">
+                            <span className="absolute bottom-1 right-1 grid place-items-center w-4 h-4 rounded-full bg-[#ffbade]">
                               <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />
                             </span>
                           )}

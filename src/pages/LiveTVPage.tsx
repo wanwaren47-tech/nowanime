@@ -146,9 +146,9 @@ const LiveTVPage = () => {
     return (
       <AppLayout>
         <SEO title={`${activeChannel.name} – Live TV – NowAnime`} description={`Watch ${activeChannel.name} live now on NowAnime.`} />
-        <div className="min-h-[calc(100vh-3.5rem)]" style={{ background: "#0A0A0A" }}>
+        <div className="min-h-[calc(100vh-3.5rem)]" style={{ background: "#0e0b18" }}>
           {/* Header */}
-          <div className="sticky top-12 md:top-14 z-30 flex items-center gap-2 px-3 py-2.5 bg-[#0A0A0A]/95 backdrop-blur border-b border-white/5">
+          <div className="sticky top-12 md:top-14 z-30 flex items-center gap-2 px-3 py-2.5 bg-[#0e0b18]/95 backdrop-blur border-b border-white/5">
             <button
               onClick={() => setActiveChannel(null)}
               className="w-9 h-9 grid place-items-center rounded-full hover:bg-white/5 text-white"
@@ -156,7 +156,7 @@ const LiveTVPage = () => {
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
-            <span className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase animate-pulse text-white" style={{ background: "#E50914" }}>
+            <span className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase animate-pulse text-white" style={{ background: "#ffbade" }}>
               Live
             </span>
             <span className="text-sm font-bold text-white truncate flex-1">{activeChannel.name}</span>
@@ -203,10 +203,10 @@ const LiveTVPage = () => {
         title="Live TV – NowAnime"
         description="Watch 80+ live TV channels from around the world — news, sports, entertainment, music and more, streamed free on NowAnime."
       />
-      <div className="px-4 pt-4 pb-10 max-w-[1400px] mx-auto" style={{ background: "#0A0A0A" }}>
+      <div className="px-4 pt-4 pb-10 max-w-[1400px] mx-auto" style={{ background: "#0e0b18" }}>
         {/* Title */}
         <div className="flex items-center gap-2 mb-3">
-          <Radio className="w-4 h-4" style={{ color: "#E50914" }} />
+          <Radio className="w-4 h-4" style={{ color: "#ffbade" }} />
           <h1 className="text-lg font-bold text-white">Live TV</h1>
           <span className="ml-1 text-[10px] text-white/45">{numbered.length} channels</span>
         </div>
@@ -218,7 +218,7 @@ const LiveTVPage = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search channels…"
-            className="w-full pl-9 pr-3 py-2 rounded-lg text-xs text-white placeholder:text-white/40 focus:outline-none focus:border-[#E50914]/60 border border-white/5"
+            className="w-full pl-9 pr-3 py-2 rounded-lg text-xs text-white placeholder:text-white/40 focus:outline-none focus:border-[#ffbade]/60 border border-white/5"
             style={{ background: "#1F1F1F" }}
           />
         </div>
@@ -237,8 +237,8 @@ const LiveTVPage = () => {
                       active ? "text-white" : "text-white/70 hover:text-white"
                     }`}
                     style={{
-                      background: active ? "#E50914" : "#1F1F1F",
-                      border: active ? "1px solid #E50914" : "1px solid rgba(255,255,255,0.05)",
+                      background: active ? "#ffbade" : "#1F1F1F",
+                      border: active ? "1px solid #ffbade" : "1px solid rgba(255,255,255,0.05)",
                     }}
                   >
                     {cat}
@@ -268,7 +268,7 @@ const LiveTVPage = () => {
           </div>
         )}
         {iptv.isError && (
-          <p className="text-sm text-center py-10" style={{ color: "#E50914" }}>
+          <p className="text-sm text-center py-10" style={{ color: "#ffbade" }}>
             Failed to load channels. Please try again.
           </p>
         )}
@@ -314,7 +314,7 @@ const LiveTVPage = () => {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1.5">
-                          <span className="px-1 py-[1px] rounded text-[8px] font-bold uppercase tracking-wider text-white animate-pulse" style={{ background: "#E50914" }}>Live</span>
+                          <span className="px-1 py-[1px] rounded text-[8px] font-bold uppercase tracking-wider text-white animate-pulse" style={{ background: "#ffbade" }}>Live</span>
                           <p className="text-[13px] font-bold text-white truncate">{c.name}</p>
                         </div>
                         <p className="text-[10.5px] text-white/50 truncate mt-0.5">
@@ -355,8 +355,8 @@ const LiveTVPage = () => {
                       onClick={() => setPage(p)}
                       className="w-9 h-9 rounded-lg text-[12px] font-bold text-white"
                       style={{
-                        background: p === safePage ? "#E50914" : "#1F1F1F",
-                        border: p === safePage ? "1px solid #E50914" : "1px solid rgba(255,255,255,0.08)",
+                        background: p === safePage ? "#ffbade" : "#1F1F1F",
+                        border: p === safePage ? "1px solid #ffbade" : "1px solid rgba(255,255,255,0.08)",
                         boxShadow: p === safePage ? "0 0 12px rgba(229,9,20,0.5)" : "none",
                       }}
                     >

@@ -34,7 +34,7 @@ const NotFound = () => {
               key={s.to}
               onClick={() => navigate(s.to)}
               className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold text-white transition-transform hover:scale-[1.02]"
-              style={{ background: "#E50914" }}
+              style={{ background: "#ffbade" }}
             >
               <s.icon className="w-4 h-4" /> {s.label}
             </button>

@@ -96,7 +96,7 @@ const ShortsPage = () => {
 
               {/* Bottom gradient + info */}
               <div className="absolute inset-x-0 bottom-0 pt-20 pb-24 px-4 bg-gradient-to-t from-black via-black/70 to-transparent z-10 pointer-events-none">
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-[#E50914] mb-1">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-[#ffbade] mb-1">
                   {isTv ? "TV Series" : "Movie"} · Official Trailer
                 </p>
                 <h2 className="text-xl font-bold text-white leading-tight mb-1.5">{title}</h2>
@@ -138,7 +138,7 @@ const ShortsPage = () => {
                   to={isTv ? `/watch/tv/${t.item.id}/1/1` : `/watch/movie/${t.item.id}`}
                   className="flex flex-col items-center gap-1 text-white"
                 >
-                  <span className="w-11 h-11 rounded-full bg-[#E50914] grid place-items-center shadow-[0_0_20px_rgba(229,9,20,0.6)]">
+                  <span className="w-11 h-11 rounded-full bg-[#ffbade] grid place-items-center shadow-[0_0_20px_rgba(229,9,20,0.6)]">
                     <Play className="w-5 h-5 fill-white" />
                   </span>
                   <span className="text-[10px] font-semibold">Watch</span>

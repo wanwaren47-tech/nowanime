@@ -35,9 +35,9 @@ const StepProgress = ({ current, total = 5, showBack = true, backTo }: Props) =>
               <div
                 className={`w-7 h-7 rounded-full grid place-items-center text-[11px] font-bold border ${
                   active
-                    ? "text-white border-[#E50914] bg-[#E50914]/15"
+                    ? "text-white border-[#ffbade] bg-[#ffbade]/15"
                     : done
-                    ? "text-white border-[#E50914] bg-[#E50914]"
+                    ? "text-white border-[#ffbade] bg-[#ffbade]"
                     : "text-white/40 border-white/20 bg-transparent"
                 }`}
                 style={
@@ -50,7 +50,7 @@ const StepProgress = ({ current, total = 5, showBack = true, backTo }: Props) =>
               </div>
               {n < total && (
                 <div
-                  className={`w-7 h-px ${n < current ? "bg-[#E50914]" : "bg-white/15"}`}
+                  className={`w-7 h-px ${n < current ? "bg-[#ffbade]" : "bg-white/15"}`}
                 />
               )}
             </div>

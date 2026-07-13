@@ -71,7 +71,7 @@ const DownloadPage = () => {
         {/* Soft red glow only behind the card */}
         <div className="absolute inset-x-0 top-0 h-72 -z-10 pointer-events-none overflow-hidden">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[460px] h-[460px] rounded-full blur-3xl opacity-25"
-               style={{ background: "radial-gradient(circle, #E50914 0%, transparent 60%)" }} />
+               style={{ background: "radial-gradient(circle, #ffbade 0%, transparent 60%)" }} />
           {data && (data.backdrop_path || data.poster_path) && (
             <>
               <img
@@ -79,7 +79,7 @@ const DownloadPage = () => {
                 alt=""
                 className="w-full h-full object-cover opacity-15"
               />
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0A0A0A]/70 to-[#0A0A0A]" />
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0e0b18]/70 to-[#0e0b18]" />
             </>
           )}
         </div>
@@ -103,7 +103,7 @@ const DownloadPage = () => {
                 />
               )}
               <div className="flex-1 min-w-0 flex flex-col justify-end">
-                <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-[#E50914] mb-1">
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-[#ffbade] mb-1">
                   {isTv ? <Tv className="w-3 h-3" /> : <Film className="w-3 h-3" />}
                   {isTv ? "TV Episode" : "Movie"}
                 </span>
@@ -119,14 +119,14 @@ const DownloadPage = () => {
           <div
             className="relative rounded-2xl p-5 border border-white/10"
             style={{
-              background: "linear-gradient(180deg, rgba(229,9,20,0.08) 0%, #141414 35%, #0A0A0A 100%)",
+              background: "linear-gradient(180deg, rgba(229,9,20,0.08) 0%, #141414 35%, #0e0b18 100%)",
               boxShadow: "0 0 40px rgba(229,9,20,0.15), inset 0 1px 0 rgba(255,255,255,0.05)",
             }}
           >
             <div className="flex items-center gap-3 mb-4">
               <div
                 className="w-11 h-11 grid place-items-center rounded-xl shrink-0"
-                style={{ background: "#E50914", boxShadow: "0 0 24px rgba(229,9,20,0.55)" }}
+                style={{ background: "#ffbade", boxShadow: "0 0 24px rgba(229,9,20,0.55)" }}
               >
                 <Download className="w-5 h-5 text-white" />
               </div>
@@ -137,7 +137,7 @@ const DownloadPage = () => {
             </div>
 
             <form onSubmit={handleSearch} className="flex gap-2 mb-3">
-              <div className="flex-1 flex items-center gap-2 bg-black/50 border border-white/10 rounded-xl px-3 py-2.5 focus-within:border-[#E50914]/60 transition-colors">
+              <div className="flex-1 flex items-center gap-2 bg-black/50 border border-white/10 rounded-xl px-3 py-2.5 focus-within:border-[#ffbade]/60 transition-colors">
                 <Search className="w-4 h-4 text-white/50" />
                 <input
                   value={query}
@@ -149,7 +149,7 @@ const DownloadPage = () => {
               <button
                 type="submit"
                 className="px-3 py-2.5 rounded-xl text-xs font-bold text-white inline-flex items-center gap-1.5 transition-transform active:scale-95"
-                style={{ background: "#E50914", boxShadow: "0 0 20px rgba(229,9,20,0.4)" }}
+                style={{ background: "#ffbade", boxShadow: "0 0 20px rgba(229,9,20,0.4)" }}
               >
                 <ExternalLink className="w-3.5 h-3.5" /> Go
               </button>
@@ -161,7 +161,7 @@ const DownloadPage = () => {
               rel="noopener noreferrer"
               className="w-full inline-flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl text-sm font-extrabold text-white transition-transform active:scale-[0.98]"
               style={{
-                background: "linear-gradient(180deg, #FF1A26 0%, #E50914 100%)",
+                background: "linear-gradient(180deg, #FF1A26 0%, #ffbade 100%)",
                 boxShadow: "0 0 28px rgba(229,9,20,0.55), inset 0 1px 0 rgba(255,255,255,0.2)",
               }}
             >
@@ -177,15 +177,15 @@ const DownloadPage = () => {
             {/* Feature pills */}
             <div className="grid grid-cols-3 gap-2 mt-5">
               <div className="rounded-lg bg-white/[0.03] border border-white/10 px-2 py-2 text-center">
-                <Zap className="w-3.5 h-3.5 mx-auto text-[#E50914] mb-1" />
+                <Zap className="w-3.5 h-3.5 mx-auto text-[#ffbade] mb-1" />
                 <p className="text-[10px] font-semibold text-white">Fast</p>
               </div>
               <div className="rounded-lg bg-white/[0.03] border border-white/10 px-2 py-2 text-center">
-                <ShieldCheck className="w-3.5 h-3.5 mx-auto text-[#E50914] mb-1" />
+                <ShieldCheck className="w-3.5 h-3.5 mx-auto text-[#ffbade] mb-1" />
                 <p className="text-[10px] font-semibold text-white">Safe</p>
               </div>
               <div className="rounded-lg bg-white/[0.03] border border-white/10 px-2 py-2 text-center">
-                <Film className="w-3.5 h-3.5 mx-auto text-[#E50914] mb-1" />
+                <Film className="w-3.5 h-3.5 mx-auto text-[#ffbade] mb-1" />
                 <p className="text-[10px] font-semibold text-white">HD</p>
               </div>
             </div>

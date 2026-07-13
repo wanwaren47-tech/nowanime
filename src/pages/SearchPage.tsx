@@ -65,7 +65,7 @@ const ResultRow = ({ item, onClick }: { item: ResultItem; onClick: () => void })
         ) : (
           <div className="w-full h-full grid place-items-center text-white/25 text-[9px]">No art</div>
         )}
-        <span className="absolute bottom-1 right-1 grid place-items-center w-5 h-5 rounded-full bg-[#E50914]">
+        <span className="absolute bottom-1 right-1 grid place-items-center w-5 h-5 rounded-full bg-[#ffbade]">
           <Play className="w-2.5 h-2.5 text-white fill-white" />
         </span>
       </div>
@@ -249,12 +249,12 @@ const SearchPage = () => {
         {showExplore ? (
           <>
             <div className="flex items-center gap-1.5 mb-3">
-              <TrendingUp className="w-3.5 h-3.5" style={{ color: "#E50914" }} />
+              <TrendingUp className="w-3.5 h-3.5" style={{ color: "#ffbade" }} />
               <h2 className="text-white text-sm font-bold">Trending now</h2>
             </div>
             {isFetching && results.length === 0 ? (
               <div className="flex items-center justify-center h-28">
-                <Loader2 className="w-4 h-4 animate-spin" style={{ color: "#E50914" }} />
+                <Loader2 className="w-4 h-4 animate-spin" style={{ color: "#ffbade" }} />
               </div>
             ) : (
               <div className="space-y-2 pb-4">
@@ -282,7 +282,7 @@ const SearchPage = () => {
                   key={f.value}
                   onClick={() => setFilter(f.value)}
                   className={`px-3 py-1 rounded-full text-[10.5px] font-medium whitespace-nowrap transition-all ${filter === f.value ? "text-white" : "text-white/60 border border-white/10"}`}
-                  style={filter === f.value ? { background: "#E50914" } : { background: "#141414" }}
+                  style={filter === f.value ? { background: "#ffbade" } : { background: "#141414" }}
                 >
                   {f.label}
                 </button>
@@ -291,7 +291,7 @@ const SearchPage = () => {
 
             {isFetching ? (
               <div className="flex items-center justify-center h-32">
-                <Loader2 className="w-5 h-5 animate-spin" style={{ color: "#E50914" }} />
+                <Loader2 className="w-5 h-5 animate-spin" style={{ color: "#ffbade" }} />
               </div>
             ) : filtered.length === 0 ? (
               <div className="py-6">

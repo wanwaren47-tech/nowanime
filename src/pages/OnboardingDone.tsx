@@ -51,21 +51,21 @@ const OnboardingDone = () => {
           <div
             className="w-14 h-14 rounded-full grid place-items-center"
             style={{
-              border: "2px solid #E50914",
+              border: "2px solid #ffbade",
               boxShadow: "0 0 18px rgba(229,9,20,0.55), inset 0 0 8px rgba(229,9,20,0.35)",
             }}
           >
-            <Check className="w-7 h-7 text-[#E50914]" strokeWidth={2.5} />
+            <Check className="w-7 h-7 text-[#ffbade]" strokeWidth={2.5} />
           </div>
         </div>
         <p className="text-[12px] font-semibold flex items-center gap-1.5 justify-center">
-          <Check className="w-3.5 h-3.5 text-[#E50914]" /> Account Created Successfully
+          <Check className="w-3.5 h-3.5 text-[#ffbade]" /> Account Created Successfully
         </p>
 
         <div className="mt-4 max-w-sm mx-auto text-left rounded-lg bg-white/[0.03] border border-white/10 p-3">
           {FEATURES.map((f) => (
             <div key={f} className="flex items-center gap-2 py-0.5 text-[11px] text-white/80">
-              <Check className="w-3 h-3 text-[#E50914]" /> {f}
+              <Check className="w-3 h-3 text-[#ffbade]" /> {f}
             </div>
           ))}
         </div>
@@ -76,15 +76,15 @@ const OnboardingDone = () => {
             type="button"
             onClick={() => setAgreed((v) => !v)}
             aria-pressed={agreed}
-            className={`mt-0.5 w-4 h-4 rounded grid place-items-center flex-shrink-0 transition-colors ${agreed ? "bg-[#E50914] border-[#E50914]" : "border border-white/30"}`}
+            className={`mt-0.5 w-4 h-4 rounded grid place-items-center flex-shrink-0 transition-colors ${agreed ? "bg-[#ffbade] border-[#ffbade]" : "border border-white/30"}`}
           >
             {agreed && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
           </button>
           <span className="text-[10.5px] leading-relaxed text-white/70" onClick={() => setAgreed((v) => !v)}>
             I agree to the{" "}
-            <Link to="/terms" onClick={(e) => e.stopPropagation()} className="text-[#E50914] font-semibold hover:underline">Terms &amp; Conditions</Link>{" "}
+            <Link to="/terms" onClick={(e) => e.stopPropagation()} className="text-[#ffbade] font-semibold hover:underline">Terms &amp; Conditions</Link>{" "}
             and{" "}
-            <Link to="/privacy" onClick={(e) => e.stopPropagation()} className="text-[#E50914] font-semibold hover:underline">Privacy Policy</Link>.
+            <Link to="/privacy" onClick={(e) => e.stopPropagation()} className="text-[#ffbade] font-semibold hover:underline">Privacy Policy</Link>.
           </span>
         </label>
 
@@ -93,7 +93,7 @@ const OnboardingDone = () => {
           disabled={!agreed}
           className="w-full max-w-md md:max-w-sm mx-auto mt-5 h-10 md:h-12 rounded-lg text-white text-xs md:text-sm font-semibold flex items-center justify-center relative disabled:opacity-50 disabled:cursor-not-allowed"
           style={{
-            background: "linear-gradient(180deg,#FF1A26 0%,#E50914 100%)",
+            background: "linear-gradient(180deg,#FF1A26 0%,#ffbade 100%)",
             boxShadow: "0 4px 14px rgba(229,9,20,0.45)",
           }}
         >

@@ -77,7 +77,7 @@ const LegalPage = ({ title, description, intro, sections, updated, cta }: Props)
         <a
           href={cta.href}
           className="inline-flex items-center justify-center mt-8 px-5 h-10 rounded-lg text-white text-sm font-semibold"
-          style={{ background: "linear-gradient(180deg,#FF1A26 0%,#E50914 100%)" }}
+          style={{ background: "linear-gradient(180deg,#FF1A26 0%,#ffbade 100%)" }}
         >
           {cta.label}
         </a>

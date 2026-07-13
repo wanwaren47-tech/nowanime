@@ -25,7 +25,7 @@ const Support = () => (
         ))}
       </div>
 
-      <Link to="/contact" className="mt-5 inline-block px-5 py-3 rounded-xl text-white font-semibold" style={{ background: "#E50914" }}>
+      <Link to="/contact" className="mt-5 inline-block px-5 py-3 rounded-xl text-white font-semibold" style={{ background: "#ffbade" }}>
         Contact Support
       </Link>
     </div>
