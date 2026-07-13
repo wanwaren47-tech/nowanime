@@ -1,14 +1,14 @@
 {
-  "name": "NowAnime - Stream. Discover. Bloom.",
+  "name": "NowAnime — Watch & Download Anime",
   "short_name": "NowAnime",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "theme_color": "#000000",
-  "background_color": "#000000",
-  "description": "Stream movies, TV shows, music, anime & live TV — free.",
+  "theme_color": "#0e0b18",
+  "background_color": "#0e0b18",
+  "description": "Stream and download subbed & dubbed anime in HD — free.",
   "icons": [
-    { "src": "/__l5e/assets-v1/4ab80063-d859-4dfe-8b48-e95339cc3489/nowanime-logo-v3.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "/__l5e/assets-v1/4ab80063-d859-4dfe-8b48-e95339cc3489/nowanime-logo-v3.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    { "src": "/__l5e/assets-v1/7d35115b-2e70-4ed6-9182-9951fd24f8db/nowanime-logo.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/__l5e/assets-v1/7d35115b-2e70-4ed6-9182-9951fd24f8db/nowanime-logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ]
 }
