@@ -40,8 +40,8 @@ const TvWatchPage = () => {
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#0A0A0A" }}>
       <SEO
-        title={data ? `${data.name} S${seasonNum}E${episodeNum} – BingBloom` : "Watch TV – BingBloom"}
-        description={data?.overview?.slice(0, 160) || "Stream TV episodes in HD on BingBloom."}
+        title={data ? `${data.name} S${seasonNum}E${episodeNum} – NowAnime` : "Watch TV – NowAnime"}
+        description={data?.overview?.slice(0, 160) || "Stream TV episodes in HD on NowAnime."}
         type="video.episode"
       />
       <div className="flex-1 max-w-[1400px] mx-auto w-full">

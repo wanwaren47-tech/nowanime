@@ -244,7 +244,7 @@ Deno.serve(async (req) => {
       headers["Accept-Ranges"] = ar || "bytes";
       headers["Access-Control-Expose-Headers"] = "Content-Length, Content-Range, Accept-Ranges";
       if (download) {
-        const fn = (url.searchParams.get("filename") || `bingbloom-${rawId}.mp4`).replace(/[^a-zA-Z0-9._-]/g, "_");
+        const fn = (url.searchParams.get("filename") || `nowanime-${rawId}.mp4`).replace(/[^a-zA-Z0-9._-]/g, "_");
         headers["Content-Disposition"] = `attachment; filename="${fn}"`;
       }
       return new Response(upstream.body, { status: upstream.status, headers });

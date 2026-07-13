@@ -186,8 +186,8 @@ const SearchPage = () => {
   return (
     <AppLayout>
       <SEO
-        title={searchQuery ? `${searchQuery} – Search – BingBloom` : "Explore – BingBloom"}
-        description={searchQuery ? `Search results for "${searchQuery}" on BingBloom.` : "Explore movies, TV series, anime and animation on BingBloom."}
+        title={searchQuery ? `${searchQuery} – Search – NowAnime` : "Explore – NowAnime"}
+        description={searchQuery ? `Search results for "${searchQuery}" on NowAnime.` : "Explore movies, TV series, anime and animation on NowAnime."}
       />
       <div className="px-5 pt-4" style={{ background: "#000" }}>
         {/* Search bar */}

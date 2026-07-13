@@ -28,7 +28,7 @@ const OnboardingDone = () => {
   };
   return (
     <div className="min-h-screen bg-black text-white pb-6 relative overflow-hidden">
-      <SEO title="Welcome – BingBloom" />
+      <SEO title="Welcome – NowAnime" />
       <StepProgress current={5} showBack={false} />
       <div
         className="absolute inset-0 pointer-events-none"
@@ -42,7 +42,7 @@ const OnboardingDone = () => {
         <div className="flex justify-center mb-3">
           <BrandLogo size={72} wordmarkSize="md" />
         </div>
-        <h2 className="text-base md:text-2xl font-bold mt-2">Welcome to BingBloom</h2>
+        <h2 className="text-base md:text-2xl font-bold mt-2">Welcome to NowAnime</h2>
         <p className="text-[11px] md:text-sm text-white/55 mt-1 max-w-xs md:max-w-sm mx-auto">
           Your account is ready. Personalized recommendations have been prepared for you.
         </p>
@@ -97,7 +97,7 @@ const OnboardingDone = () => {
             boxShadow: "0 4px 14px rgba(229,9,20,0.45)",
           }}
         >
-          Enter BingBloom
+          Enter NowAnime
           <ChevronRight className="w-4 h-4 absolute right-4" />
         </button>
         <p className="text-[10px] text-white/45 mt-2">Start discovering content you'll love.</p>

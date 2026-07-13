@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Home, Compass, Film } from "lucide-react";
 import SEO from "@/components/SEO";
-import logoAsset from "@/assets/bingbloom-official-logo.png.asset.json";
+import logoAsset from "@/assets/nowanime-official-logo.png.asset.json";
 
 const SUGGESTIONS = [
   { label: "Trending now", to: "/movies", icon: Film },
@@ -14,14 +14,14 @@ const NotFound = () => {
   return (
     <div className="flex min-h-screen items-center justify-center" style={{ background: "#000" }}>
       <SEO
-        title="Content not found – BingBloom"
-        description="We couldn't find that page on BingBloom. Try one of our suggestions to keep watching."
+        title="Content not found – NowAnime"
+        description="We couldn't find that page on NowAnime. Try one of our suggestions to keep watching."
         noindex
       />
       <div className="text-center px-6 max-w-sm w-full animate-fade-in">
         <img
           src={logoAsset.url}
-          alt="BingBloom"
+          alt="NowAnime"
           className="w-20 h-20 mx-auto mb-5 rounded-2xl shadow-[0_0_40px_rgba(229,9,20,0.35)]"
         />
         <h1 className="text-xl font-bold text-white mb-2">Sorry, content not found</h1>
@@ -41,7 +41,7 @@ const NotFound = () => {
           ))}
         </div>
         <Link to="/" className="block mt-6 text-xs text-white/40 hover:text-white/70">
-          BingBloom &mdash; stream movies & series
+          NowAnime &mdash; stream movies & series
         </Link>
       </div>
     </div>

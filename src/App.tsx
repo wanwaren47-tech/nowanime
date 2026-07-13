@@ -52,7 +52,7 @@ import LegalNotices from "./pages/LegalNotices";
 import Help from "./pages/Help";
 import Jobs from "./pages/Jobs";
 import Terms from "./pages/Terms";
-import OnlyOnBingBloom from "./pages/OnlyOnBingBloom";
+import OnlyOnNowAnime from "./pages/OnlyOnNowAnime";
 import Redeem from "./pages/Redeem";
 import SpeedTest from "./pages/SpeedTest";
 import AdChoices from "./pages/AdChoices";
@@ -75,7 +75,7 @@ const queryClient = new QueryClient({
 
 const persister = createSyncStoragePersister({
   storage: typeof window !== "undefined" ? window.localStorage : undefined,
-  key: "bingbloom-query-cache",
+  key: "nowanime-query-cache",
   throttleTime: 1000,
 });
 
@@ -145,7 +145,7 @@ const App = () => (
             <Route path="/help" element={<Help />} />
             <Route path="/jobs" element={<Jobs />} />
             <Route path="/terms" element={<Terms />} />
-            <Route path="/only-on-bingbloom" element={<OnlyOnBingBloom />} />
+            <Route path="/only-on-nowanime" element={<OnlyOnNowAnime />} />
             <Route path="/redeem" element={<Redeem />} />
             <Route path="/privacy" element={<PrivacyPage />} />
             <Route path="/speed-test" element={<SpeedTest />} />

@@ -36,7 +36,7 @@ const OnboardingGenres = () => {
 
   return (
     <div className="min-h-screen bg-black text-white pb-10">
-      <SEO title="Choose Genres – BingBloom" />
+      <SEO title="Choose Genres – NowAnime" />
       <StepProgress current={2} />
       <div className="flex flex-col items-center mt-2">
         <BrandLogo size={36} wordmarkSize="sm" />

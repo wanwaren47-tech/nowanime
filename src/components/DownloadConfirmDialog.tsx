@@ -16,11 +16,11 @@ const DownloadConfirmDialog = ({ open, onOpenChange, title, url, onContinue }: P
         <DialogHeader>
           <div className="flex items-center gap-2 mb-1">
             <ShieldAlert className="w-4 h-4 text-[#E50914]" />
-            <DialogTitle className="text-sm font-bold">You're leaving BingBloom</DialogTitle>
+            <DialogTitle className="text-sm font-bold">You're leaving NowAnime</DialogTitle>
           </div>
           <DialogDescription className="text-[11px] text-white/65 leading-relaxed">
             To download <span className="text-white font-semibold">{title}</span>, we'll open an external
-            download page inside an in-app browser. BingBloom doesn't host or control the file.
+            download page inside an in-app browser. NowAnime doesn't host or control the file.
           </DialogDescription>
         </DialogHeader>
         <div className="text-[10px] text-white/40 break-all bg-black/40 rounded p-2 border border-white/5">

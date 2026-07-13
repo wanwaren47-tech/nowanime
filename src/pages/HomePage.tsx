@@ -53,8 +53,8 @@ const HomePage = () => {
   return (
     <AppLayout>
       <SEO
-        title="BingBloom – Stream Movies, TV, Live & Music"
-        description="Stream trending movies, TV shows, anime, music and live TV channels free on BingBloom."
+        title="NowAnime – Stream Movies, TV, Live & Music"
+        description="Stream trending movies, TV shows, anime, music and live TV channels free on NowAnime."
       />
 
       <TmdbHero item={heroItem} type="movie" isLoading={trendingMovies.isLoading} />

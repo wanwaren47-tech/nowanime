@@ -73,11 +73,11 @@ const TopBar = () => {
           <Link to="/home" className="flex items-center gap-1.5 md:gap-2 flex-shrink-0">
             <img
               src={logoAsset.url}
-              alt="BingBloom"
+              alt="NowAnime"
               className="h-7 w-7 md:h-8 md:w-8"
               style={{ filter: "drop-shadow(0 0 8px rgba(229,9,20,0.55))" }}
             />
-            <span className="hidden sm:inline text-base font-extrabold text-gradient-bb tracking-tight">BingBloom</span>
+            <span className="hidden sm:inline text-base font-extrabold text-gradient-bb tracking-tight">NowAnime</span>
           </Link>
 
           {/* Desktop horizontal nav */}
@@ -166,7 +166,7 @@ const TopBar = () => {
             <div className="flex items-center justify-between px-4 h-14 border-b border-border">
               <Link to="/home" onClick={() => setDrawerOpen(false)} className="flex items-center gap-2">
                 <img src={logoAsset.url} alt="" className="w-8 h-8" style={{ filter: "drop-shadow(0 0 6px rgba(229,9,20,0.6))" }} />
-                <span className="text-base font-extrabold text-gradient-bb">BingBloom</span>
+                <span className="text-base font-extrabold text-gradient-bb">NowAnime</span>
               </Link>
               <button
                 onClick={() => setDrawerOpen(false)}

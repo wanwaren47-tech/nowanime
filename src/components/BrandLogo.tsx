@@ -1,4 +1,4 @@
-import logoAsset from "@/assets/bingbloom-logo-v3.png.asset.json";
+import logoAsset from "@/assets/nowanime-logo-v3.png.asset.json";
 
 interface Props {
   size?: number;
@@ -18,7 +18,7 @@ const BrandLogo = ({ size = 56, withWordmark = true, wordmarkSize = "md", classN
     <div className={`flex flex-col items-center ${className}`}>
       <img
         src={logoAsset.url}
-        alt="BingBloom"
+        alt="NowAnime"
         style={{ width: size, height: size, objectFit: "contain" }}
       />
       {withWordmark && (

@@ -56,13 +56,13 @@ const GenrePage = () => {
   return (
     <AppLayout>
       <SEO
-        title={`${info.name} Movies – BingBloom`}
-        description={`Discover ${info.name.toLowerCase()} movies on BingBloom. Trending, top-rated and new releases all in one place.`}
+        title={`${info.name} Movies – NowAnime`}
+        description={`Discover ${info.name.toLowerCase()} movies on NowAnime. Trending, top-rated and new releases all in one place.`}
         jsonLd={{
           "@type": "CollectionPage",
-          name: `${info.name} Movies – BingBloom`,
-          description: `Discover ${info.name.toLowerCase()} movies on BingBloom.`,
-          url: `https://bingbloom.lovable.app/genre/${genre}`,
+          name: `${info.name} Movies – NowAnime`,
+          description: `Discover ${info.name.toLowerCase()} movies on NowAnime.`,
+          url: `https://nowanime.lovable.app/genre/${genre}`,
         }}
       />
       <div className="px-[4%] pt-6 pb-2">

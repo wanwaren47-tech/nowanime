@@ -43,7 +43,7 @@ const ShortsPage = () => {
 
   return (
     <div className="fixed inset-0 bg-black z-0">
-      <SEO title="Shorts – Trailers feed – BingBloom" description="Swipe through trending movie and TV trailers." />
+      <SEO title="Shorts – Trailers feed – NowAnime" description="Swipe through trending movie and TV trailers." />
       <Link to="/home" className="absolute top-3 left-3 z-50 p-2 rounded-full bg-black/60 backdrop-blur">
         <ArrowLeft className="w-5 h-5 text-white" />
       </Link>

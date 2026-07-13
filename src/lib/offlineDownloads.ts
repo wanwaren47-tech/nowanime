@@ -1,7 +1,7 @@
 // IndexedDB-backed offline video store.
 // Stores MP4 blobs in chunks for resumable download + offline playback.
 
-const DB_NAME = "bingbloom-offline";
+const DB_NAME = "nowanime-offline";
 const DB_VERSION = 1;
 const STORE_META = "videos";     // metadata + completed blob
 const STORE_CHUNKS = "chunks";   // per-video temp chunks during download

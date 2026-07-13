@@ -22,7 +22,7 @@ interface Props {
 
 const LegalPage = ({ title, description, intro, sections, updated, cta }: Props) => (
   <AppLayout>
-    <SEO title={`${title} – BingBloom`} description={description} />
+    <SEO title={`${title} – NowAnime`} description={description} />
     <article className="max-w-3xl mx-auto px-5 py-8 text-white">
       <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{title}</h1>
       {updated && <p className="text-[11px] text-white/45 mt-1">Last updated: {updated}</p>}

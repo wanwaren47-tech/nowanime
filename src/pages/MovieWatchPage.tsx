@@ -45,8 +45,8 @@ const MovieWatchPage = () => {
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#0A0A0A" }}>
       <SEO
-        title={data ? `Watch ${data.title} – BingBloom` : "Watch Movie – BingBloom"}
-        description={data?.overview?.slice(0, 160) || "Stream movies in HD on BingBloom."}
+        title={data ? `Watch ${data.title} – NowAnime` : "Watch Movie – NowAnime"}
+        description={data?.overview?.slice(0, 160) || "Stream movies in HD on NowAnime."}
         type="video.movie"
       />
       <div className="flex-1 max-w-[1400px] mx-auto w-full">

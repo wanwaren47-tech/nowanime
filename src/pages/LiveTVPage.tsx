@@ -145,7 +145,7 @@ const LiveTVPage = () => {
   if (activeChannel) {
     return (
       <AppLayout>
-        <SEO title={`${activeChannel.name} – Live TV – BingBloom`} description={`Watch ${activeChannel.name} live now on BingBloom.`} />
+        <SEO title={`${activeChannel.name} – Live TV – NowAnime`} description={`Watch ${activeChannel.name} live now on NowAnime.`} />
         <div className="min-h-[calc(100vh-3.5rem)]" style={{ background: "#0A0A0A" }}>
           {/* Header */}
           <div className="sticky top-12 md:top-14 z-30 flex items-center gap-2 px-3 py-2.5 bg-[#0A0A0A]/95 backdrop-blur border-b border-white/5">
@@ -200,8 +200,8 @@ const LiveTVPage = () => {
   return (
     <AppLayout>
       <SEO
-        title="Live TV – BingBloom"
-        description="Watch 80+ live TV channels from around the world — news, sports, entertainment, music and more, streamed free on BingBloom."
+        title="Live TV – NowAnime"
+        description="Watch 80+ live TV channels from around the world — news, sports, entertainment, music and more, streamed free on NowAnime."
       />
       <div className="px-4 pt-4 pb-10 max-w-[1400px] mx-auto" style={{ background: "#0A0A0A" }}>
         {/* Title */}

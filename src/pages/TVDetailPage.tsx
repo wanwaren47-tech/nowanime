@@ -65,14 +65,14 @@ const TVDetailPage = () => {
   return (
     <AppLayout>
       <SEO
-        title={`${data.name} – Watch on BingBloom`}
-        description={(data.overview || `Watch ${data.name} streaming on BingBloom. Episodes, cast, reviews and more.`).slice(0, 160)}
+        title={`${data.name} – Watch on NowAnime`}
+        description={(data.overview || `Watch ${data.name} streaming on NowAnime. Episodes, cast, reviews and more.`).slice(0, 160)}
         type="video.tv_show"
         image={img(data.backdrop_path, "w780") || undefined}
         jsonLd={{
           "@type": "TVSeries",
           name: data.name,
-          description: data.overview || `Watch ${data.name} on BingBloom.`,
+          description: data.overview || `Watch ${data.name} on NowAnime.`,
           image: poster || undefined,
           datePublished: data.first_air_date || undefined,
           aggregateRating: data.vote_average > 0 ? {

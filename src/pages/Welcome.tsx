@@ -19,7 +19,7 @@ const Welcome = () => {
 
   return (
     <div className="min-h-screen bg-black text-white relative overflow-hidden flex flex-col md:flex-row md:items-stretch">
-      <SEO title="Welcome to BingBloom" description="Stream movies, TV shows, anime and live channels — free, ad-supported." />
+      <SEO title="Welcome to NowAnime" description="Stream movies, TV shows, anime and live channels — free, ad-supported." />
       <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at top, rgba(229,9,20,0.25) 0%, transparent 60%)" }} />
 
       {/* Desktop-only cinematic brand panel (hidden on mobile) */}

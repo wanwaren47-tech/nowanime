@@ -37,8 +37,8 @@ const DailyChallenge = () => {
     try {
       if (navigator.share) {
         await navigator.share({
-          title: "BingBloom",
-          text: "Stream free movies, TV & live channels on BingBloom!",
+          title: "NowAnime",
+          text: "Stream free movies, TV & live channels on NowAnime!",
           url: window.location.origin,
         });
         complete("share");
@@ -53,7 +53,7 @@ const DailyChallenge = () => {
     {
       id: "share",
       icon: Share2,
-      title: "Share BingBloom with a friend",
+      title: "Share NowAnime with a friend",
       prize: "Ad-free for 1 hour",
       action: { label: "Share", onClick: handleShare },
     },

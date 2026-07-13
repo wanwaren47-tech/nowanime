@@ -45,7 +45,7 @@ const DownloadPage = () => {
   );
 
   // Auto-redirect once the title is known. Open in a new tab so the user keeps
-  // BingBloom open and lands on the pre-filled download options.
+  // NowAnime open and lands on the pre-filled download options.
   useEffect(() => {
     if (!mediaTitle || redirected) return;
     setRedirected(true);
@@ -63,8 +63,8 @@ const DownloadPage = () => {
   return (
     <AppLayout>
       <SEO
-        title={mediaTitle ? `Download ${mediaTitle} – BingBloom` : "Download – BingBloom"}
-        description="Download movies and episodes for offline viewing on BingBloom."
+        title={mediaTitle ? `Download ${mediaTitle} – NowAnime` : "Download – NowAnime"}
+        description="Download movies and episodes for offline viewing on NowAnime."
       />
       {/* Modal-style overlay so the app still feels alive behind it */}
       <div className="relative">

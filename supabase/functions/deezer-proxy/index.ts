@@ -25,7 +25,7 @@ Deno.serve(async (req) => {
     upstream.searchParams.set("limit", limit);
 
     const res = await fetch(upstream.toString(), {
-      headers: { "User-Agent": "Mozilla/5.0 BingBloom" },
+      headers: { "User-Agent": "Mozilla/5.0 NowAnime" },
     });
     const text = await res.text();
     return new Response(text, {

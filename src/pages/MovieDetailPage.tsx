@@ -67,14 +67,14 @@ const MovieDetailPage = () => {
   return (
     <AppLayout>
       <SEO
-        title={`${data.title} – Watch on BingBloom`}
-        description={(data.overview || `Watch ${data.title} streaming on BingBloom. Cast, reviews, trailers and more.`).slice(0, 160)}
+        title={`${data.title} – Watch on NowAnime`}
+        description={(data.overview || `Watch ${data.title} streaming on NowAnime. Cast, reviews, trailers and more.`).slice(0, 160)}
         type="video.movie"
         image={img(data.backdrop_path, "w780") || undefined}
         jsonLd={{
           "@type": "Movie",
           name: data.title,
-          description: data.overview || `Watch ${data.title} on BingBloom.`,
+          description: data.overview || `Watch ${data.title} on NowAnime.`,
           image: poster || undefined,
           datePublished: data.release_date || undefined,
           aggregateRating: data.vote_average > 0 ? {

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
 import SEO from "@/components/SEO";
 import logoAsset from "@/assets/bing-logo.png.asset.json";
-import apkAsset from "@/assets/bingbloom-app.apk.asset.json";
+import apkAsset from "@/assets/nowanime-app.apk.asset.json";
 
 const SCREENSHOTS = [
   "https://image.tmdb.org/t/p/w300/49WJfeN0moxb9IPfGn8AIqMGskD.jpg",
@@ -22,7 +22,7 @@ const InstallAppPage = () => {
     setDownloading(true);
     const a = document.createElement("a");
     a.href = apkAsset.url;
-    a.download = "BingBloom.apk";
+    a.download = "NowAnime.apk";
     a.rel = "noopener";
     a.target = "_blank";
     document.body.appendChild(a);
@@ -31,11 +31,11 @@ const InstallAppPage = () => {
     setTimeout(() => { setDownloading(false); setDone(true); }, 1200);
   };
 
-  useEffect(() => { document.title = "Install BingBloom – Free Movies & TV"; }, []);
+  useEffect(() => { document.title = "Install NowAnime – Free Movies & TV"; }, []);
 
   return (
     <AppLayout>
-      <SEO title="Install BingBloom App" description="Install the free BingBloom Android app to stream and download movies, TV shows, anime and live channels." />
+      <SEO title="Install NowAnime App" description="Install the free NowAnime Android app to stream and download movies, TV shows, anime and live channels." />
 
       <div className="max-w-2xl mx-auto px-4 pt-3 pb-10">
         <Link to="/home" className="inline-flex items-center gap-1 text-xs text-foreground/70 hover:text-foreground mb-3">
@@ -43,9 +43,9 @@ const InstallAppPage = () => {
         </Link>
 
         <div className="flex items-start gap-3 mb-4">
-          <img src={logoAsset.url} alt="BingBloom" className="w-14 h-14 rounded-2xl flex-shrink-0 shadow-lg" style={{ filter: "drop-shadow(0 0 14px rgba(229,9,20,0.45))" }} />
+          <img src={logoAsset.url} alt="NowAnime" className="w-14 h-14 rounded-2xl flex-shrink-0 shadow-lg" style={{ filter: "drop-shadow(0 0 14px rgba(229,9,20,0.45))" }} />
           <div className="flex-1 min-w-0">
-            <h1 className="text-base font-bold text-foreground leading-tight">BingBloom</h1>
+            <h1 className="text-base font-bold text-foreground leading-tight">NowAnime</h1>
             <p className="text-[11px] text-primary font-medium">Bing Bloom Studios</p>
             <p className="text-[10px] text-muted-foreground mt-0.5">Contains ads · Free</p>
           </div>
@@ -70,7 +70,7 @@ const InstallAppPage = () => {
             {done ? (<><Check className="w-3.5 h-3.5" /> Downloaded — open APK</>) : downloading ? "Downloading…" : (<><Download className="w-3.5 h-3.5" /> Install</>)}
           </button>
           <button
-            onClick={() => navigator.share?.({ title: "BingBloom", url: window.location.href }).catch(() => {})}
+            onClick={() => navigator.share?.({ title: "NowAnime", url: window.location.href }).catch(() => {})}
             className="w-10 grid place-items-center rounded-xl border border-border bg-card"
             aria-label="Share"
           >
@@ -90,7 +90,7 @@ const InstallAppPage = () => {
         </button>
         {helpOpen && (
           <div className="mb-4 rounded-xl border border-border/40 p-3 text-[11px] text-foreground/80 space-y-2 leading-relaxed">
-            <p><span className="font-semibold text-foreground">1.</span> Tap <span className="font-semibold">Install</span> above to download <span className="font-mono">BingBloom.apk</span>.</p>
+            <p><span className="font-semibold text-foreground">1.</span> Tap <span className="font-semibold">Install</span> above to download <span className="font-mono">NowAnime.apk</span>.</p>
             <p><span className="font-semibold text-foreground">2.</span> Your browser may ask for permission to download or install apps from unknown sources — tap <span className="font-semibold">Allow</span>.</p>
             <p><span className="font-semibold text-foreground">3.</span> Open the downloaded file and tap <span className="font-semibold">Install</span>.</p>
             <p className="flex items-start gap-1.5 text-[11px] mt-2 pt-2 border-t border-border/30">
@@ -109,7 +109,7 @@ const InstallAppPage = () => {
         <section className="mb-5">
           <h2 className="text-sm font-semibold text-foreground mb-1.5">About this app</h2>
           <p className="text-xs text-foreground/80 leading-relaxed">
-            Stream and download thousands of movies, TV shows, anime, live channels and music — completely free. BingBloom keeps your watchlist in sync, supports offline playback and ships with parental controls.
+            Stream and download thousands of movies, TV shows, anime, live channels and music — completely free. NowAnime keeps your watchlist in sync, supports offline playback and ships with parental controls.
           </p>
         </section>
 

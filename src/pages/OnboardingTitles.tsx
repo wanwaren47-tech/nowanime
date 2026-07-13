@@ -38,7 +38,7 @@ const OnboardingTitles = () => {
 
   return (
     <div className="min-h-screen bg-black text-white pb-28">
-      <SEO title="Personalize – BingBloom" />
+      <SEO title="Personalize – NowAnime" />
       <StepProgress current={3} total={4} />
       <div className="flex flex-col items-center mt-2">
         <BrandLogo size={36} wordmarkSize="sm" />

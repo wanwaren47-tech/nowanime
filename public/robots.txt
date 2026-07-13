@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://bingbloom.lovable.app/sitemap.xml
+Sitemap: https://nowanime.lovable.app/sitemap.xml

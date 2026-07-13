@@ -153,7 +153,7 @@ const MyDownloadsPage = () => {
 
   return (
     <AppLayout hideFooter>
-      <SEO title="My Downloads – BingBloom" description="Watch your downloaded movies offline anytime on BingBloom." />
+      <SEO title="My Downloads – NowAnime" description="Watch your downloaded movies offline anytime on NowAnime." />
       <div className="px-4 pt-3 pb-8 max-w-2xl mx-auto" style={{ background: "#0A0A0A" }}>
         <header className="flex items-center justify-between mb-4 pt-1">
           <button onClick={() => navigate(-1)} className="w-8 h-8 grid place-items-center rounded-full hover:bg-white/5 text-white" aria-label="Back">

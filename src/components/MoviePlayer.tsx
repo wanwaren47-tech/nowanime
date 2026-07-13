@@ -174,7 +174,7 @@ const MoviePlayer = ({ tmdbId, type = "movie", season = 1, episode = 1, serverId
             allow="autoplay; fullscreen; picture-in-picture; encrypted-media; clipboard-write"
             sandbox={adBlock ? SANDBOX_BLOCKED : SANDBOX_FULL}
             referrerPolicy="origin"
-            title="BingBloom Player"
+            title="NowAnime Player"
             style={{ border: 0, aspectRatio: "16/9" }}
           />
         )}
