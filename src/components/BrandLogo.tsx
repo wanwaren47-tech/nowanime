@@ -1,4 +1,4 @@
-import logoAsset from "@/assets/nowanime-logo-v3.png.asset.json";
+import logoAsset from "@/assets/nowanime-logo.png.asset.json";
 
 interface Props {
   size?: number;
@@ -23,8 +23,8 @@ const BrandLogo = ({ size = 56, withWordmark = true, wordmarkSize = "md", classN
       />
       {withWordmark && (
         <p className={`${wm} font-extrabold tracking-tight mt-1.5 leading-none`}>
-          <span className="text-white">Bing</span>
-          <span style={{ color: "#E50914" }}>Bloom</span>
+          <span className="text-foreground">Now</span>
+          <span className="text-primary">Anime</span>
         </p>
       )}
     </div>
