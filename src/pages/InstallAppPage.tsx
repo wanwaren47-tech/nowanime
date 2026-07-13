@@ -3,7 +3,7 @@ import { ChevronLeft, Download, Star, Share2, Shield, Smartphone, Check, Chevron
 import { Link } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
 import SEO from "@/components/SEO";
-import logoAsset from "@/assets/bing-logo.png.asset.json";
+import logoAsset from "@/assets/nowanime-logo.png.asset.json";
 import apkAsset from "@/assets/nowanime-app.apk.asset.json";
 
 const SCREENSHOTS = [
