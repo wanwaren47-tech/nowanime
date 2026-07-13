@@ -60,7 +60,7 @@ const OnboardingGenres = () => {
                   on
                     ? {
                         border: "1.5px solid #ffbade",
-                        boxShadow: "0 0 10px rgba(229,9,20,0.6), inset 0 0 8px rgba(229,9,20,0.18)",
+                        boxShadow: "0 0 10px rgba(255,186,222,0.6), inset 0 0 8px rgba(255,186,222,0.18)",
                       }
                     : { border: "1px solid rgba(255,255,255,0.06)" }
                 }
@@ -78,7 +78,7 @@ const OnboardingGenres = () => {
           className="w-full max-w-md md:max-w-sm mx-auto mt-5 md:mt-8 h-10 md:h-12 rounded-lg text-white text-xs md:text-sm font-semibold flex items-center justify-center relative disabled:opacity-50"
           style={{
             background: "linear-gradient(180deg,#FF1A26 0%,#ffbade 100%)",
-            boxShadow: "0 4px 14px rgba(229,9,20,0.35)",
+            boxShadow: "0 4px 14px rgba(255,186,222,0.35)",
           }}
         >
           Continue

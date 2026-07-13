@@ -58,7 +58,7 @@ const OnboardingTitles = () => {
                 key={m.t}
                 onClick={() => toggle(m.t)}
                 className="aspect-[2/3] rounded-lg overflow-hidden bg-[#0f0f10] relative transition-all"
-                style={on ? { boxShadow: "0 0 10px rgba(229,9,20,0.7)", outline: "1.5px solid #ffbade" } : { border: "1px solid rgba(255,255,255,0.05)" }}
+                style={on ? { boxShadow: "0 0 10px rgba(255,186,222,0.7)", outline: "1.5px solid #ffbade" } : { border: "1px solid rgba(255,255,255,0.05)" }}
               >
                 <img src={m.img} alt={m.t} className="w-full h-full object-cover" loading="lazy" />
               </button>
@@ -72,7 +72,7 @@ const OnboardingTitles = () => {
           onClick={submit}
           disabled={picked.length < 3}
           className="w-full max-w-md md:max-w-sm mx-auto h-10 md:h-12 rounded-lg text-white text-xs md:text-sm font-semibold flex items-center justify-center relative disabled:opacity-50"
-          style={{ background: "linear-gradient(180deg,#FF1A26 0%,#ffbade 100%)", boxShadow: "0 4px 14px rgba(229,9,20,0.35)" }}
+          style={{ background: "linear-gradient(180deg,#FF1A26 0%,#ffbade 100%)", boxShadow: "0 4px 14px rgba(255,186,222,0.35)" }}
         >
           Continue ({picked.length} selected)
           <ChevronRight className="w-4 h-4 absolute right-4" />

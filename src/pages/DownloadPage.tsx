@@ -119,14 +119,14 @@ const DownloadPage = () => {
           <div
             className="relative rounded-2xl p-5 border border-white/10"
             style={{
-              background: "linear-gradient(180deg, rgba(229,9,20,0.08) 0%, #141414 35%, #0e0b18 100%)",
-              boxShadow: "0 0 40px rgba(229,9,20,0.15), inset 0 1px 0 rgba(255,255,255,0.05)",
+              background: "linear-gradient(180deg, rgba(255,186,222,0.08) 0%, #141414 35%, #0e0b18 100%)",
+              boxShadow: "0 0 40px rgba(255,186,222,0.15), inset 0 1px 0 rgba(255,255,255,0.05)",
             }}
           >
             <div className="flex items-center gap-3 mb-4">
               <div
                 className="w-11 h-11 grid place-items-center rounded-xl shrink-0"
-                style={{ background: "#ffbade", boxShadow: "0 0 24px rgba(229,9,20,0.55)" }}
+                style={{ background: "#ffbade", boxShadow: "0 0 24px rgba(255,186,222,0.55)" }}
               >
                 <Download className="w-5 h-5 text-white" />
               </div>
@@ -149,7 +149,7 @@ const DownloadPage = () => {
               <button
                 type="submit"
                 className="px-3 py-2.5 rounded-xl text-xs font-bold text-white inline-flex items-center gap-1.5 transition-transform active:scale-95"
-                style={{ background: "#ffbade", boxShadow: "0 0 20px rgba(229,9,20,0.4)" }}
+                style={{ background: "#ffbade", boxShadow: "0 0 20px rgba(255,186,222,0.4)" }}
               >
                 <ExternalLink className="w-3.5 h-3.5" /> Go
               </button>
@@ -162,7 +162,7 @@ const DownloadPage = () => {
               className="w-full inline-flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl text-sm font-extrabold text-white transition-transform active:scale-[0.98]"
               style={{
                 background: "linear-gradient(180deg, #FF1A26 0%, #ffbade 100%)",
-                boxShadow: "0 0 28px rgba(229,9,20,0.55), inset 0 1px 0 rgba(255,255,255,0.2)",
+                boxShadow: "0 0 28px rgba(255,186,222,0.55), inset 0 1px 0 rgba(255,255,255,0.2)",
               }}
             >
               <Download className="w-4 h-4" /> Download Now

@@ -34,7 +34,7 @@ const OnboardingDone = () => {
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(ellipse at center, rgba(229,9,20,0.22) 0%, transparent 65%)",
+            "radial-gradient(ellipse at center, rgba(255,186,222,0.22) 0%, transparent 65%)",
         }}
       />
 
@@ -52,7 +52,7 @@ const OnboardingDone = () => {
             className="w-14 h-14 rounded-full grid place-items-center"
             style={{
               border: "2px solid #ffbade",
-              boxShadow: "0 0 18px rgba(229,9,20,0.55), inset 0 0 8px rgba(229,9,20,0.35)",
+              boxShadow: "0 0 18px rgba(255,186,222,0.55), inset 0 0 8px rgba(255,186,222,0.35)",
             }}
           >
             <Check className="w-7 h-7 text-[#ffbade]" strokeWidth={2.5} />
@@ -94,7 +94,7 @@ const OnboardingDone = () => {
           className="w-full max-w-md md:max-w-sm mx-auto mt-5 h-10 md:h-12 rounded-lg text-white text-xs md:text-sm font-semibold flex items-center justify-center relative disabled:opacity-50 disabled:cursor-not-allowed"
           style={{
             background: "linear-gradient(180deg,#FF1A26 0%,#ffbade 100%)",
-            boxShadow: "0 4px 14px rgba(229,9,20,0.45)",
+            boxShadow: "0 4px 14px rgba(255,186,222,0.45)",
           }}
         >
           Enter NowAnime

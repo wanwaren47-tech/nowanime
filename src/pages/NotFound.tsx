@@ -22,7 +22,7 @@ const NotFound = () => {
         <img
           src={logoAsset.url}
           alt="NowAnime"
-          className="w-20 h-20 mx-auto mb-5 rounded-2xl shadow-[0_0_40px_rgba(229,9,20,0.35)]"
+          className="w-20 h-20 mx-auto mb-5 rounded-2xl shadow-[0_0_40px_rgba(255,186,222,0.35)]"
         />
         <h1 className="text-xl font-bold text-white mb-2">Sorry, content not found</h1>
         <p className="text-sm text-white/60 mb-6">

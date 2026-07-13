@@ -42,7 +42,7 @@ const StepProgress = ({ current, total = 5, showBack = true, backTo }: Props) =>
                 }`}
                 style={
                   active
-                    ? { boxShadow: "0 0 12px rgba(229,9,20,0.7)" }
+                    ? { boxShadow: "0 0 12px rgba(255,186,222,0.7)" }
                     : undefined
                 }
               >

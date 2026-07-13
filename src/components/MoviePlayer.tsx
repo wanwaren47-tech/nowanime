@@ -250,7 +250,7 @@ const MoviePlayer = ({ tmdbId, type = "movie", season = 1, episode = 1, serverId
           onClick={() => selectServer(serverIdx + 1)}
           title="Next server"
           className="ml-auto flex items-center gap-1 px-2.5 py-1 rounded-md text-[10.5px] font-semibold text-white"
-          style={{ background: "#1f1f1f", border: "1px solid rgba(229,9,20,0.4)" }}
+          style={{ background: "#1f1f1f", border: "1px solid rgba(255,186,222,0.4)" }}
         >
           Next <ChevronRight className="w-3 h-3" />
         </button>

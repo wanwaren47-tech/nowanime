@@ -357,7 +357,7 @@ const LiveTVPage = () => {
                       style={{
                         background: p === safePage ? "#ffbade" : "#1F1F1F",
                         border: p === safePage ? "1px solid #ffbade" : "1px solid rgba(255,255,255,0.08)",
-                        boxShadow: p === safePage ? "0 0 12px rgba(229,9,20,0.5)" : "none",
+                        boxShadow: p === safePage ? "0 0 12px rgba(255,186,222,0.5)" : "none",
                       }}
                     >
                       {p}

@@ -108,7 +108,7 @@ const DailyChallenge = () => {
               className="min-w-[200px] max-w-[200px] rounded-xl border border-white/10 p-3 flex flex-col gap-2"
               style={{
                 background:
-                  "linear-gradient(140deg, rgba(229,9,20,0.18), rgba(20,20,20,0.85) 60%)",
+                  "linear-gradient(140deg, rgba(255,186,222,0.18), rgba(20,20,20,0.85) 60%)",
               }}
             >
               <div className="flex items-center justify-between">
