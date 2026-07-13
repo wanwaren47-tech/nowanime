@@ -165,6 +165,29 @@ const TvWatchPage = () => {
             </div>
           </div>
         )}
+          </div>
+
+          <aside className="hidden lg:block">
+            <div className="sticky top-14">
+              <h3 className="text-[12px] font-semibold text-foreground mb-2 px-1">Up Next</h3>
+              <div className="flex flex-col gap-2">
+                {upNext.map((m: any) => (
+                  <Link key={m.id} to={`/tv/${m.id}`} className="flex gap-2 rounded-lg p-1.5 hover:bg-white/5 transition">
+                    <div className="relative flex-shrink-0 w-[150px] aspect-video rounded-md overflow-hidden bg-surface-2">
+                      {(m.backdrop_path || m.poster_path) && (
+                        <img src={img(m.backdrop_path || m.poster_path, "w300")} alt={m.name || m.title} loading="lazy" className="w-full h-full object-cover" />
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[11.5px] font-semibold text-foreground line-clamp-2 leading-snug">{m.name || m.title}</p>
+                      <p className="text-[10px] text-muted-foreground mt-1">{(m.first_air_date || "").slice(0, 4)}</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </aside>
+        </div>
       </div>
       <Footer />
     </div>
