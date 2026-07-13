@@ -37,37 +37,41 @@ const TvWatchPage = () => {
     }
   }, [data, seasonNum, episodeNum]);
 
+  const upNext = (trending.data || []).slice(0, 15);
+
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "#0A0A0A" }}>
+    <div className="min-h-screen flex flex-col bg-background">
       <SEO
-        title={data ? `${data.name} S${seasonNum}E${episodeNum} – NowAnime` : "Watch TV – NowAnime"}
-        description={data?.overview?.slice(0, 160) || "Stream TV episodes in HD on NowAnime."}
+        title={data ? `${data.name} S${seasonNum}E${episodeNum} – NowAnime` : "Watch Anime – NowAnime"}
+        description={data?.overview?.slice(0, 160) || "Stream anime episodes in HD on NowAnime."}
         type="video.episode"
       />
-      <div className="flex-1 max-w-[1400px] mx-auto w-full">
-        <header className="sticky top-0 z-30 flex items-center gap-3 px-3 h-11 bg-[#0A0A0A]/95 backdrop-blur border-b border-white/5">
+      <div className="flex-1 max-w-[1600px] mx-auto w-full">
+        <header className="sticky top-0 z-30 flex items-center gap-3 px-3 h-11 bg-background/95 backdrop-blur border-b border-border">
           <Link to={tmdbId ? `/tv/${tmdbId}` : "/home"} className="p-1.5 -ml-1 rounded-full hover:bg-white/10">
-            <ArrowLeft className="w-4 h-4 text-white" />
+            <ArrowLeft className="w-4 h-4 text-foreground" />
           </Link>
-          <h1 className="text-[13px] font-semibold text-white truncate">
+          <h1 className="text-[13px] font-semibold text-foreground truncate">
             {data ? `${data.name} · S${seasonNum} E${episodeNum}` : "Watch"}
           </h1>
         </header>
 
-        <div className="w-full md:max-w-2xl lg:max-w-3xl md:mx-auto">
-          <MoviePlayer
-            tmdbId={tmdbId || ""}
-            type="tv"
-            season={seasonNum}
-            episode={episodeNum}
-            serverId={server}
-            onServerChange={setServer}
-            title={data?.name}
-            year={(data?.first_air_date || "").slice(0, 4)}
-            poster={data?.poster_path ? img(data.poster_path, "w500") : null}
-            backdrop={data?.backdrop_path ? img(data.backdrop_path, "w780") : null}
-          />
-        </div>
+        <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-4 lg:px-4 lg:py-3">
+          <div className="min-w-0">
+            <div className="w-full lg:rounded-lg lg:overflow-hidden">
+              <MoviePlayer
+                tmdbId={tmdbId || ""}
+                type="tv"
+                season={seasonNum}
+                episode={episodeNum}
+                serverId={server}
+                onServerChange={setServer}
+                title={data?.name}
+                year={(data?.first_air_date || "").slice(0, 4)}
+                poster={data?.poster_path ? img(data.poster_path, "w500") : null}
+                backdrop={data?.backdrop_path ? img(data.backdrop_path, "w780") : null}
+              />
+            </div>
 
         {data && (
           <div className="px-4 pb-4">
