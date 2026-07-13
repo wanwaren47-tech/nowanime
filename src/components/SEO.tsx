@@ -1,7 +1,7 @@
 import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router-dom";
 
-const SITE = "https://bingbloom.lovable.app";
+const SITE = "https://nowanime.lovable.app";
 const DEFAULT_IMAGE = `${SITE}/pwa-512x512.png`;
 
 interface SEOProps {

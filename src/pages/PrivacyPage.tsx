@@ -5,7 +5,7 @@ const sections = [
     { title: "Collected Automatically", bullets: ["Usage data (content watched, time spent)", "Device information (browser, OS, IP)", "Cookies and similar tracking technologies"] },
   ]},
   { heading: "How We Use Your Information", bullets: [
-    "Provide and improve the BingBloom service",
+    "Provide and improve the NowAnime service",
     "Personalize content recommendations",
     "Remember preferences and settings",
     "Analyze usage to improve our platform",
@@ -15,8 +15,8 @@ const sections = [
   { heading: "Data Security", paragraphs: ["We implement reasonable administrative, logical, physical, and managerial measures to safeguard your information."] },
   { heading: "Data Retention", paragraphs: ["We keep your personal information only as long as necessary for the purposes we collected it for."] },
   { heading: "Your Rights", bullets: ["Access information we hold about you", "Request correction of inaccurate information", "Request deletion of your information", "Opt out of marketing communications"] },
-  { heading: "Contact Us", paragraphs: ["For privacy questions or to exercise your rights, contact privacy@bingbloom.com."] },
+  { heading: "Contact Us", paragraphs: ["For privacy questions or to exercise your rights, contact privacy@nowanime.com."] },
 ];
 export default function PrivacyPage() {
-  return <LegalPage title="Privacy Policy" description="How BingBloom collects, uses and protects your personal information." updated="June 2026" sections={sections} />;
+  return <LegalPage title="Privacy Policy" description="How NowAnime collects, uses and protects your personal information." updated="June 2026" sections={sections} />;
 }

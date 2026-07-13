@@ -35,7 +35,7 @@ const ProfilePage = () => {
 
   return (
     <AppLayout>
-      <SEO title="Profile – BingBloom" description="Your BingBloom profile — watch history, liked content, watchlist and account settings." />
+      <SEO title="Profile – NowAnime" description="Your NowAnime profile — watch history, liked content, watchlist and account settings." />
       <div className="max-w-3xl mx-auto px-5 py-6">
         <div className="bg-gradient-to-br from-primary/10 via-card to-card rounded-2xl p-6 mb-6 border border-border/50">
           <div className="flex items-start gap-4">
@@ -105,13 +105,13 @@ const ProfilePage = () => {
           })}
 
           <a
-            href="mailto:hello.bingbloom@gmail.com"
+            href="mailto:hello.nowanime@gmail.com"
             className="w-full flex items-center gap-3 p-3 bg-card rounded-xl hover:bg-secondary transition-colors border border-border/30"
           >
             <Mail className="w-4 h-4 text-primary" />
             <div className="flex-1 text-left">
               <p className="text-xs font-medium text-foreground">Contact Us</p>
-              <p className="text-[10px] text-muted-foreground">hello.bingbloom@gmail.com</p>
+              <p className="text-[10px] text-muted-foreground">hello.nowanime@gmail.com</p>
             </div>
             <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
           </a>
@@ -122,7 +122,7 @@ const ProfilePage = () => {
             <img src={logoImg} alt="BB" className="w-10 h-10 flex-shrink-0" />
             <div className="flex-1">
               <p className="text-xs font-semibold text-foreground mb-0.5">
-                {isInstalled ? "✅ App Installed!" : "Install BingBloom"}
+                {isInstalled ? "✅ App Installed!" : "Install NowAnime"}
               </p>
               <p className="text-[10px] text-muted-foreground mb-2">
                 {isInstalled ? "You're using the installed version." : "Add to home screen for fast access."}
@@ -137,7 +137,7 @@ const ProfilePage = () => {
         </div>
 
         <p className="text-center text-[10px] text-muted-foreground mt-6">
-          BingBloom v1.0 · Stream. Discover. Bloom. 🌸
+          NowAnime v1.0 · Stream. Discover. Bloom. 🌸
         </p>
       </div>
     </AppLayout>

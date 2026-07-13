@@ -6,7 +6,7 @@ import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 import { isDownloaded } from "@/lib/offlineDownloads";
 import DownloadButton from "@/components/DownloadButton";
 
-export type ServerId = "hd" | "pixaplay";
+export type ServerId = "hd" | "nowanime" | "vidsrc" | "nontongo";
 
 interface ServerDef {
   id: ServerId;
@@ -17,19 +17,35 @@ interface ServerDef {
 export const PLAYER_SERVERS: ServerDef[] = [
   {
     id: "hd",
-    label: "Server 1 · HD",
+    label: "Server 1 · HD (111Movies)",
     build: (id, type, s, e) =>
       type === "tv"
-        ? `https://vidsrc.pm/embed/tv/${id}/${s}/${e}`
-        : `https://vidsrc.pm/embed/movie/${id}`,
+        ? `https://111movies.com/tv/${id}/${s}/${e}`
+        : `https://111movies.com/movie/${id}`,
   },
   {
-    id: "pixaplay",
-    label: "Server 2 · FastStream",
+    id: "nowanime",
+    label: "Server 2 · NowAnime",
     build: (id, type, s, e) =>
       type === "tv"
-        ? `https://player.smashystream.com/playere.php?tmdb=${id}&season=${s}&episode=${e}`
-        : `https://player.smashystream.com/playere.php?tmdb=${id}`,
+        ? `https://vidsrc.su/embed/tv/${id}/${s}/${e}`
+        : `https://vidsrc.su/embed/movie/${id}`,
+  },
+  {
+    id: "vidsrc",
+    label: "Server 3 · VidSrc",
+    build: (id, type, s, e) =>
+      type === "tv"
+        ? `https://vsrc.su/embed/tv/${id}/${s}/${e}`
+        : `https://vsrc.su/embed/movie/${id}`,
+  },
+  {
+    id: "nontongo",
+    label: "Server 4 · Nontongo",
+    build: (id, type, s, e) =>
+      type === "tv"
+        ? `https://www.nontongo.win/embed/tv?tmdb=${id}&season=${s}&episode=${e}`
+        : `https://www.nontongo.win/embed/movie?tmdb=${id}`,
   },
 ];
 
@@ -139,7 +155,7 @@ const MoviePlayer = ({ tmdbId, type = "movie", season = 1, episode = 1, serverId
   // Offline + not saved → show a soft, friendly notice instead of a dead iframe.
   if (!online && !savedOffline) {
     return (
-      <div className="w-full" style={{ background: "#0A0A0A" }}>
+      <div className="w-full" style={{ background: "hsl(var(--background))" }}>
         <div className="relative w-full aspect-video overflow-hidden flex flex-col items-center justify-center gap-3 px-6 text-center">
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/5">
             <WifiOff className="h-6 w-6 text-white/70" />
@@ -152,7 +168,7 @@ const MoviePlayer = ({ tmdbId, type = "movie", season = 1, episode = 1, serverId
           <Link
             to="/my-downloads"
             className="mt-1 inline-flex items-center gap-1.5 rounded-md px-3.5 py-1.5 text-[11px] font-semibold text-white"
-            style={{ background: "#E50914" }}
+            style={{ background: "hsl(var(--primary))" }}
           >
             <CloudDownload className="h-3.5 w-3.5" /> Go to Downloads
           </Link>
@@ -162,7 +178,7 @@ const MoviePlayer = ({ tmdbId, type = "movie", season = 1, episode = 1, serverId
   }
 
   return (
-    <div className="w-full" style={{ background: "#0A0A0A" }}>
+    <div className="w-full" style={{ background: "hsl(var(--background))" }}>
       <div ref={containerRef} className="relative w-full aspect-video overflow-hidden">
         {resolvedSrc && (
           <iframe
@@ -174,26 +190,26 @@ const MoviePlayer = ({ tmdbId, type = "movie", season = 1, episode = 1, serverId
             allow="autoplay; fullscreen; picture-in-picture; encrypted-media; clipboard-write"
             sandbox={adBlock ? SANDBOX_BLOCKED : SANDBOX_FULL}
             referrerPolicy="origin"
-            title="BingBloom Player"
+            title="NowAnime Player"
             style={{ border: 0, aspectRatio: "16/9" }}
           />
         )}
 
         {loading && !error && (
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center pointer-events-none" style={{ background: "#0A0A0A" }}>
-            <Loader2 className="w-9 h-9 animate-spin mb-2" style={{ color: "#E50914" }} />
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center pointer-events-none" style={{ background: "hsl(var(--background))" }}>
+            <Loader2 className="w-9 h-9 animate-spin mb-2" style={{ color: "hsl(var(--primary))" }} />
             <p className="text-white text-xs font-medium">Loading {server.label}…</p>
           </div>
         )}
 
         {error && (
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-2 px-6 text-center" style={{ background: "#0A0A0A" }}>
-            <AlertCircle className="w-8 h-8" style={{ color: "#E50914" }} />
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-2 px-6 text-center" style={{ background: "hsl(var(--background))" }}>
+            <AlertCircle className="w-8 h-8" style={{ color: "hsl(var(--primary))" }} />
             <p className="text-white text-xs font-medium">Couldn't load {server.label}.</p>
             <button
               onClick={() => selectServer(serverIdx + 1)}
               className="flex items-center gap-1.5 text-white text-[11px] px-3 py-1.5 rounded-md font-semibold"
-              style={{ background: "#E50914" }}
+              style={{ background: "hsl(var(--primary))" }}
             >
               <RefreshCw className="w-3 h-3" /> Try next server
             </button>
@@ -205,7 +221,7 @@ const MoviePlayer = ({ tmdbId, type = "movie", season = 1, episode = 1, serverId
             onClick={() => setAdBlock((s) => !s)}
             title={adBlock ? "Ad-block on — redirects blocked" : "Ad-block off"}
             className="flex items-center gap-1 text-white text-[10px] px-2 py-1 rounded-md backdrop-blur-md"
-            style={{ background: adBlock ? "#E50914" : "rgba(0,0,0,0.55)" }}
+            style={{ background: adBlock ? "hsl(var(--primary))" : "rgba(0,0,0,0.55)" }}
           >
             <Shield className="w-3 h-3" /> {adBlock ? "ON" : "OFF"}
           </button>
@@ -215,14 +231,14 @@ const MoviePlayer = ({ tmdbId, type = "movie", season = 1, episode = 1, serverId
         </div>
       </div>
 
-      <div className="flex items-center gap-1.5 px-3 py-2" style={{ background: "#0A0A0A" }}>
+      <div className="flex items-center gap-1.5 px-3 py-2" style={{ background: "hsl(var(--background))" }}>
         {PLAYER_SERVERS.map((s, i) => (
           <button
             key={s.id}
             onClick={() => selectServer(i)}
             className="px-2.5 py-1 rounded-md text-[10.5px] font-semibold transition-colors"
             style={{
-              background: i === serverIdx ? "#E50914" : "rgba(255,255,255,0.06)",
+              background: i === serverIdx ? "hsl(var(--primary))" : "rgba(255,255,255,0.06)",
               color: i === serverIdx ? "#fff" : "rgba(255,255,255,0.7)",
               border: "1px solid rgba(255,255,255,0.08)",
             }}
@@ -234,14 +250,14 @@ const MoviePlayer = ({ tmdbId, type = "movie", season = 1, episode = 1, serverId
           onClick={() => selectServer(serverIdx + 1)}
           title="Next server"
           className="ml-auto flex items-center gap-1 px-2.5 py-1 rounded-md text-[10.5px] font-semibold text-white"
-          style={{ background: "#1f1f1f", border: "1px solid rgba(229,9,20,0.4)" }}
+          style={{ background: "#1f1f1f", border: "1px solid rgba(255,186,222,0.4)" }}
         >
           Next <ChevronRight className="w-3 h-3" />
         </button>
       </div>
 
       {title && (
-        <div className="flex items-center gap-2 px-3 py-2" style={{ background: "#0A0A0A", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+        <div className="flex items-center gap-2 px-3 py-2" style={{ background: "hsl(var(--background))", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
           <CloudDownload className="w-3.5 h-3.5 text-amber-400" />
           <span className="text-[10.5px] text-white/55 flex-1">Save this {type === "tv" ? "episode" : "movie"} for offline viewing</span>
           <DownloadButton

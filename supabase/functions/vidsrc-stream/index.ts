@@ -151,6 +151,16 @@ async function scrapeVidsrcXyz(
 // ---------- Embed-URL fallback (always works in an iframe) ----------
 const EMBED_DOMAINS = [
   "vidsrc.pm",
+  "vidsrc.su",
+  "vsrc.su",
+  "vidsrcme.ru",
+  "vidsrcme.su",
+  "vidsrc-me.ru",
+  "vidsrc-me.su",
+  "vidsrc-embed.ru",
+  "vidsrc-embed.su",
+  "111movies.com",
+  "nontongo.win",
   "vidsrc.to",
   "vidsrc.xyz",
   "vidsrc.net",
@@ -166,6 +176,16 @@ function embedUrl(
   season?: string,
   episode?: string,
   domain: string = "vidsrc.pm",
+  "vidsrc.su",
+  "vsrc.su",
+  "vidsrcme.ru",
+  "vidsrcme.su",
+  "vidsrc-me.ru",
+  "vidsrc-me.su",
+  "vidsrc-embed.ru",
+  "vidsrc-embed.su",
+  "111movies.com",
+  "nontongo.win",
 ): string {
   // 2embed and autoembed have different URL shapes
   if (domain === "2embed.cc") {
@@ -244,7 +264,7 @@ Deno.serve(async (req) => {
       headers["Accept-Ranges"] = ar || "bytes";
       headers["Access-Control-Expose-Headers"] = "Content-Length, Content-Range, Accept-Ranges";
       if (download) {
-        const fn = (url.searchParams.get("filename") || `bingbloom-${rawId}.mp4`).replace(/[^a-zA-Z0-9._-]/g, "_");
+        const fn = (url.searchParams.get("filename") || `nowanime-${rawId}.mp4`).replace(/[^a-zA-Z0-9._-]/g, "_");
         headers["Content-Disposition"] = `attachment; filename="${fn}"`;
       }
       return new Response(upstream.body, { status: upstream.status, headers });

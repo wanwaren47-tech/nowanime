@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate, NavLink } from "react-router-dom";
 import { Search, X, Menu, Home, Film, Tv, Clapperboard, Radio, Palette, Camera, User, Mic2, Bookmark, Heart, Settings, Shield, Download } from "lucide-react";
 import { useState, useEffect } from "react";
 import ThemeToggle from "./ThemeToggle";
-import logoAsset from "@/assets/bing-logo.png.asset.json";
+import logoAsset from "@/assets/nowanime-logo.png.asset.json";
 
 const primaryNav = [
   { to: "/home", label: "Home", icon: Home },
@@ -73,11 +73,11 @@ const TopBar = () => {
           <Link to="/home" className="flex items-center gap-1.5 md:gap-2 flex-shrink-0">
             <img
               src={logoAsset.url}
-              alt="BingBloom"
+              alt="NowAnime"
               className="h-7 w-7 md:h-8 md:w-8"
-              style={{ filter: "drop-shadow(0 0 8px rgba(229,9,20,0.55))" }}
+              style={{ filter: "drop-shadow(0 0 8px rgba(255,186,222,0.55))" }}
             />
-            <span className="hidden sm:inline text-base font-extrabold text-gradient-bb tracking-tight">BingBloom</span>
+            <span className="hidden sm:inline text-base font-extrabold text-gradient-bb tracking-tight">NowAnime</span>
           </Link>
 
           {/* Desktop horizontal nav */}
@@ -123,7 +123,7 @@ const TopBar = () => {
           <div className="flex items-center gap-1 flex-shrink-0">
             <Link
               to="/install"
-              className="md:hidden inline-flex items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-primary-foreground shadow-[0_2px_8px_rgba(229,9,20,0.45)]"
+              className="md:hidden inline-flex items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-primary-foreground shadow-[0_2px_8px_rgba(255,186,222,0.45)]"
               aria-label="Install App"
             >
               <Download className="h-3 w-3" /> Install
@@ -165,8 +165,8 @@ const TopBar = () => {
           <aside className="fixed top-0 left-0 bottom-0 z-[70] w-[82%] max-w-[300px] bg-card shadow-2xl flex flex-col animate-slide-in-right" style={{ animation: "slide-in-right 0.3s ease-out reverse" }}>
             <div className="flex items-center justify-between px-4 h-14 border-b border-border">
               <Link to="/home" onClick={() => setDrawerOpen(false)} className="flex items-center gap-2">
-                <img src={logoAsset.url} alt="" className="w-8 h-8" style={{ filter: "drop-shadow(0 0 6px rgba(229,9,20,0.6))" }} />
-                <span className="text-base font-extrabold text-gradient-bb">BingBloom</span>
+                <img src={logoAsset.url} alt="" className="w-8 h-8" style={{ filter: "drop-shadow(0 0 6px rgba(255,186,222,0.6))" }} />
+                <span className="text-base font-extrabold text-gradient-bb">NowAnime</span>
               </Link>
               <button
                 onClick={() => setDrawerOpen(false)}

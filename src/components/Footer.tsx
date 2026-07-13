@@ -9,7 +9,7 @@ const COLS = [
       { label: "Investor Relations", to: "/investors" },
       { label: "Jobs", to: "/jobs" },
       { label: "Media Center", to: "/media" },
-      { label: "Only on BingBloom", to: "/only-on-bingbloom" },
+      { label: "Only on NowAnime", to: "/only-on-nowanime" },
     ],
   },
   {
@@ -48,8 +48,8 @@ const COLS = [
 const Footer = () => (
   <footer className="border-t border-white/10 bg-black/95 text-white/55 pb-20 md:pb-6">
     <div className="max-w-6xl mx-auto px-5 pt-4">
-      <a href="mailto:hello.bingbloom@gmail.com" className="text-[12px] underline hover:text-white">
-        Questions? Email hello.bingbloom@gmail.com
+      <a href="mailto:hello.nowanime@gmail.com" className="text-[12px] underline hover:text-white">
+        Questions? Email hello.nowanime@gmail.com
       </a>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-x-5 gap-y-5 mt-5 text-[12px]">
@@ -74,10 +74,10 @@ const Footer = () => (
       </div>
 
       <p className="mt-5 text-[10.5px] text-white/45">
-        BingBloom Inc. · 811 Grand St, Alameda, CA 94501, USA
+        NowAnime Inc. · 811 Grand St, Alameda, CA 94501, USA
       </p>
       <p className="mt-1 text-[10.5px] text-white/40">
-        © {new Date().getFullYear()} BingBloom Inc. All rights reserved. Stream. Discover. Bloom.
+        © {new Date().getFullYear()} NowAnime Inc. All rights reserved. Stream. Discover. Bloom.
       </p>
     </div>
   </footer>

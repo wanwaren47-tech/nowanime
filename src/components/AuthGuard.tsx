@@ -14,7 +14,7 @@ const PUBLIC_PREFIXES = [
   "/jobs",
   "/terms",
   "/contact",
-  "/only-on-bingbloom",
+  "/only-on-nowanime",
   "/redeem",
   "/privacy",
   "/speed-test",
