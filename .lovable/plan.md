@@ -1,58 +1,66 @@
-# BingBloom — Downloads, MovieBox, Offline & UI Overhaul
+# BingBloom → NowAnime: Full Rebrand & Anime Refocus
 
-## Key technical note (important)
-The `moviebox-api` you uploaded is a **Python** library. Lovable apps are client-side React + Vite and **cannot host a persistent Python/FastAPI server**, so the README's FastAPI approach won't run here. The good news: I reverse-engineered the library and confirmed it just calls MovieBox's REST API. I tested the full flow live and it works:
+Turning the current multi-content app (movies, TV, live TV, anime, music, novels) into an **anime-only** experience called **NowAnime**, using the uploaded repo as the visual reference (logo, color scheme, layout patterns) while keeping all the functionality we've already built (downloads flow, offline, ads, edge functions).
 
-```text
-1. POST  /wefeed-h5api-bff/subject/search-suggest   (referer moviebox.ph)   -> Bearer token + cookies
-2. POST  /wefeed-h5api-bff/subject/search           (bearer)                -> subjectId + detailPath
-3. GET   /wefeed-h5api-bff/subject/download         (referer videodownloader.site) -> real MP4 URLs (360/480/720/1080) + subtitles
-```
+## Scope confirmation
+- Rebrand only — same routes, same backend, same download/offline system.
+- Content narrows to anime + anime movies (still powered by TMDB) plus new metadata sources (Jikan, AniList, Kitsu, ANN).
+- New streaming servers replace vidsrc default.
+- Player redesigned YouTube-style (video left, suggestions right on desktop; stacked on mobile).
 
-I'll reimplement this in a **Supabase Edge Function** (Deno/TypeScript) so "Fast Downloads" works fully inside the app — no external server for you to run.
+## Task plan (10 tasks)
 
-## Task list
+**1. Extract reference repo + brand assets**
+Unzip `nowanime-a04861e4-main.zip` to `/tmp/nowanime-ref/`, upload `nowanime-logo.png` via `lovable-assets`, and read `index.css`, `tailwind.config.ts`, `Navbar.tsx`, `Spotlight.tsx`, `Section.tsx`, `Player.tsx` to lift the exact color tokens, gradients, and layout structure.
 
-**1. MovieBox edge function (`moviebox-resolve`)**
-Reimplement the 3-step flow above in Deno. Input: `{ title, year?, mediaType, season?, episode? }`. Output: ranked resolutions with direct MP4 URLs + subtitle tracks. Add input validation, the SSRF-safe fetch pattern already used in the repo, and CORS.
+**2. New design system (NowAnime tokens)**
+Rewrite `src/index.css` + `tailwind.config.ts` with the reference palette (anime-style: deep purple/magenta/cyan gradients on near-black, per reference). All existing semantic tokens (`--primary`, `--background`, `--accent`, gradients, shadows) get new HSL values. No component change needed — tokens do the work.
 
-**2. Download-source selection step**
-New `DownloadSourceSheet` shown when the Download button is tapped. Two cards:
-- **BingBloom** — "current/fast", keeps existing `videodownloader.site` in-app flow.
-- **Fast Downloads** — powered by MovieBox edge function.
-Flow: choose source → **Next** → source-specific options (resolution for MovieBox) → **Continue**. Wire into `DownloadButton`, the movie/TV/anime detail pages, and the explore (search) results.
+**3. Rebrand strings, logo, meta, PWA**
+- Replace every "BingBloom" / "bingbloom" occurrence with "NowAnime" / "nowanime" across `src/`, `public/manifest.json`, `index.html`, `README.md`, `public/sw.js`, `public/llms.txt`, `public/sitemap.xml`, `SEO.tsx`, `Footer.tsx`, `TopBar.tsx`.
+- Replace `BrandLogo` image with new `nowanime-logo.png` asset. Update favicon (`public/favicon.ico` → new PNG, update `index.html <link rel="icon">`, delete old ico per rules).
+- Update `<title>` / meta description to anime-focused copy.
+- Email `hello.bingbloom@gmail.com` → `hello.nowanime@gmail.com`.
 
-**3. In-app downloads + offline playback**
-For "Fast Downloads": fetch the chosen MP4 (streamed through the existing `proxy` edge function for CORS), store the blob in IndexedDB via the existing `offlineDownloads.ts`, save metadata via `savedDownloads.ts`. Rebuild `MyDownloadsPage` to list items with progress, play stored blobs inline (`URL.createObjectURL`), and delete. Keep the BingBloom external path as-is.
+**4. Anime-first navigation & pages**
+- `BottomNav`: Home, Browse (anime catalog), Search, Downloads, Profile — remove Movies/TV/LiveTV entries.
+- `App.tsx`: redirect `/movies`, `/tv`, `/live-tv`, `/podcasts`, `/shorts` to `/home` (keep routes to avoid 404s; render anime browse).
+- `HomePage`: replace mixed rails with anime-only rails (Trending, Top Airing, Seasonal, Movies, By Genre) sourced from Jikan + TMDB anime.
+- Keep `MovieDetailPage` / `TVDetailPage` — they already work for anime titles; just repoint entry points.
 
-**4. Explore page download entry**
-On `/search` results, add a Download action that opens the same source-selection flow and (for MovieBox) shows the external/source check so users can verify availability before downloading.
+**5. Metadata layer (Jikan + AniList + Kitsu)**
+Extend existing `src/lib/jikan.ts`, `src/lib/anilist.ts`, `src/lib/kitsu.ts` with a unified `getAnimeFull(idOrSlug)` that merges: TMDB (for streaming ids), Jikan (characters + VAs + episodes), AniList (relations + recommendations), Kitsu (trending fallback). New hook `useAnimeMeta(tmdbId, title)` used by detail + player pages. Cast section renders character + Japanese/English VA.
 
-**5. New Profile page**
-Rebuild `ProfilePage` from scratch with a clean layout (avatar/name, quick links to Downloads, My List, Liked, Settings, Contact). Remove the old/stale routes and links that no longer exist. Only the profile page changes.
+**6. New streaming servers in player**
+Replace/extend `MoviePlayer.tsx` server list with 4 servers:
+1. **111Movies** (new HD default) — `https://111movies.com/movie/{tmdbId}` and `/tv/{tmdbId}/{s}/{e}`.
+2. **BingBloom** (rename to **NowAnime Server**) — existing vidsrc-stream edge function using new domains list (`vidsrcme.ru`, `vidsrcme.su`, `vsrc.su`, etc. with fallback rotation).
+3. **VidSrc** — direct embed `https://vidsrc.su/embed/movie/{tmdbId}` (updated domain).
+4. **Nontongo** — `https://www.nontongo.win/embed/movie/{tmdbId}`.
+Each iframe uses `sandbox="allow-same-origin allow-scripts allow-forms allow-presentation"` (no `allow-popups`, `allow-top-navigation`) to block redirects. Update `vidsrc-stream` edge function to rotate through the new domain list.
 
-**6. Ads in Movies & Anime pages**
-Insert 3 ad placements between content rows on `MoviesPage` and `AnimePage` using the existing `AdSlot`/`InlineAdRow`/`NativeAd` components, spaced naturally so they don't disrupt browsing.
+**7. YouTube-style player layout**
+New `WatchPage` layout: on `md+`, CSS grid `grid-cols-[minmax(0,1fr)_360px]`. Left column: player + title + description + cast + episodes (for series) + ads. Right column (sticky): "Up Next" suggestions rail (vertical list of `TmdbCard` in horizontal thumb+title format), driven by `useMovieSimilar` / anime recommendations. Mobile stays stacked. Update `MovieWatchPage.tsx` + `TvWatchPage.tsx`.
 
-**7. Offline app support**
-Cache TMDB metadata/listings (React Query persist + IndexedDB) so the app shell and browsing work offline. When a user taps play while offline on a title that isn't downloaded, show a smooth soft popup: "You're offline — connect to the internet to stream this." Downloaded titles still play offline. Verify the existing PWA service worker follows Lovable preview-safety rules.
+**8. Ad slot preservation**
+Audit every page for existing `<AdSlot>`, `<InlineAdRow>`, `<NativeAd>` — keep placements exactly. Confirm ad slots on: Home (3), Browse (3), Anime detail, Watch (left column, between synopsis/cast and suggestions), Downloads, Search. No new ads, no removed ads.
 
-**8. Desktop onboarding layout**
-Give Welcome + onboarding (genres/titles/done) a polished desktop layout (centered split/二-column, larger artwork) while keeping the exact same content and step flow. Mobile layout stays untouched via responsive classes.
+**9. Download flow — keep as-is**
+Verify `DownloadSourceSheet`, `DownloadButton`, `MyDownloadsPage`, `moviebox-resolve`, offline IndexedDB all still work after rebrand. Only string change is "BingBloom" label → "NowAnime Fast" in `DownloadSourceSheet`. External flow (`videodownloader.site`) untouched.
 
-**9. Email + contact**
-Replace contact email everywhere (Contact page, Footer, Profile) with `hello.bingbloom@gmail.com` as a `mailto:` link that opens the user's email app.
+**10. Live TV → Anime TV + final QA**
+Repurpose `LiveTVPage` as "Anime TV" (curated list of free anime streams from `iptv-org` filtered by category=anime + Japanese; keep list layout). Then full pass: typecheck, build, click through home → browse → detail → watch (test all 4 servers with sandbox iframe), downloads flow, offline popup, ads visible, no BingBloom strings remaining (`rg -i bingbloom src/ public/`). Fix any bugs.
 
-**10. Icons + final QA**
-Change the bottom-nav **Home** icon to a standard house icon and the **Movies** icon to a film/clapper icon (currently Home=Clapperboard, Movies=Tv — confusing). Then full pass: typecheck, build, click through download flow, profile, ads, offline popup, and onboarding on desktop + mobile; fix any bugs found.
+## Technical notes
+- No new secrets, no schema changes.
+- Iframe redirect blocking: strict `sandbox` attr on all embed servers; if a server needs `allow-popups` we drop it.
+- Player domain rotation: edge function tries domains in order, HEAD-checks, returns first live URL; cached 15 min.
+- Cast/VA data cached client-side via React Query (Jikan rate-limited to 60/min — respected via `staleTime: 30min`).
+- Reference repo is source-of-truth for **look**; our routing/pages/functionality remain.
 
-## Technical details
-- Edge function: `supabase/functions/moviebox-resolve/index.ts`, deployed automatically. Token is fetched per-request from the `x-user` header (no secret needed); referer differs per step (the critical detail that makes downloads return real URLs).
-- Large video blobs: IndexedDB only (never localStorage). Metadata stays in `savedDownloads.ts`.
-- CORS for MP4 fetch: route through existing `proxy` function; respect its existing SSRF blocklist by allowlisting the MovieBox CDN host.
-- No database schema changes required. No new secrets required.
-- All new colors/styles use existing semantic tokens; no hardcoded palette changes.
+## Out of scope
+- Rewriting existing detail pages structurally (only tokens + strings change).
+- Auth changes, database changes.
+- Removing the download-source sheet (kept — just relabeled).
 
-## Out of scope / honest limits
-- True native external-storage saving needs Capacitor (separate path); IndexedDB is used for PWA offline playback, as your notes suggested.
-- MovieBox availability depends on their CDN; some titles legitimately return no downloadable resource — the UI will show a clear "not available from this source, try BingBloom" message.
+Ready to execute all 10 tasks in one pass on approval.
