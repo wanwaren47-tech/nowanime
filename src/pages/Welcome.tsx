@@ -34,10 +34,10 @@ const Welcome = () => {
             <span className="text-white">STREAM.</span> <span className="text-white">DISCOVER.</span> <span style={{ color: "#ffbade" }}>BLOOM.</span>
           </p>
           <h2 className="mt-6 text-4xl font-bold leading-tight">
-            Thousands of movies, series, anime & live channels.
+            Thousands of anime series & movies.
           </h2>
           <p className="mt-3 text-sm text-white/60 leading-relaxed max-w-md">
-            Free, ad-supported, and available on every device. Pick up where you left off and discover something new every day.
+            Subbed & dubbed anime in HD, free and ad-supported. Pick up where you left off and discover something new every day.
           </p>
           <div className="mt-8 flex gap-8">
             {features.map((f, i) => (
@@ -59,7 +59,7 @@ const Welcome = () => {
               <span className="text-white">STREAM.</span> <span className="text-white">DISCOVER.</span> <span style={{ color: "#ffbade" }}>BLOOM.</span>
             </p>
             <p className="mt-2 text-[11px] text-white/65 leading-relaxed max-w-xs">
-              Thousands of movies, TV series, anime and live channels — free, on every device.
+              Thousands of anime series and movies — free, on every device.
             </p>
 
             <div className="mt-4 grid grid-cols-3 gap-2 w-full max-w-sm">
