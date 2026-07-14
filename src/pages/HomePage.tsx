@@ -91,10 +91,6 @@ const HomePage = () => {
       <TmdbRow title="Comedy" items={comedy.data} isLoading={comedy.isLoading} type="tv" />
       <TmdbRow title="Drama" items={drama.data} isLoading={drama.isLoading} type="tv" />
       <TmdbRow title="Mystery" items={mystery.data} isLoading={mystery.isLoading} type="tv" />
-
-      <LiveTvRow />
-
-      <TmdbRow title="Animated Movies" items={animationMovies.data} isLoading={animationMovies.isLoading} type="movie" viewAll="/animation" />
     </AppLayout>
   );
 };
