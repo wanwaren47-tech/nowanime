@@ -7,18 +7,21 @@ import SEO from "@/components/SEO";
 import { saveOnboardingStep } from "@/lib/onboarding";
 
 const GENRES = [
+  { label: "Shounen", emoji: "⚔️" },
+  { label: "Shoujo", emoji: "💖" },
+  { label: "Isekai", emoji: "🌌" },
+  { label: "Mecha", emoji: "🤖" },
+  { label: "Slice of Life", emoji: "🍵" },
+  { label: "Romance", emoji: "🌸" },
   { label: "Action", emoji: "💥" },
-  { label: "Romance", emoji: "😍" },
-  { label: "Comedy", emoji: "😂" },
-  { label: "Horror", emoji: "💀" },
-  { label: "Thriller", emoji: "😲" },
+  { label: "Fantasy", emoji: "🐉" },
   { label: "Sci-Fi", emoji: "🪐" },
-  { label: "Superhero", emoji: "🦸" },
-  { label: "Anime", emoji: "👧" },
-  { label: "Documentary", emoji: "🎥" },
+  { label: "Horror", emoji: "👻" },
+  { label: "Sports", emoji: "🏐" },
+  { label: "Comedy", emoji: "😂" },
   { label: "Drama", emoji: "😢" },
-  { label: "Family", emoji: "👨‍👩‍👧" },
-  { label: "Mystery", emoji: "🔍" },
+  { label: "Music", emoji: "🎵" },
+  { label: "Supernatural", emoji: "✨" },
 ];
 
 const OnboardingGenres = () => {
@@ -29,14 +32,14 @@ const OnboardingGenres = () => {
     setPicked((p) => (p.includes(g) ? p.filter((x) => x !== g) : [...p, g]));
 
   const submit = () => {
-    if (picked.length < 5) return;
+    if (picked.length < 3) return;
     saveOnboardingStep("genres", picked);
     navigate("/onboarding/titles");
   };
 
   return (
     <div className="min-h-screen bg-black text-white pb-10">
-      <SEO title="Choose Genres – NowAnime" />
+      <SEO title="Choose Anime Genres – NowAnime" />
       <StepProgress current={2} />
       <div className="flex flex-col items-center mt-2">
         <BrandLogo size={36} wordmarkSize="sm" />
@@ -44,9 +47,9 @@ const OnboardingGenres = () => {
 
       <div className="px-5 mt-3 md:mt-8">
         <h1 className="text-lg md:text-3xl font-bold text-center leading-tight">
-          What do you enjoy watching?
+          What anime do you enjoy?
         </h1>
-        <p className="text-center text-white/55 text-[11px] md:text-sm mt-1.5">Choose at least 5 genres</p>
+        <p className="text-center text-white/55 text-[11px] md:text-sm mt-1.5">Pick at least 3 genres</p>
 
         <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 md:gap-3 mt-4 md:mt-6 max-w-md md:max-w-4xl mx-auto">
           {GENRES.map((g) => {
@@ -74,17 +77,17 @@ const OnboardingGenres = () => {
 
         <button
           onClick={submit}
-          disabled={picked.length < 5}
+          disabled={picked.length < 3}
           className="w-full max-w-md md:max-w-sm mx-auto mt-5 md:mt-8 h-10 md:h-12 rounded-lg text-white text-xs md:text-sm font-semibold flex items-center justify-center relative disabled:opacity-50"
           style={{
-            background: "linear-gradient(180deg,#FF1A26 0%,#ffbade 100%)",
+            background: "linear-gradient(180deg,#ffbade 0%,#c084fc 100%)",
             boxShadow: "0 4px 14px rgba(255,186,222,0.35)",
           }}
         >
           Continue
           <ChevronRight className="w-4 h-4 absolute right-4" />
         </button>
-        <p className="text-center text-[10px] text-white/55 mt-2">Selected {picked.length}/12</p>
+        <p className="text-center text-[10px] text-white/55 mt-2">Selected {picked.length}/{GENRES.length}</p>
       </div>
     </div>
   );

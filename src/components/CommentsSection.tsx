@@ -34,7 +34,7 @@ const CommentItem = ({ comment }: { comment: PipedComment }) => (
           {comment.likeCount > 0 ? comment.likeCount.toLocaleString() : ""}
         </span>
         {comment.hearted && (
-          <Heart className="w-3 h-3 text-red-500 fill-red-500" />
+          <Heart className="w-3 h-3 text-primary fill-primary" />
         )}
       </div>
     </div>

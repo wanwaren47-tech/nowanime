@@ -6,7 +6,7 @@ import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 import { isDownloaded } from "@/lib/offlineDownloads";
 import DownloadButton from "@/components/DownloadButton";
 
-export type ServerId = "hd" | "nowanime" | "vidsrc" | "nontongo";
+export type ServerId = "hd" | "smashy" | "vidsrc" | "nontongo";
 
 interface ServerDef {
   id: ServerId;
@@ -17,35 +17,35 @@ interface ServerDef {
 export const PLAYER_SERVERS: ServerDef[] = [
   {
     id: "hd",
-    label: "Server 1 · HD (111Movies)",
+    label: "111Movies · HD",
     build: (id, type, s, e) =>
       type === "tv"
         ? `https://111movies.com/tv/${id}/${s}/${e}`
         : `https://111movies.com/movie/${id}`,
   },
   {
-    id: "nowanime",
-    label: "Server 2 · NowAnime",
+    id: "smashy",
+    label: "SmashyStream",
+    build: (id, type, s, e) =>
+      type === "tv"
+        ? `https://embed.smashystream.com/playere.php?tmdb=${id}&season=${s}&episode=${e}`
+        : `https://embed.smashystream.com/playere.php?tmdb=${id}`,
+  },
+  {
+    id: "vidsrc",
+    label: "VidSrc",
     build: (id, type, s, e) =>
       type === "tv"
         ? `https://vidsrc.su/embed/tv/${id}/${s}/${e}`
         : `https://vidsrc.su/embed/movie/${id}`,
   },
   {
-    id: "vidsrc",
-    label: "Server 3 · VidSrc",
-    build: (id, type, s, e) =>
-      type === "tv"
-        ? `https://vsrc.su/embed/tv/${id}/${s}/${e}`
-        : `https://vsrc.su/embed/movie/${id}`,
-  },
-  {
     id: "nontongo",
-    label: "Server 4 · Nontongo",
+    label: "Nontongo",
     build: (id, type, s, e) =>
       type === "tv"
-        ? `https://www.nontongo.win/embed/tv?tmdb=${id}&season=${s}&episode=${e}`
-        : `https://www.nontongo.win/embed/movie?tmdb=${id}`,
+        ? `https://www.nontongo.win/embed/tv/${id}/${s}/${e}`
+        : `https://www.nontongo.win/embed/movie/${id}`,
   },
 ];
 

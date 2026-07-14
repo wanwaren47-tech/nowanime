@@ -1,13 +1,12 @@
-import { Home, Compass, Sparkles, Tv, CloudDownload, User } from "lucide-react";
+import { Home, Compass, CloudDownload, User, Settings } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 const tabs = [
-  { to: "/home", icon: Home, label: "Home", match: (p: string) => p === "/" || p === "/home" },
-  { to: "/anime", icon: Sparkles, label: "Anime", match: (p: string) => p.startsWith("/anime") || p.startsWith("/movies") || p.startsWith("/tv") },
+  { to: "/home", icon: Home, label: "Home", match: (p: string) => p === "/" || p === "/home" || p.startsWith("/anime") },
   { to: "/search", icon: Compass, label: "Explore", match: (p: string) => p.startsWith("/search") },
-  { to: "/live-tv", icon: Tv, label: "Anime TV", match: (p: string) => p.startsWith("/live-tv") },
   { to: "/my-downloads", icon: CloudDownload, label: "Downloads", match: (p: string) => p.startsWith("/my-downloads") || p.startsWith("/download") },
   { to: "/profile", icon: User, label: "Profile", match: (p: string) => p.startsWith("/profile") },
+  { to: "/settings", icon: Settings, label: "Settings", match: (p: string) => p.startsWith("/settings") },
 ];
 
 const BottomNav = () => {
@@ -25,14 +24,14 @@ const BottomNav = () => {
             <li key={t.to} className="flex-1 min-w-0">
               <Link
                 to={t.to}
-                className={`relative flex min-h-[44px] flex-col items-center justify-center gap-0.5 px-0.5 pt-1.5 pb-1 text-[9px] font-medium transition ${
+                className={`relative flex min-h-[56px] flex-col items-center justify-center gap-1 px-1 pt-2 pb-1.5 text-[11px] font-semibold transition ${
                   active ? "text-primary" : "text-muted-foreground"
                 }`}
               >
-                <Icon className="h-[18px] w-[18px]" strokeWidth={active ? 2.4 : 1.8} />
+                <Icon className="h-[22px] w-[22px]" strokeWidth={active ? 2.4 : 1.9} />
                 <span className="truncate max-w-full">{t.label}</span>
                 {active && (
-                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-5 rounded-full bg-primary" />
+                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[2.5px] w-7 rounded-full bg-primary" />
                 )}
               </Link>
             </li>

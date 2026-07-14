@@ -8,7 +8,7 @@
   "background_color": "#0e0b18",
   "description": "Stream and download subbed & dubbed anime in HD — free.",
   "icons": [
-    { "src": "/__l5e/assets-v1/7d35115b-2e70-4ed6-9182-9951fd24f8db/nowanime-logo.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "/__l5e/assets-v1/7d35115b-2e70-4ed6-9182-9951fd24f8db/nowanime-logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    { "src": "/__l5e/assets-v1/398f3a67-0c02-4dfa-966b-cbaf96c5f13a/nowanime-logo.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/__l5e/assets-v1/398f3a67-0c02-4dfa-966b-cbaf96c5f13a/nowanime-logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ]
 }
