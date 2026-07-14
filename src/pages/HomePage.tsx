@@ -54,7 +54,7 @@ const HomePage = () => {
   const comedy = useAnimeByGenre("Comedy");
   const drama = useAnimeByGenre("Drama");
   const mystery = useAnimeByGenre("Mystery");
-  const animationMovies = useAnimationMovies();
+  
 
   const heroItem = trending.data?.[0];
 
