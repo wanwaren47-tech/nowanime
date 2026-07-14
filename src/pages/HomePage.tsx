@@ -4,11 +4,9 @@ import SEO from "@/components/SEO";
 import TmdbHero from "@/components/TmdbHero";
 import TmdbRow from "@/components/TmdbRow";
 import TmdbContinueRow from "@/components/TmdbContinueRow";
-import LiveTvRow from "@/components/LiveTvRow";
 import InlineAdRow from "@/components/InlineAdRow";
 import { fetchList, type TmdbItem } from "@/lib/tmdb";
 import { useTrendingAnime, usePopularAnime, useTopRatedAnime, useAnimeByGenre } from "@/hooks/useAnimeContent";
-import { useAnimationMovies } from "@/hooks/useTmdb";
 
 // Discover anime with custom params (TMDB).
 const animeDiscover = (extra: Record<string, string> = {}) => {
