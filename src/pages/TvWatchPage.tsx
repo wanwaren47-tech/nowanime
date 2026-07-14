@@ -189,7 +189,7 @@ const TvWatchPage = () => {
           </aside>
         </div>
       </div>
-      <Footer />
+      <div className="hidden md:block"><Footer /></div>
     </div>
   );
 };
