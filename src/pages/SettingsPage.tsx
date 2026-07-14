@@ -1,4 +1,4 @@
-import { ArrowLeft, Bell, Moon, Globe, Shield, Wifi, Play, Eye, Clock, Volume2, Subtitles, Smartphone, Lock, Info, Trash2 } from "lucide-react";
+import { ArrowLeft, Bell, Moon, Globe, Shield, Wifi, Play, Eye, Clock, Volume2, Subtitles, Smartphone, Lock, Info, Trash2, HelpCircle, MessageCircle, FileText, BookOpen, Cookie, Download as DownloadIcon, Users, Gauge, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import AppLayout from "@/components/AppLayout";
@@ -114,11 +114,31 @@ const SettingsPage = () => {
             </div>
           </button>
 
+          <p className="text-[9px] font-semibold text-muted-foreground uppercase tracking-widest px-1 pt-6 mb-2">More</p>
+          {[
+            { icon: HelpCircle, label: "Help Center", to: "/help" },
+            { icon: MessageCircle, label: "FAQ", to: "/faq" },
+            { icon: Users, label: "Contact Us", to: "/contact" },
+            { icon: Users, label: "Follow Us", to: "/follow-us" },
+            { icon: DownloadIcon, label: "Install the App", to: "/install" },
+            { icon: Gauge, label: "Speed Test", to: "/speed-test" },
+            { icon: FileText, label: "Terms of Use", to: "/terms" },
+            { icon: BookOpen, label: "Privacy Policy", to: "/privacy" },
+            { icon: Cookie, label: "Cookie Preferences", to: "/cookie-preferences" },
+            { icon: FileText, label: "Legal Notices", to: "/legal-notices" },
+          ].map((row) => (
+            <Link key={row.to} to={row.to} className="flex items-center gap-3 p-3 rounded-xl bg-card hover:bg-white/[0.04] transition-colors border border-border/30">
+              <row.icon className="w-4 h-4 text-primary flex-shrink-0" />
+              <p className="text-xs font-medium text-foreground flex-1">{row.label}</p>
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
+            </Link>
+          ))}
+
           <div className="flex items-center gap-3 p-3 rounded-xl bg-card mt-4 border border-border/30">
             <Info className="w-4 h-4 text-muted-foreground" />
             <div>
               <p className="text-xs font-medium text-foreground">NowAnime v1.0</p>
-              <p className="text-[10px] text-muted-foreground">Stream. Discover. Bloom. 🌸</p>
+              <p className="text-[10px] text-muted-foreground">Stream anime free, anytime.</p>
             </div>
           </div>
         </div>
