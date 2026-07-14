@@ -43,7 +43,11 @@ const AppLayout = ({ children, hideNav, hideFooter }: AppLayoutProps) => {
           </section>
         )}
       </main>
-      {!hideFooter && <Footer />}
+      {!hideFooter && (
+        <div className="hidden md:block">
+          <Footer />
+        </div>
+      )}
       <BottomNav />
     </div>
   );

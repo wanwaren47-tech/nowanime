@@ -6,19 +6,20 @@ import BrandLogo from "@/components/BrandLogo";
 import SEO from "@/components/SEO";
 import { saveOnboardingStep } from "@/lib/onboarding";
 
+// Popular anime titles (TMDB posters)
 const TITLES = [
-  { t: "John Wick", img: "https://image.tmdb.org/t/p/w300/fZPSd91yGE9fCcCe6OoQr6E3Bev.jpg" },
-  { t: "Stranger Things", img: "https://image.tmdb.org/t/p/w300/49WJfeN0moxb9IPfGn8AIqMGskD.jpg" },
-  { t: "The Last of Us", img: "https://image.tmdb.org/t/p/w300/uKvVjHNqB5VmOrdxqAt2F7J78ED.jpg" },
-  { t: "Avatar", img: "https://image.tmdb.org/t/p/w300/kyeqWdyUXW608qlYkRqosgbbJyK.jpg" },
-  { t: "Breaking Bad", img: "https://image.tmdb.org/t/p/w300/ggFHVNu6YYI5L9pCfOacjizRGt.jpg" },
-  { t: "Fast & Furious", img: "https://image.tmdb.org/t/p/w300/lUZj2D5Y9pwmJ3MgEYJ7M7G7Itq.jpg" },
-  { t: "Money Heist", img: "https://image.tmdb.org/t/p/w300/reEMJA1uzscCbkpeRJeTT2bjqUp.jpg" },
-  { t: "Squid Game", img: "https://image.tmdb.org/t/p/w300/dDlEmu3EZ0Pgg93K2SVNLCjCSvE.jpg" },
   { t: "Naruto", img: "https://image.tmdb.org/t/p/w300/xppeysfvDKVx5MsTnJzCFhVAk1F.jpg" },
   { t: "One Piece", img: "https://image.tmdb.org/t/p/w300/cMD9Ygz11zjJzAovURpO75Qg7rT.jpg" },
-  { t: "The Boys", img: "https://image.tmdb.org/t/p/w300/stTEycfG9928HYGEISBFaG1ngjM.jpg" },
-  { t: "Avengers", img: "https://image.tmdb.org/t/p/w300/RYMX2wcKCBAr24UyPD7xwmjaTn.jpg" },
+  { t: "Attack on Titan", img: "https://image.tmdb.org/t/p/w300/hTP1DtLGFamjfu8WqjnuQdP1n4i.jpg" },
+  { t: "Demon Slayer", img: "https://image.tmdb.org/t/p/w300/xUfRZu2mi8jH6SzQEJGP6tjBuYj.jpg" },
+  { t: "Jujutsu Kaisen", img: "https://image.tmdb.org/t/p/w300/fHpKWq9ayzSk8nSwqRuaAUemRKh.jpg" },
+  { t: "My Hero Academia", img: "https://image.tmdb.org/t/p/w300/ivOLM47yJt90P19RH1NvJrAJz9F.jpg" },
+  { t: "Bleach", img: "https://image.tmdb.org/t/p/w300/2EewmxXe72ogD0EaWM8gqa0ccIw.jpg" },
+  { t: "Death Note", img: "https://image.tmdb.org/t/p/w300/tCZFfYTIwrR7n94J6G14Y4hAFU6.jpg" },
+  { t: "Chainsaw Man", img: "https://image.tmdb.org/t/p/w300/npdB6eFzizki0WaZ1OvKcJrWe97.jpg" },
+  { t: "Spy x Family", img: "https://image.tmdb.org/t/p/w300/l4NBB2j5NBb5aoR9ZOhKbXOgQhs.jpg" },
+  { t: "Fullmetal Alchemist", img: "https://image.tmdb.org/t/p/w300/5ZFUEOULaVml7pQuXxhpR2SmVUw.jpg" },
+  { t: "Tokyo Ghoul", img: "https://image.tmdb.org/t/p/w300/wl4y7CcpApZBteVpuMYcYSHRUFn.jpg" },
 ];
 
 const OnboardingTitles = () => {
@@ -46,9 +47,9 @@ const OnboardingTitles = () => {
 
       <div className="px-5 mt-3 md:mt-8">
         <h1 className="text-base md:text-3xl font-bold text-center leading-tight">
-          Help us personalize your experience
+          Pick anime you love
         </h1>
-        <p className="text-center text-white/55 text-[11px] md:text-sm mt-1">Choose 3–10 titles you love.</p>
+        <p className="text-center text-white/55 text-[11px] md:text-sm mt-1">Choose 3–10 titles.</p>
 
         <div className="grid grid-cols-4 md:grid-cols-6 gap-2 md:gap-3 mt-4 md:mt-6 max-w-md md:max-w-4xl mx-auto">
           {TITLES.map((m) => {
@@ -72,7 +73,7 @@ const OnboardingTitles = () => {
           onClick={submit}
           disabled={picked.length < 3}
           className="w-full max-w-md md:max-w-sm mx-auto h-10 md:h-12 rounded-lg text-white text-xs md:text-sm font-semibold flex items-center justify-center relative disabled:opacity-50"
-          style={{ background: "linear-gradient(180deg,#FF1A26 0%,#ffbade 100%)", boxShadow: "0 4px 14px rgba(255,186,222,0.35)" }}
+          style={{ background: "linear-gradient(180deg,#ffbade 0%,#c084fc 100%)", boxShadow: "0 4px 14px rgba(255,186,222,0.35)" }}
         >
           Continue ({picked.length} selected)
           <ChevronRight className="w-4 h-4 absolute right-4" />

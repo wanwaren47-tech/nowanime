@@ -161,7 +161,7 @@ const DownloadPage = () => {
               rel="noopener noreferrer"
               className="w-full inline-flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl text-sm font-extrabold text-white transition-transform active:scale-[0.98]"
               style={{
-                background: "linear-gradient(180deg, #FF1A26 0%, #ffbade 100%)",
+                background: "linear-gradient(180deg,#ffbade 0%,#c084fc 100%)",
                 boxShadow: "0 0 28px rgba(255,186,222,0.55), inset 0 1px 0 rgba(255,255,255,0.2)",
               }}
             >

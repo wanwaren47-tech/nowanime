@@ -1,25 +1,22 @@
 import { Link } from "react-router-dom";
-import { Globe } from "lucide-react";
 
 const COLS = [
   {
-    title: "Company",
+    title: "Explore",
     links: [
-      { label: "About / Corporate", to: "/corporate" },
-      { label: "Investor Relations", to: "/investors" },
-      { label: "Jobs", to: "/jobs" },
-      { label: "Media Center", to: "/media" },
-      { label: "Only on NowAnime", to: "/only-on-nowanime" },
+      { label: "Home", to: "/home" },
+      { label: "Anime", to: "/anime" },
+      { label: "Explore", to: "/search" },
+      { label: "Downloads", to: "/my-downloads" },
     ],
   },
   {
-    title: "Watch",
+    title: "App",
     links: [
-      { label: "Ways to Watch", to: "/ways-to-watch" },
       { label: "Install the App", to: "/install" },
       { label: "Speed Test", to: "/speed-test" },
       { label: "Follow Us", to: "/follow-us" },
-      { label: "Account", to: "/profile" },
+      { label: "Settings", to: "/settings" },
     ],
   },
   {
@@ -28,8 +25,6 @@ const COLS = [
       { label: "Help Center", to: "/help" },
       { label: "FAQ", to: "/faq" },
       { label: "Contact Us", to: "/contact" },
-      { label: "Redeem Gift Cards", to: "/redeem" },
-      { label: "Buy Gift Cards", to: "/gift-cards" },
     ],
   },
   {
@@ -38,15 +33,13 @@ const COLS = [
       { label: "Terms of Use", to: "/terms" },
       { label: "Privacy Policy", to: "/privacy" },
       { label: "Cookie Preferences", to: "/cookie-preferences" },
-      { label: "Advert Choices", to: "/ad-choices" },
       { label: "Legal Notices", to: "/legal-notices" },
-      { label: "Legal Guarantee", to: "/legal-guarantee" },
     ],
   },
 ];
 
 const Footer = () => (
-  <footer className="border-t border-white/10 bg-black/95 text-white/55 pb-20 md:pb-6">
+  <footer className="border-t border-white/10 bg-black/95 text-white/55 pb-6">
     <div className="max-w-6xl mx-auto px-5 pt-4">
       <a href="mailto:hello.nowanime@gmail.com" className="text-[12px] underline hover:text-white">
         Questions? Email hello.nowanime@gmail.com
@@ -67,17 +60,9 @@ const Footer = () => (
         ))}
       </div>
 
-      <div className="mt-6 flex items-center gap-2">
-        <button className="inline-flex items-center gap-2 px-3 py-1.5 border border-white/20 rounded text-[11px] text-white">
-          <Globe className="w-3 h-3" /> English
-        </button>
-      </div>
-
-      <p className="mt-5 text-[10.5px] text-white/45">
-        NowAnime Inc. · 811 Grand St, Alameda, CA 94501, USA
-      </p>
+      <p className="mt-6 text-[10.5px] text-white/45">NowAnime · Stream anime free, anytime.</p>
       <p className="mt-1 text-[10.5px] text-white/40">
-        © {new Date().getFullYear()} NowAnime Inc. All rights reserved. Stream. Discover. Bloom.
+        © {new Date().getFullYear()} NowAnime. All rights reserved.
       </p>
     </div>
   </footer>

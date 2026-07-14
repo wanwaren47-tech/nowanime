@@ -8,11 +8,11 @@ import { setOnboarded } from "@/lib/onboarding";
 import { toast } from "sonner";
 
 const FEATURES = [
-  "Personalized Recommendations",
-  "Movies & TV Shows",
-  "Anime & Music",
-  "Live TV Access",
-  "Secure Account Protection",
+  "Personalized anime recommendations",
+  "Subbed & dubbed episodes",
+  "Anime movies & series",
+  "Download for offline viewing",
+  "Free, no account required",
 ];
 
 const OnboardingDone = () => {
@@ -93,7 +93,7 @@ const OnboardingDone = () => {
           disabled={!agreed}
           className="w-full max-w-md md:max-w-sm mx-auto mt-5 h-10 md:h-12 rounded-lg text-white text-xs md:text-sm font-semibold flex items-center justify-center relative disabled:opacity-50 disabled:cursor-not-allowed"
           style={{
-            background: "linear-gradient(180deg,#FF1A26 0%,#ffbade 100%)",
+            background: "linear-gradient(180deg,#ffbade 0%,#c084fc 100%)",
             boxShadow: "0 4px 14px rgba(255,186,222,0.45)",
           }}
         >

@@ -172,7 +172,7 @@ const MovieWatchPage = () => {
           </aside>
         </div>
       </div>
-      <Footer />
+      <div className="hidden md:block"><Footer /></div>
     </div>
   );
 };

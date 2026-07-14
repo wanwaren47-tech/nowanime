@@ -4,11 +4,9 @@ import SEO from "@/components/SEO";
 import TmdbHero from "@/components/TmdbHero";
 import TmdbRow from "@/components/TmdbRow";
 import TmdbContinueRow from "@/components/TmdbContinueRow";
-import LiveTvRow from "@/components/LiveTvRow";
 import InlineAdRow from "@/components/InlineAdRow";
 import { fetchList, type TmdbItem } from "@/lib/tmdb";
 import { useTrendingAnime, usePopularAnime, useTopRatedAnime, useAnimeByGenre } from "@/hooks/useAnimeContent";
-import { useAnimationMovies } from "@/hooks/useTmdb";
 
 // Discover anime with custom params (TMDB).
 const animeDiscover = (extra: Record<string, string> = {}) => {
@@ -56,7 +54,7 @@ const HomePage = () => {
   const comedy = useAnimeByGenre("Comedy");
   const drama = useAnimeByGenre("Drama");
   const mystery = useAnimeByGenre("Mystery");
-  const animationMovies = useAnimationMovies();
+  
 
   const heroItem = trending.data?.[0];
 
@@ -93,10 +91,6 @@ const HomePage = () => {
       <TmdbRow title="Comedy" items={comedy.data} isLoading={comedy.isLoading} type="tv" />
       <TmdbRow title="Drama" items={drama.data} isLoading={drama.isLoading} type="tv" />
       <TmdbRow title="Mystery" items={mystery.data} isLoading={mystery.isLoading} type="tv" />
-
-      <LiveTvRow />
-
-      <TmdbRow title="Animated Movies" items={animationMovies.data} isLoading={animationMovies.isLoading} type="movie" viewAll="/animation" />
     </AppLayout>
   );
 };
