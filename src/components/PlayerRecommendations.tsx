@@ -1,39 +1,22 @@
 import TmdbRow from "./TmdbRow";
-import {
-  useMovieRecommendations,
-  useMovieSimilar,
-  useTvRecommendations,
-  useTvSimilar,
-} from "@/hooks/useTmdb";
+import { useTrendingAnime, usePopularAnime, useTopRatedAnime } from "@/hooks/useAnimeContent";
 
 interface Props {
   tmdbId: string;
   type: "movie" | "tv";
 }
 
-const PlayerRecommendations = ({ tmdbId, type }: Props) => {
-  const recMovie = useMovieRecommendations(type === "movie" ? tmdbId : undefined);
-  const simMovie = useMovieSimilar(type === "movie" ? tmdbId : undefined);
-  const recTv = useTvRecommendations(type === "tv" ? tmdbId : undefined);
-  const simTv = useTvSimilar(type === "tv" ? tmdbId : undefined);
-
-  const forYou = type === "movie" ? simMovie : simTv;
-  const recommended = type === "movie" ? recMovie : recTv;
+// Suggestions are ALWAYS anime, regardless of the current title.
+const PlayerRecommendations = (_: Props) => {
+  const trending = useTrendingAnime();
+  const popular = usePopularAnime();
+  const topRated = useTopRatedAnime();
 
   return (
     <div className="mt-8">
-      <TmdbRow
-        title="For You"
-        items={forYou.data}
-        isLoading={forYou.isLoading}
-        type={type}
-      />
-      <TmdbRow
-        title="Recommended"
-        items={recommended.data}
-        isLoading={recommended.isLoading}
-        type={type}
-      />
+      <TmdbRow title="Trending Anime" items={trending.data} isLoading={trending.isLoading} type="tv" />
+      <TmdbRow title="Popular Anime" items={popular.data} isLoading={popular.isLoading} type="tv" />
+      <TmdbRow title="Top Rated Anime" items={topRated.data} isLoading={topRated.isLoading} type="tv" ranked />
     </div>
   );
 };

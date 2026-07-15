@@ -6,7 +6,8 @@ import SEO from "@/components/SEO";
 import InlineAdRow from "@/components/InlineAdRow";
 import TmdbRow from "@/components/TmdbRow";
 import Footer from "@/components/Footer";
-import { useTvDetail, useTvSeason, useTrendingTv, usePopularTv, useTopRatedTv } from "@/hooks/useTmdb";
+import { useTvDetail, useTvSeason, useTvExternalIds } from "@/hooks/useTmdb";
+import { useTrendingAnime, usePopularAnime, useTopRatedAnime } from "@/hooks/useAnimeContent";
 import { img } from "@/lib/tmdb";
 import { recordContinue } from "@/components/TmdbContinueRow";
 
@@ -21,9 +22,10 @@ const TvWatchPage = () => {
   const seasonQuery = useTvSeason(tmdbId, activeSeason);
   const seasons = (data?.seasons || []).filter((s: any) => s.season_number > 0);
   const cast = (data?.credits?.cast || []).slice(0, 15);
-  const trending = useTrendingTv();
-  const popular = usePopularTv();
-  const topRated = useTopRatedTv();
+  const trending = useTrendingAnime();
+  const popular = usePopularAnime();
+  const topRated = useTopRatedAnime();
+  const ext = useTvExternalIds(tmdbId);
 
   useLayoutEffect(() => { window.scrollTo(0, 0); }, []);
 
@@ -61,6 +63,7 @@ const TvWatchPage = () => {
             <div className="w-full lg:rounded-lg lg:overflow-hidden">
               <MoviePlayer
                 tmdbId={tmdbId || ""}
+                imdbId={ext.data?.imdb_id || null}
                 type="tv"
                 season={seasonNum}
                 episode={episodeNum}
@@ -155,9 +158,9 @@ const TvWatchPage = () => {
             </div>
 
             <div className="mt-2 -mx-4 space-y-0.5">
-              <TmdbRow title="Trending TV" items={trending.data} isLoading={trending.isLoading} type="tv" />
-              <TmdbRow title="Popular Shows" items={popular.data} isLoading={popular.isLoading} type="tv" />
-              <TmdbRow title="Top Rated" items={topRated.data} isLoading={topRated.isLoading} type="tv" ranked />
+              <TmdbRow title="Trending Anime" items={trending.data} isLoading={trending.isLoading} type="tv" />
+              <TmdbRow title="Popular Anime" items={popular.data} isLoading={popular.isLoading} type="tv" />
+              <TmdbRow title="Top Rated Anime" items={topRated.data} isLoading={topRated.isLoading} type="tv" ranked />
             </div>
 
             <div className="mt-2 -mx-4">
@@ -172,7 +175,7 @@ const TvWatchPage = () => {
               <h3 className="text-[12px] font-semibold text-foreground mb-2 px-1">Up Next</h3>
               <div className="flex flex-col gap-2">
                 {upNext.map((m: any) => (
-                  <Link key={m.id} to={`/tv/${m.id}`} className="flex gap-2 rounded-lg p-1.5 hover:bg-white/5 transition">
+                  <Link key={m.id} to={`/watch/tv/${m.id}/1/1`} className="flex gap-2 rounded-lg p-1.5 hover:bg-white/5 transition">
                     <div className="relative flex-shrink-0 w-[150px] aspect-video rounded-md overflow-hidden bg-surface-2">
                       {(m.backdrop_path || m.poster_path) && (
                         <img src={img(m.backdrop_path || m.poster_path, "w300")} alt={m.name || m.title} loading="lazy" className="w-full h-full object-cover" />

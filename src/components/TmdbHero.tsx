@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Play, Info, Star } from "lucide-react";
 import { TmdbItem, img } from "@/lib/tmdb";
-import { useTrendingMovies } from "@/hooks/useTmdb";
+import { useTrendingAnime } from "@/hooks/useAnimeContent";
 
 interface TmdbHeroProps {
   item?: TmdbItem;
@@ -10,12 +10,12 @@ interface TmdbHeroProps {
   isLoading?: boolean;
 }
 
-const SLIDE_DURATION = 12000; // ms each slide stays
-const BUTTON_DELAY = 1800; // ms wait before showing buttons
-const FADE_OUT = 1400; // ms fade out before next
+const SLIDE_DURATION = 12000;
+const BUTTON_DELAY = 1800;
+const FADE_OUT = 1400;
 
 const TmdbHero = ({ isLoading }: TmdbHeroProps) => {
-  const { data } = useTrendingMovies();
+  const { data } = useTrendingAnime();
   const slides = (data || []).slice(0, 5);
   const [index, setIndex] = useState(0);
   const [phase, setPhase] = useState<"in" | "buttons" | "out">("in");
@@ -33,9 +33,10 @@ const TmdbHero = ({ isLoading }: TmdbHeroProps) => {
     return <div className="relative w-full h-[42vh] sm:h-[55vh] md:h-[72vh] bg-gradient-to-br from-card to-background animate-pulse" />;
   }
 
-  const item = slides[index];
+  const item = slides[index] as any;
   const backdrop = img(item.backdrop_path, "original") || img(item.poster_path, "original");
-  const year = (item.release_date || item.first_air_date || "").slice(0, 4);
+  const title = item.name || item.title;
+  const year = (item.first_air_date || item.release_date || "").slice(0, 4);
   const fadeImg = phase === "out" ? "opacity-0" : "opacity-100";
   const showButtons = phase === "buttons";
 
@@ -44,7 +45,7 @@ const TmdbHero = ({ isLoading }: TmdbHeroProps) => {
       <img
         key={item.id}
         src={backdrop}
-        alt={item.title}
+        alt={title}
         width={1920}
         height={1080}
         fetchPriority="high"
@@ -56,11 +57,14 @@ const TmdbHero = ({ isLoading }: TmdbHeroProps) => {
       <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/40 to-transparent" />
 
       <div className={`absolute bottom-8 md:bottom-20 left-0 right-0 px-[5%] max-w-3xl transition-opacity duration-500 ${phase === "out" ? "opacity-0" : "opacity-100"}`}>
-        <span className="text-[10px] md:text-xs font-semibold uppercase tracking-widest text-primary">
-          #{index + 1} Spotlight
+        <span
+          className="text-[10px] md:text-xs font-extrabold uppercase tracking-widest"
+          style={{ background: "var(--gradient-primary)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
+        >
+          #{index + 1} Spotlight Anime
         </span>
         <h1 key={`t-${item.id}`} className="mt-1.5 text-2xl md:text-5xl font-extrabold text-foreground leading-tight drop-shadow-2xl animate-fade-in">
-          {item.title}
+          {title}
         </h1>
         <div className="mt-2 flex flex-wrap items-center gap-1.5 text-[10px] md:text-sm text-foreground/90">
           {item.vote_average > 0 && (
@@ -68,9 +72,9 @@ const TmdbHero = ({ isLoading }: TmdbHeroProps) => {
               <Star className="w-3 h-3 text-primary fill-primary" /> {item.vote_average.toFixed(1)}
             </span>
           )}
-          <span className="inline-flex items-center rounded-sm bg-surface-2 px-2 py-0.5">Movie</span>
+          <span className="inline-flex items-center rounded-sm bg-surface-2 px-2 py-0.5">Anime</span>
           {year && <span className="inline-flex items-center rounded-sm bg-surface-2 px-2 py-0.5">{year}</span>}
-          <span className="inline-flex items-center rounded-sm bg-surface-2 px-2 py-0.5">HD</span>
+          <span className="inline-flex items-center rounded-sm bg-surface-2 px-2 py-0.5">HD · SUB</span>
         </div>
         <p className="hidden md:block mt-3 text-sm md:text-base text-foreground/80 line-clamp-3 max-w-xl">{item.overview}</p>
 
@@ -80,13 +84,14 @@ const TmdbHero = ({ isLoading }: TmdbHeroProps) => {
           }`}
         >
           <Link
-            to={`/watch/movie/${item.id}`}
-            className="inline-flex items-center gap-2 rounded-full bg-primary px-4 md:px-6 py-2 md:py-2.5 text-xs md:text-sm font-semibold text-primary-foreground transition hover:brightness-110 active:scale-[0.98]"
+            to={`/watch/tv/${item.id}/1/1`}
+            className="inline-flex items-center gap-2 rounded-full px-4 md:px-6 py-2 md:py-2.5 text-xs md:text-sm font-semibold text-primary-foreground transition hover:brightness-110 active:scale-[0.98]"
+            style={{ background: "var(--gradient-primary)", boxShadow: "var(--shadow-primary)" }}
           >
             <Play className="w-3.5 h-3.5 fill-current" /> Watch
           </Link>
           <Link
-            to={`/movie/${item.id}`}
+            to={`/tv/${item.id}`}
             className="inline-flex items-center gap-2 rounded-full bg-surface-2 px-4 md:px-6 py-2 md:py-2.5 text-xs md:text-sm font-semibold text-foreground transition hover:bg-surface"
           >
             <Info className="w-3.5 h-3.5" /> Info
@@ -94,7 +99,6 @@ const TmdbHero = ({ isLoading }: TmdbHeroProps) => {
         </div>
       </div>
 
-      {/* Slide indicators */}
       <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
         {slides.map((_, i) => (
           <button

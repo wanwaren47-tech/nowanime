@@ -8,24 +8,20 @@ import TmdbRow from "@/components/TmdbRow";
 import Footer from "@/components/Footer";
 import {
   useMovieDetail,
-  useMovieSimilar,
-  useMovieRecommendations,
-  useTrendingMovies,
-  usePopularMovies,
-  useTopRatedMovies,
+  useMovieExternalIds,
 } from "@/hooks/useTmdb";
+import { useTrendingAnime, usePopularAnime, useTopRatedAnime } from "@/hooks/useAnimeContent";
 import { img } from "@/lib/tmdb";
 import { recordContinue } from "@/components/TmdbContinueRow";
 
 const MovieWatchPage = () => {
   const { tmdbId } = useParams<{ tmdbId: string }>();
   const { data } = useMovieDetail(tmdbId);
-  const similar = useMovieSimilar(tmdbId);
-  const recommended = useMovieRecommendations(tmdbId);
-  const trending = useTrendingMovies();
-  const popular = usePopularMovies();
-  const topRated = useTopRatedMovies();
-  const suggestions = (similar.data && similar.data.length > 0 ? similar.data : recommended.data) || [];
+  const ext = useMovieExternalIds(tmdbId);
+  const trending = useTrendingAnime();
+  const popular = usePopularAnime();
+  const topRated = useTopRatedAnime();
+  const suggestions = trending.data || [];
   const cast = (data?.credits?.cast || []).slice(0, 15);
   const [server, setServer] = useState<ServerId>("hd");
 
@@ -63,6 +59,7 @@ const MovieWatchPage = () => {
             <div className="w-full lg:rounded-lg lg:overflow-hidden">
               <MoviePlayer
                 tmdbId={tmdbId || ""}
+                imdbId={ext.data?.imdb_id || null}
                 type="movie"
                 serverId={server}
                 onServerChange={setServer}
@@ -84,16 +81,16 @@ const MovieWatchPage = () => {
 
             {/* Mobile-only horizontal suggestions (desktop uses sidebar) */}
             <section className="mt-4 lg:hidden">
-              <h3 className="text-[12px] font-semibold text-foreground mb-2">You May Also Like</h3>
+              <h3 className="text-[12px] font-semibold text-foreground mb-2">More Anime</h3>
               <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mx-4 px-4">
                 {suggestions.slice(0, 20).map((m: any) => (
                   <Link
                     key={m.id}
-                    to={`/watch/movie/${m.id}`}
+                    to={`/watch/tv/${m.id}/1/1`}
                     className="relative flex-shrink-0 w-[110px] aspect-video rounded-lg overflow-hidden bg-white/5 border border-white/10"
                   >
                     {(m.backdrop_path || m.poster_path) && (
-                      <img src={img(m.backdrop_path || m.poster_path, "w300")} alt={m.title} loading="lazy" className="w-full h-full object-cover" />
+                      <img src={img(m.backdrop_path || m.poster_path, "w300")} alt={m.name || m.title} loading="lazy" className="w-full h-full object-cover" />
                     )}
                     <span className="absolute bottom-1 right-1 grid place-items-center w-5 h-5 rounded-full bg-primary">
                       <Play className="w-2.5 h-2.5 text-primary-foreground fill-primary-foreground" />
@@ -130,9 +127,9 @@ const MovieWatchPage = () => {
             </div>
 
             <div className="mt-2 -mx-4 space-y-0.5">
-              <TmdbRow title="Trending Now" items={trending.data} isLoading={trending.isLoading} type="movie" />
-              <TmdbRow title="Popular Movies" items={popular.data} isLoading={popular.isLoading} type="movie" />
-              <TmdbRow title="Top Rated" items={topRated.data} isLoading={topRated.isLoading} type="movie" ranked />
+              <TmdbRow title="Trending Anime" items={trending.data} isLoading={trending.isLoading} type="tv" />
+              <TmdbRow title="Popular Anime" items={popular.data} isLoading={popular.isLoading} type="tv" />
+              <TmdbRow title="Top Rated Anime" items={topRated.data} isLoading={topRated.isLoading} type="tv" ranked />
             </div>
 
             <div className="mt-2 -mx-4">
@@ -150,20 +147,20 @@ const MovieWatchPage = () => {
                 {suggestions.slice(0, 15).map((m: any) => (
                   <Link
                     key={m.id}
-                    to={`/watch/movie/${m.id}`}
+                    to={`/watch/tv/${m.id}/1/1`}
                     className="flex gap-2 rounded-lg p-1.5 hover:bg-white/5 transition"
                   >
                     <div className="relative flex-shrink-0 w-[150px] aspect-video rounded-md overflow-hidden bg-surface-2">
                       {(m.backdrop_path || m.poster_path) && (
-                        <img src={img(m.backdrop_path || m.poster_path, "w300")} alt={m.title || m.name} loading="lazy" className="w-full h-full object-cover" />
+                        <img src={img(m.backdrop_path || m.poster_path, "w300")} alt={m.name || m.title} loading="lazy" className="w-full h-full object-cover" />
                       )}
                       <span className="absolute bottom-1 right-1 grid place-items-center w-5 h-5 rounded-full bg-primary">
                         <Play className="w-2.5 h-2.5 text-primary-foreground fill-primary-foreground" />
                       </span>
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-[11.5px] font-semibold text-foreground line-clamp-2 leading-snug">{m.title || m.name}</p>
-                      <p className="text-[10px] text-muted-foreground mt-1">{(m.release_date || m.first_air_date || "").slice(0, 4)}</p>
+                      <p className="text-[11.5px] font-semibold text-foreground line-clamp-2 leading-snug">{m.name || m.title}</p>
+                      <p className="text-[10px] text-muted-foreground mt-1">{(m.first_air_date || m.release_date || "").slice(0, 4)}</p>
                     </div>
                   </Link>
                 ))}
