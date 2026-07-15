@@ -1,50 +1,72 @@
-# Full Anime Cleanup & Polish — 10 Tasks
+## Goal
+Transform NowAnime end-to-end into a pure anime experience: new red/orange brand + logo, anime-only suggestions everywhere, spotlight fed from anime, working IMDb-based 111Movies + VidSrc + Nontongo, and persistent stream caching.
 
-Complete the NowAnime transformation: purge remaining movie/red references, wire all 4 servers reliably, new professional logo, tighter bottom nav, and settings-as-pages.
+## 10-Task Plan
 
-## Tasks
+### 1. New professional logo + favicon
+Generate a corporate-grade anime mark (stylized flame/torii silhouette in red→orange gradient, no letter "N", clean vector-look). Save as `src/assets/nowanime-logo.png`, upload via `lovable-assets`, then update:
+- `public/favicon.png`, `public/apple-touch-icon.png`, `public/icon-192.png`, `public/icon-512.png`
+- `public/manifest.json` name/theme_color
+- `src/components/BrandLogo.tsx` to consume the new asset
 
-**1. New professional NowAnime logo + favicon/splash**
-Generate a clean anime-style mark (stylized "N" with pink/purple gradient, subtle sparkle/star motif — professional not cartoony). Upload via `lovable-assets`. Replace: `public/favicon.png`, `public/manifest.json` icons, `apple-touch-icon`, all `BrandLogo` references, splash screen meta. Delete stale logo asset JSONs.
+### 2. Red + orange theme tokens
+Rewrite `src/index.css` primary tokens:
+- `--primary: 12 90% 55%` (vivid red-orange)
+- `--accent: 28 100% 58%` (orange)
+- `--gradient-primary: linear-gradient(135deg, hsl(12 90% 55%), hsl(28 100% 58%))`
+- Background stays dark (`240 12% 6%`)
+Sweep all `#ffbade`, `pink-*`, `purple-*` remnants → semantic tokens.
 
-**2. Purge red color remnants → pink brand token**
-`rg -i "red-|#ff0000|#dc2626|#ef4444|bg-red|text-red|border-red"` across `src/**` and replace with `primary`/`destructive` semantic tokens (destructive already themed pink). Sweep `index.css` for any leftover red HSL values.
+### 3. IMDb-based 111Movies server (fix embed)
+Update `src/components/MoviePlayer.tsx`:
+- Add `imdbId` prop threaded from watch pages
+- 111Movies URL: `https://111movies.com/movie/{imdbId}` / `/tv/{imdbId}/{s}/{e}`
+- Fetch IMDb ID via TMDB `/movie/{id}/external_ids` in `MovieWatchPage.tsx` + `TvWatchPage.tsx` (add `useMovieExternalIds` hook in `useTmdb.ts`)
+- Fallback to TMDB-based servers if IMDb missing
 
-**3. Delete irrelevant movie/TV pages**
-Remove: `MoviesPage.tsx`, `TVPage.tsx`, `PodcastsPage.tsx`, `ShortsPage.tsx`, `DocumentaryPage.tsx`, `AnimationPage.tsx` (redundant w/ Anime), `LiveTVPage.tsx`, `LikedVideosPage.tsx` (if unused), `OnlyOnNowAnime.tsx`, `GiftCards.tsx`, `Redeem.tsx`, `Investors.tsx`, `Jobs.tsx`, `Corporate.tsx`, `MediaCenter.tsx`, `WaysToWatch.tsx`, `AdChoices.tsx` unused corp pages. Update `App.tsx` routes → redirect to `/home`. Remove `Footer.tsx` usage on mobile.
+### 4. Verify VidSrc + Nontongo embeds
+- VidSrc: `https://vidsrc.su/embed/movie/{tmdbId}` and `/tv/{tmdbId}/{s}/{e}` (confirmed working format)
+- Nontongo: `https://www.nontongo.win/embed/movie/{tmdbId}` / `/tv/{tmdbId}/{s}/{e}`
+- Iframe sandbox: `allow-same-origin allow-scripts allow-forms allow-presentation allow-popups` + `referrerpolicy="no-referrer"`
+- Add onError → auto-cycle to next server
 
-**4. BottomNav: 5 tabs, larger buttons**
-Simplify to **Home / Explore / Downloads / Profile / Settings** (remove Anime TV, remove Anime tab — Anime is on Home). Increase icon size to 22px, label to 11px, min-height 52px, more padding. Remove Live TV entry.
+### 5. Server selector redesign (top-of-player row)
+Replace old bottom-source buttons with a clean chip row directly under the iframe:
+- 4 chips: **HD (111Movies)** · **VidSrc** · **Nontongo** · **Smashy**
+- Active chip uses gradient-primary; inactive muted
+- Remove any leftover "previous button" / legacy source pills
 
-**5. Remove mobile footer + settings-as-pages**
-`AppLayout.tsx`: hide `<Footer />` on mobile (`hidden md:block`). In `SettingsPage.tsx`, add sections for each footer link (Help, FAQ, Contact, Privacy, Terms, Legal, Follow Us, Install App, Speed Test) as tappable list rows navigating to their existing pages.
+### 6. Anime spotlight (hero)
+`src/components/TmdbHero.tsx` (or HomePage hero): replace TMDB trending-movie source with Jikan `getTopAnime()` from `src/lib/jikan.ts`. Card shows: rank #, anime title, score, "TV"/"Movie", year, "HD", synopsis, Watch button routing to `/anime/:mal_id`. Remove all references to "The Furious"/movie fallback data.
 
-**6. Onboarding → anime-first**
-`OnboardingGenres.tsx`: replace movie genres with anime genres (Shounen, Shoujo, Isekai, Mecha, Slice of Life, Romance, Action, Fantasy, Sci-Fi, Horror, Sports, Comedy, Drama, Music, Supernatural). `OnboardingTitles.tsx`: seed with popular anime titles from Jikan/TMDB anime discover. `Welcome.tsx` copy → anime-focused. `OnboardingDone.tsx` → "Start watching anime".
+### 7. Anime-only player suggestions
+`src/components/PlayerRecommendations.tsx`: switch data source from `useMovieSimilar` / `useTvSimilar` to Jikan `getAnimeRecommendations(malId)` with fallback to `getTopAnime()`. Remove non-anime cards entirely. Same treatment for the "Up Next" rail in `MovieWatchPage` / `TvWatchPage`.
 
-**7. 4 servers with working embeds + stream caching**
-`MoviePlayer.tsx` server list, in this order:
-1. **111Movies** (default) — `https://111movies.com/movie/{id}` / `/tv/{id}/{s}/{e}`
-2. **SmashyStream** — `https://embed.smashystream.com/playere.php?tmdb={id}` (movie) / `?tmdb={id}&season={s}&episode={e}` (tv)
-3. **VidSrc** — `https://vidsrc.su/embed/movie/{id}` / `/tv/{id}/{s}/{e}`
-4. **Nontongo** — `https://www.nontongo.win/embed/movie/{id}` / `/tv/{id}/{s}/{e}`
+### 8. Top nav = fully anime
+`src/components/TopBar.tsx` + `src/components/BottomNav.tsx`:
+- Remove "Movies" / "TV" entries
+- Tabs: Home · Anime · Explore (Flame icon `lucide-react`) · Downloads · Profile
+- Explore uses `Flame` icon in red-orange gradient
 
-Sandbox: `allow-same-origin allow-scripts allow-forms allow-presentation`, `referrerpolicy="no-referrer"`. Use existing `streamCache.ts` (`getCachedStream`/`recordStream`) — on iframe load success record working=true, on error try next server and cache result. 7-day cache already in place.
+### 9. Stream caching (persistent)
+`src/lib/streamCache.ts` already exists — wire it:
+- `MoviePlayer.tsx` calls `recordStream({ tmdbId, imdbId, server, url, mediaType, s, e })` on successful iframe load
+- On mount, `getCachedStream()` returns last-working server for that title → auto-select
+- 7-day TTL via `localStorage` key `nowanime:streamcache:v1`
+- Also record last IMDb ID lookup to skip re-fetch
 
-**8. Home page — anime-only sections polish**
-Remove `LiveTvRow` and `useAnimationMovies` row from `HomePage.tsx`. Keep: Trending, Seasonal, Popular, Top Rated, Movies, Genre rows (Action, Romance, Fantasy, Comedy, Drama, Mystery). Ensure `TmdbHero` uses anime. `PlayerRecommendations` / suggestions rail on watch pages: filter to `with_genres=16 & with_original_language=ja`.
+### 10. QA sweep + cleanup
+- `rg -i "the furious|pink-|purple-|ffbade|bingbloom"` across `src/` → 0 hits
+- Delete stale movie/TV suggestion imports
+- Typecheck passes
+- Playwright: load `/`, `/anime`, `/watch/movie/{id}`, `/watch/tv/{id}/1/1` → screenshot each server chip switch, confirm iframe URL matches expected pattern (IMDb for 111Movies, TMDB for others), confirm suggestion rail shows only anime titles.
 
-**9. Watch page suggestions = anime only**
-`MovieWatchPage.tsx` + `TvWatchPage.tsx`: replace `useMovieSimilar` "Up Next" with anime-filtered discover (recommendations intersected with genre 16 or fallback trending anime). Ensures no non-anime bleed into the right rail.
+## Technical Details
+- IMDb lookup endpoint: `GET https://api.themoviedb.org/3/{movie|tv}/{id}/external_ids` → `imdb_id` field
+- Jikan recommendations: `GET https://api.jikan.moe/v4/anime/{id}/recommendations`
+- Iframe redirect protection kept via strict sandbox flags (no `allow-top-navigation`)
+- Cache shape: `{ [tmdbId]: { server: ServerId, imdbId?: string, ts: number } }`
 
-**10. QA sweep**
-- `rg -i "bingbloom|movies page|live tv|podcast" src/ public/` → 0 hits
-- `rg -i "red-[0-9]|#ef4444|#dc2626" src/` → 0 hits
-- Typecheck + build
-- Playwright: load `/home`, `/anime`, `/search`, `/my-downloads`, click a title → watch page → cycle through all 4 servers, verify iframe loads (screenshot each), verify downloads sheet still works, verify onboarding flow, verify bottom nav 5 tabs, verify no footer on mobile, verify settings page shows all sub-page rows.
-
-## Technical notes
-- Logo: `imagegen` premium tier for legible mark, transparent PNG, then `lovable-assets create`.
-- Stream cache already exists (`src/lib/streamCache.ts` + `record-stream` edge fn) — just wire calls in `MoviePlayer.tsx` onLoad/onError.
-- Iframe redirect prevention already via strict `sandbox`.
-- No schema/secret changes.
+## Out of Scope
+- No changes to auth, downloads, onboarding, or SEO tags
+- No new pages; existing routes stay intact
