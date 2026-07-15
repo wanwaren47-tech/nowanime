@@ -6,51 +6,64 @@ import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 import { isDownloaded } from "@/lib/offlineDownloads";
 import DownloadButton from "@/components/DownloadButton";
 
-export type ServerId = "hd" | "smashy" | "vidsrc" | "nontongo";
+export type ServerId = "hd" | "vidsrc" | "nontongo" | "smashy";
+
+interface ServerCtx {
+  tmdbId: string;
+  imdbId?: string | null;
+  type: "movie" | "tv";
+  season?: number;
+  episode?: number;
+}
 
 interface ServerDef {
   id: ServerId;
   label: string;
-  build: (tmdbId: string, type: "movie" | "tv", season?: number, episode?: number) => string;
+  requiresImdb?: boolean;
+  build: (ctx: ServerCtx) => string;
 }
 
 export const PLAYER_SERVERS: ServerDef[] = [
   {
     id: "hd",
-    label: "111Movies · HD",
-    build: (id, type, s, e) =>
-      type === "tv"
-        ? `https://111movies.com/tv/${id}/${s}/${e}`
-        : `https://111movies.com/movie/${id}`,
-  },
-  {
-    id: "smashy",
-    label: "SmashyStream",
-    build: (id, type, s, e) =>
-      type === "tv"
-        ? `https://embed.smashystream.com/playere.php?tmdb=${id}&season=${s}&episode=${e}`
-        : `https://embed.smashystream.com/playere.php?tmdb=${id}`,
+    label: "HD · 111Movies",
+    requiresImdb: true,
+    build: ({ imdbId, tmdbId, type, season, episode }) => {
+      const id = imdbId || tmdbId;
+      return type === "tv"
+        ? `https://111movies.com/tv/${id}/${season}/${episode}`
+        : `https://111movies.com/movie/${id}`;
+    },
   },
   {
     id: "vidsrc",
     label: "VidSrc",
-    build: (id, type, s, e) =>
+    build: ({ tmdbId, type, season, episode }) =>
       type === "tv"
-        ? `https://vidsrc.su/embed/tv/${id}/${s}/${e}`
-        : `https://vidsrc.su/embed/movie/${id}`,
+        ? `https://vidsrc.su/embed/tv/${tmdbId}/${season}/${episode}`
+        : `https://vidsrc.su/embed/movie/${tmdbId}`,
   },
   {
     id: "nontongo",
     label: "Nontongo",
-    build: (id, type, s, e) =>
+    build: ({ tmdbId, type, season, episode }) =>
       type === "tv"
-        ? `https://www.nontongo.win/embed/tv/${id}/${s}/${e}`
-        : `https://www.nontongo.win/embed/movie/${id}`,
+        ? `https://www.nontongo.win/embed/tv/${tmdbId}/${season}/${episode}`
+        : `https://www.nontongo.win/embed/movie/${tmdbId}`,
+  },
+  {
+    id: "smashy",
+    label: "Smashy",
+    build: ({ tmdbId, type, season, episode }) =>
+      type === "tv"
+        ? `https://embed.smashystream.com/playere.php?tmdb=${tmdbId}&season=${season}&episode=${episode}`
+        : `https://embed.smashystream.com/playere.php?tmdb=${tmdbId}`,
   },
 ];
 
 interface Props {
   tmdbId: string;
+  imdbId?: string | null;
   type?: "movie" | "tv";
   season?: number;
   episode?: number;
@@ -62,12 +75,10 @@ interface Props {
   backdrop?: string | null;
 }
 
-// When ad-block is ON: omit allow-top-navigation & allow-popups → blocks redirects
-// and pop-unders but keeps play/pause/seek/fullscreen working inside the iframe.
 const SANDBOX_BLOCKED = "allow-same-origin allow-scripts allow-forms allow-presentation";
 const SANDBOX_FULL = "allow-same-origin allow-scripts allow-popups allow-forms allow-presentation allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation";
 
-const MoviePlayer = ({ tmdbId, type = "movie", season = 1, episode = 1, serverId, onServerChange, title, year, poster, backdrop }: Props) => {
+const MoviePlayer = ({ tmdbId, imdbId, type = "movie", season = 1, episode = 1, serverId, onServerChange, title, year, poster, backdrop }: Props) => {
   const initialIdx = Math.max(0, PLAYER_SERVERS.findIndex((s) => s.id === serverId));
   const [serverIdx, setServerIdx] = useState(initialIdx === -1 ? 0 : initialIdx);
   const [loading, setLoading] = useState(true);
@@ -95,7 +106,7 @@ const MoviePlayer = ({ tmdbId, type = "movie", season = 1, episode = 1, serverId
   }, [serverId]);
 
   const server = PLAYER_SERVERS[serverIdx];
-  const builtSrc = server.build(tmdbId, type, season, episode);
+  const builtSrc = server.build({ tmdbId, imdbId, type, season, episode });
 
   // Resolve from cache first, then fall back to template URL.
   useEffect(() => {
