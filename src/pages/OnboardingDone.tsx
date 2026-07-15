@@ -34,7 +34,7 @@ const OnboardingDone = () => {
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(ellipse at center, rgba(255,186,222,0.22) 0%, transparent 65%)",
+            "radial-gradient(ellipse at center, rgba(220,80,40,0.22) 0%, transparent 65%)",
         }}
       />
 
@@ -51,21 +51,21 @@ const OnboardingDone = () => {
           <div
             className="w-14 h-14 rounded-full grid place-items-center"
             style={{
-              border: "2px solid #ffbade",
-              boxShadow: "0 0 18px rgba(255,186,222,0.55), inset 0 0 8px rgba(255,186,222,0.35)",
+              border: "2px solid hsl(var(--primary))",
+              boxShadow: "0 0 18px rgba(220,80,40,0.55), inset 0 0 8px rgba(220,80,40,0.35)",
             }}
           >
-            <Check className="w-7 h-7 text-[#ffbade]" strokeWidth={2.5} />
+            <Check className="w-7 h-7 text-[hsl(var(--primary))]" strokeWidth={2.5} />
           </div>
         </div>
         <p className="text-[12px] font-semibold flex items-center gap-1.5 justify-center">
-          <Check className="w-3.5 h-3.5 text-[#ffbade]" /> Account Created Successfully
+          <Check className="w-3.5 h-3.5 text-[hsl(var(--primary))]" /> Account Created Successfully
         </p>
 
         <div className="mt-4 max-w-sm mx-auto text-left rounded-lg bg-white/[0.03] border border-white/10 p-3">
           {FEATURES.map((f) => (
             <div key={f} className="flex items-center gap-2 py-0.5 text-[11px] text-white/80">
-              <Check className="w-3 h-3 text-[#ffbade]" /> {f}
+              <Check className="w-3 h-3 text-[hsl(var(--primary))]" /> {f}
             </div>
           ))}
         </div>
@@ -76,15 +76,15 @@ const OnboardingDone = () => {
             type="button"
             onClick={() => setAgreed((v) => !v)}
             aria-pressed={agreed}
-            className={`mt-0.5 w-4 h-4 rounded grid place-items-center flex-shrink-0 transition-colors ${agreed ? "bg-[#ffbade] border-[#ffbade]" : "border border-white/30"}`}
+            className={`mt-0.5 w-4 h-4 rounded grid place-items-center flex-shrink-0 transition-colors ${agreed ? "bg-[hsl(var(--primary))] border-[hsl(var(--primary))]" : "border border-white/30"}`}
           >
             {agreed && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
           </button>
           <span className="text-[10.5px] leading-relaxed text-white/70" onClick={() => setAgreed((v) => !v)}>
             I agree to the{" "}
-            <Link to="/terms" onClick={(e) => e.stopPropagation()} className="text-[#ffbade] font-semibold hover:underline">Terms &amp; Conditions</Link>{" "}
+            <Link to="/terms" onClick={(e) => e.stopPropagation()} className="text-[hsl(var(--primary))] font-semibold hover:underline">Terms &amp; Conditions</Link>{" "}
             and{" "}
-            <Link to="/privacy" onClick={(e) => e.stopPropagation()} className="text-[#ffbade] font-semibold hover:underline">Privacy Policy</Link>.
+            <Link to="/privacy" onClick={(e) => e.stopPropagation()} className="text-[hsl(var(--primary))] font-semibold hover:underline">Privacy Policy</Link>.
           </span>
         </label>
 
@@ -93,8 +93,8 @@ const OnboardingDone = () => {
           disabled={!agreed}
           className="w-full max-w-md md:max-w-sm mx-auto mt-5 h-10 md:h-12 rounded-lg text-white text-xs md:text-sm font-semibold flex items-center justify-center relative disabled:opacity-50 disabled:cursor-not-allowed"
           style={{
-            background: "linear-gradient(180deg,#ffbade 0%,#c084fc 100%)",
-            boxShadow: "0 4px 14px rgba(255,186,222,0.45)",
+            background: "linear-gradient(180deg,hsl(var(--primary)) 0%,#c084fc 100%)",
+            boxShadow: "0 4px 14px rgba(220,80,40,0.45)",
           }}
         >
           Enter NowAnime

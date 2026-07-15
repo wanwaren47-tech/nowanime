@@ -126,7 +126,7 @@ const TVDetailPage = () => {
                 <Link
                   to={`/watch/tv/${data.id}/${activeSeason}/1`}
                   className="flex items-center gap-2 font-bold px-7 py-3 rounded-lg text-sm transition-transform hover:scale-105 shadow-xl"
-                  style={{ background: "#ffbade", color: "#fff" }}
+                  style={{ background: "hsl(var(--primary))", color: "#fff" }}
                 >
                   <Play className="w-4 h-4 fill-current" /> Play S{activeSeason} E1
                 </Link>
@@ -180,9 +180,9 @@ const TVDetailPage = () => {
                             {ep.still_path && (
                               <img src={img(ep.still_path, "w300")} alt={ep.name} className={`w-full h-full object-cover ${isPlaying ? "opacity-70" : ""}`} loading="lazy" />
                             )}
-                            <div className={`absolute inset-0 ${isPlaying ? "bg-gradient-to-b from-[#ffbade]/30 via-transparent to-[#ffbade]/40" : "bg-gradient-to-t from-black/70 to-transparent"}`} />
+                            <div className={`absolute inset-0 ${isPlaying ? "bg-gradient-to-b from-[hsl(var(--primary))]/30 via-transparent to-[hsl(var(--primary))]/40" : "bg-gradient-to-t from-black/70 to-transparent"}`} />
                             {isPlaying && (
-                              <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded bg-[#ffbade] text-[8px] font-bold uppercase tracking-wide text-white shadow-lg">
+                              <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded bg-[hsl(var(--primary))] text-[8px] font-bold uppercase tracking-wide text-white shadow-lg">
                                 Currently Playing
                               </span>
                             )}
@@ -204,14 +204,14 @@ const TVDetailPage = () => {
                             </span>
                           </Link>
                           <div className="mt-1.5 flex items-start gap-1.5">
-                            <span className={`mt-0.5 w-3.5 h-3.5 rounded-full grid place-items-center flex-shrink-0 ${isPlaying ? "bg-[#ffbade]" : "bg-white/15"}`}>
+                            <span className={`mt-0.5 w-3.5 h-3.5 rounded-full grid place-items-center flex-shrink-0 ${isPlaying ? "bg-[hsl(var(--primary))]" : "bg-white/15"}`}>
                               {isPlaying && <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />}
                             </span>
                             <div className="min-w-0">
-                              <p className={`text-[11px] font-bold leading-tight ${isPlaying ? "text-[#ffbade]" : "text-white"}`}>
+                              <p className={`text-[11px] font-bold leading-tight ${isPlaying ? "text-[hsl(var(--primary))]" : "text-white"}`}>
                                 S{activeSeason} E{ep.episode_number}
                               </p>
-                              <p className={`text-[10px] line-clamp-1 leading-tight ${isPlaying ? "text-[#ffbade]/80" : "text-white/50"}`}>
+                              <p className={`text-[10px] line-clamp-1 leading-tight ${isPlaying ? "text-[hsl(var(--primary))]/80" : "text-white/50"}`}>
                                 {ep.name}
                               </p>
                             </div>
