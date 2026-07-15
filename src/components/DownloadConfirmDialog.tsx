@@ -15,7 +15,7 @@ const DownloadConfirmDialog = ({ open, onOpenChange, title, url, onContinue }: P
       <DialogContent className="max-w-sm bg-[#0f0f10] border-white/10 text-white">
         <DialogHeader>
           <div className="flex items-center gap-2 mb-1">
-            <ShieldAlert className="w-4 h-4 text-[#ffbade]" />
+            <ShieldAlert className="w-4 h-4 text-[hsl(var(--primary))]" />
             <DialogTitle className="text-sm font-bold">You're leaving NowAnime</DialogTitle>
           </div>
           <DialogDescription className="text-[11px] text-white/65 leading-relaxed">
@@ -36,7 +36,7 @@ const DownloadConfirmDialog = ({ open, onOpenChange, title, url, onContinue }: P
           <button
             onClick={onContinue}
             className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-[11px] font-bold text-white hover:opacity-90"
-            style={{ background: "#ffbade" }}
+            style={{ background: "hsl(var(--primary))" }}
           >
             Continue <ExternalLink className="w-3 h-3" />
           </button>

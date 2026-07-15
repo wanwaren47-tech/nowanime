@@ -3,8 +3,14 @@ import {
   Trending, Movies, TV, Animation, Documentary,
   movieDetail, tvDetail, tvSeason,
   movieRecommendations, movieSimilar, tvRecommendations, tvSimilar,
+  movieExternalIds, tvExternalIds,
   TmdbItem,
 } from "@/lib/tmdb";
+
+export const useMovieExternalIds = (id?: string) =>
+  useQuery({ queryKey: ["tmdb", "movie", "ext", id], queryFn: () => movieExternalIds(id!), enabled: !!id, staleTime: 1000 * 60 * 60 * 24 });
+export const useTvExternalIds = (id?: string) =>
+  useQuery({ queryKey: ["tmdb", "tv", "ext", id], queryFn: () => tvExternalIds(id!), enabled: !!id, staleTime: 1000 * 60 * 60 * 24 });
 
 const opts = { staleTime: 1000 * 60 * 30, gcTime: 1000 * 60 * 60 * 6 };
 

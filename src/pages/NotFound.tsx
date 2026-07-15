@@ -22,7 +22,7 @@ const NotFound = () => {
         <img
           src={logoAsset.url}
           alt="NowAnime"
-          className="w-20 h-20 mx-auto mb-5 rounded-2xl shadow-[0_0_40px_rgba(255,186,222,0.35)]"
+          className="w-20 h-20 mx-auto mb-5 rounded-2xl shadow-[0_0_40px_rgba(220,80,40,0.35)]"
         />
         <h1 className="text-xl font-bold text-white mb-2">Sorry, content not found</h1>
         <p className="text-sm text-white/60 mb-6">
@@ -34,7 +34,7 @@ const NotFound = () => {
               key={s.to}
               onClick={() => navigate(s.to)}
               className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold text-white transition-transform hover:scale-[1.02]"
-              style={{ background: "#ffbade" }}
+              style={{ background: "hsl(var(--primary))" }}
             >
               <s.icon className="w-4 h-4" /> {s.label}
             </button>

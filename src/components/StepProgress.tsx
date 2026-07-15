@@ -35,14 +35,14 @@ const StepProgress = ({ current, total = 5, showBack = true, backTo }: Props) =>
               <div
                 className={`w-7 h-7 rounded-full grid place-items-center text-[11px] font-bold border ${
                   active
-                    ? "text-white border-[#ffbade] bg-[#ffbade]/15"
+                    ? "text-white border-[hsl(var(--primary))] bg-[hsl(var(--primary))]/15"
                     : done
-                    ? "text-white border-[#ffbade] bg-[#ffbade]"
+                    ? "text-white border-[hsl(var(--primary))] bg-[hsl(var(--primary))]"
                     : "text-white/40 border-white/20 bg-transparent"
                 }`}
                 style={
                   active
-                    ? { boxShadow: "0 0 12px rgba(255,186,222,0.7)" }
+                    ? { boxShadow: "0 0 12px rgba(220,80,40,0.7)" }
                     : undefined
                 }
               >
@@ -50,7 +50,7 @@ const StepProgress = ({ current, total = 5, showBack = true, backTo }: Props) =>
               </div>
               {n < total && (
                 <div
-                  className={`w-7 h-px ${n < current ? "bg-[#ffbade]" : "bg-white/15"}`}
+                  className={`w-7 h-px ${n < current ? "bg-[hsl(var(--primary))]" : "bg-white/15"}`}
                 />
               )}
             </div>

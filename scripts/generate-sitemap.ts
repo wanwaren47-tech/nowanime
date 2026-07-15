@@ -3,7 +3,7 @@
 import { writeFileSync } from "fs";
 import { resolve } from "path";
 
-const BASE_URL = "https://bingbloom.lovable.app";
+const BASE_URL = "https://nowanime.lovable.app";
 
 interface ImageRef { loc: string; caption?: string; }
 interface SitemapEntry {
@@ -13,105 +13,68 @@ interface SitemapEntry {
   images?: ImageRef[];
 }
 
-// 15+ image references — used both inline in sitemap entries and as evergreen
-// poster/backdrop links that crawlers can discover.
 const IMG = {
   hero: "https://image.tmdb.org/t/p/w1280/49WJfeN0moxb9IPfGn8AIqMGskD.jpg",
-  trending1: "https://image.tmdb.org/t/p/w780/oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg",
-  trending2: "https://image.tmdb.org/t/p/w780/uDO8zWDhfWwoFdKS4fzkUJt0Rf0.jpg",
-  trending3: "https://image.tmdb.org/t/p/w780/vUUqzWa2LnHIVqkaKVlVGkVcZIW.jpg",
-  movies1: "https://image.tmdb.org/t/p/w780/d5NXSklXo0qyIYkgV94XAgMIckC.jpg",
-  movies2: "https://image.tmdb.org/t/p/w780/8Vt6mWEReuy4Of61Lnj5Xj704m8.jpg",
-  tv1: "https://image.tmdb.org/t/p/w780/4EYPN5mVIhKLfxGruy7Dy41dTVn.jpg",
-  tv2: "https://image.tmdb.org/t/p/w780/9PFonBhy4cQy7Jz20NpMygczOkv.jpg",
   anime1: "https://image.tmdb.org/t/p/w780/u3bZgnGQ9T01sWNhyveQz0wH0Hl.jpg",
   anime2: "https://image.tmdb.org/t/p/w780/x4HHy6V7TbXmoEgKQTwwR7BdY9k.jpg",
-  animation1: "https://image.tmdb.org/t/p/w780/askg3SMvhqEl4OL52YuvdtY40Yb.jpg",
-  doc1: "https://image.tmdb.org/t/p/w780/xJHokMbljvjADYdit5fK5VQsXEG.jpg",
-  music1: "https://image.tmdb.org/t/p/w780/uOw5JD8IlD546feZ6oxbIjvN66P.jpg",
-  podcast1: "https://image.tmdb.org/t/p/w780/zfwEPjB1cASgGCw5ercAh50WiHl.jpg",
-  livetv1: "https://image.tmdb.org/t/p/w780/qhb1qOilapbapxWQn9jtRCMwXJF.jpg",
 } as const;
 
+// Popular anime TMDB IDs — one sample entry per dynamic route pattern so
+// crawlers see the full URL shape for detail, watch and download pages.
+const SAMPLE_TV_IDS = [1429, 30984, 37854, 46260, 65930, 85937];       // Attack on Titan, Naruto, One Piece, etc.
+const SAMPLE_MOVIE_IDS = [129, 372058, 568160, 508883];                // Spirited Away, Your Name, Belle, The Boy and the Heron
+const ANIME_MAL_IDS = [16498, 20, 21, 5114, 40748, 11061];             // Attack on Titan, Naruto, One Piece, FMA:B, JJK, HxH
+const GENRES = [28, 35, 18, 27, 878, 10749, 53, 16, 80, 14, 9648, 12];
+
 const entries: SitemapEntry[] = [
-  { path: "/",           changefreq: "daily",   priority: "1.0", images: [{ loc: IMG.hero, caption: "BingBloom — stream movies, TV, anime, live channels and music free" }] },
-  { path: "/home",       changefreq: "daily",   priority: "1.0", images: [{ loc: IMG.hero, caption: "BingBloom home — trending movies and shows" }] },
-  { path: "/movies",     changefreq: "daily",   priority: "0.9", images: [{ loc: IMG.movies1, caption: "Browse movies on BingBloom" }, { loc: IMG.movies2, caption: "Popular movies streaming free" }] },
-  { path: "/tv",         changefreq: "daily",   priority: "0.9", images: [{ loc: IMG.tv1, caption: "Browse TV series on BingBloom" }, { loc: IMG.tv2, caption: "Trending TV shows" }] },
-  { path: "/anime",      changefreq: "daily",   priority: "0.8", images: [{ loc: IMG.anime1, caption: "Stream anime free on BingBloom" }, { loc: IMG.anime2 }] },
-  { path: "/animation",  changefreq: "weekly",  priority: "0.7", images: [{ loc: IMG.animation1, caption: "Animated movies and series" }] },
-  { path: "/documentary",changefreq: "weekly",  priority: "0.7", images: [{ loc: IMG.doc1, caption: "Documentary films and series on BingBloom" }] },
-  { path: "/live-tv",    changefreq: "daily",   priority: "0.8", images: [{ loc: IMG.livetv1, caption: "80+ live TV channels worldwide" }] },
-  { path: "/novels",     changefreq: "weekly",  priority: "0.6" },
-  { path: "/podcasts",   changefreq: "weekly",  priority: "0.6", images: [{ loc: IMG.podcast1, caption: "Podcasts on BingBloom" }] },
-  { path: "/music",      changefreq: "weekly",  priority: "0.6", images: [{ loc: IMG.music1, caption: "Music streaming on BingBloom" }] },
-  { path: "/search",     changefreq: "weekly",  priority: "0.7" },
-  { path: "/watch",      changefreq: "daily",   priority: "0.7" },
-  { path: "/install",    changefreq: "monthly", priority: "0.8" },
-  { path: "/my-list",    changefreq: "monthly", priority: "0.4" },
-  { path: "/liked",      changefreq: "monthly", priority: "0.4" },
-  { path: "/library",    changefreq: "monthly", priority: "0.4" },
+  { path: "/", changefreq: "daily", priority: "1.0", images: [{ loc: IMG.hero, caption: "NowAnime — stream anime free in HD" }] },
+  { path: "/home", changefreq: "daily", priority: "1.0", images: [{ loc: IMG.hero, caption: "NowAnime home — trending anime" }] },
+  { path: "/anime", changefreq: "daily", priority: "0.9", images: [{ loc: IMG.anime1, caption: "Browse anime" }, { loc: IMG.anime2 }] },
+  { path: "/search", changefreq: "weekly", priority: "0.7" },
+  { path: "/welcome", changefreq: "monthly", priority: "0.5" },
+  { path: "/signin", changefreq: "monthly", priority: "0.5" },
+  { path: "/register", changefreq: "monthly", priority: "0.5" },
+  { path: "/onboarding/genres", changefreq: "monthly", priority: "0.3" },
+  { path: "/onboarding/titles", changefreq: "monthly", priority: "0.3" },
+  { path: "/onboarding/done", changefreq: "monthly", priority: "0.3" },
+  { path: "/profile", changefreq: "monthly", priority: "0.3" },
+  { path: "/settings", changefreq: "monthly", priority: "0.3" },
+  { path: "/my-list", changefreq: "monthly", priority: "0.4" },
+  { path: "/liked", changefreq: "monthly", priority: "0.4" },
+  { path: "/library", changefreq: "monthly", priority: "0.4" },
   { path: "/my-downloads", changefreq: "monthly", priority: "0.5" },
-  { path: "/contact",    changefreq: "yearly",  priority: "0.3" },
-  { path: "/support",    changefreq: "yearly",  priority: "0.3" },
-  { path: "/help",       changefreq: "yearly",  priority: "0.3" },
-  { path: "/privacy",    changefreq: "yearly",  priority: "0.3" },
-  { path: "/follow-us",  changefreq: "monthly", priority: "0.5" },
-  { path: "/welcome",    changefreq: "monthly", priority: "0.5" },
-  { path: "/profile",    changefreq: "monthly", priority: "0.3" },
-  { path: "/settings",   changefreq: "monthly", priority: "0.3" },
-  { path: "/signin",     changefreq: "monthly", priority: "0.5" },
-  { path: "/register",   changefreq: "monthly", priority: "0.5" },
-  { path: "/onboarding/phone",   changefreq: "monthly", priority: "0.3" },
-  { path: "/onboarding/genres",  changefreq: "monthly", priority: "0.3" },
-  { path: "/onboarding/titles",  changefreq: "monthly", priority: "0.3" },
-  { path: "/onboarding/social",  changefreq: "monthly", priority: "0.3" },
-  { path: "/onboarding/done",    changefreq: "monthly", priority: "0.3" },
-  // Genre landing pages
-  { path: "/genre/28",   changefreq: "weekly",  priority: "0.6" }, // Action
-  { path: "/genre/35",   changefreq: "weekly",  priority: "0.6" }, // Comedy
-  { path: "/genre/18",   changefreq: "weekly",  priority: "0.6" }, // Drama
-  { path: "/genre/27",   changefreq: "weekly",  priority: "0.6" }, // Horror
-  { path: "/genre/878",  changefreq: "weekly",  priority: "0.6" }, // Sci-Fi
-  { path: "/genre/10749",changefreq: "weekly",  priority: "0.6" }, // Romance
-  { path: "/genre/53",   changefreq: "weekly",  priority: "0.6" }, // Thriller
-  { path: "/genre/16",   changefreq: "weekly",  priority: "0.6" }, // Animation
-  { path: "/genre/80",   changefreq: "weekly",  priority: "0.6" }, // Crime
-  { path: "/genre/14",   changefreq: "weekly",  priority: "0.6" }, // Fantasy
-  { path: "/genre/9648", changefreq: "weekly",  priority: "0.6" }, // Mystery
-  { path: "/genre/12",   changefreq: "weekly",  priority: "0.6" }, // Adventure
-  // Sample evergreen detail pages (popular TMDB IDs)
-  { path: "/movie/872585",  changefreq: "weekly", priority: "0.7", images: [{ loc: IMG.trending1, caption: "Oppenheimer" }] },
-  { path: "/movie/693134",  changefreq: "weekly", priority: "0.7", images: [{ loc: IMG.trending2, caption: "Dune: Part Two" }] },
-  { path: "/movie/569094",  changefreq: "weekly", priority: "0.7", images: [{ loc: IMG.trending3, caption: "Spider-Man: Across the Spider-Verse" }] },
-  { path: "/tv/94605",      changefreq: "weekly", priority: "0.7", images: [{ loc: IMG.tv1, caption: "Arcane" }] },
-  { path: "/tv/1399",       changefreq: "weekly", priority: "0.7", images: [{ loc: IMG.tv2, caption: "Game of Thrones" }] },
-  { path: "/tv/66732",      changefreq: "weekly", priority: "0.7" }, // Stranger Things
-  { path: "/tv/60625",      changefreq: "weekly", priority: "0.7" }, // Rick and Morty
-  // Corporate / legal / info pages
-  { path: "/faq",                changefreq: "monthly", priority: "0.5" },
-  { path: "/investors",          changefreq: "monthly", priority: "0.5" },
-  { path: "/ways-to-watch",      changefreq: "monthly", priority: "0.6" },
-  { path: "/corporate",          changefreq: "yearly",  priority: "0.4" },
-  { path: "/legal-notices",      changefreq: "yearly",  priority: "0.3" },
-  { path: "/jobs",               changefreq: "monthly", priority: "0.5" },
-  { path: "/terms",              changefreq: "yearly",  priority: "0.4" },
-  { path: "/only-on-bingbloom",  changefreq: "monthly", priority: "0.6" },
-  { path: "/redeem",             changefreq: "monthly", priority: "0.4" },
-  { path: "/speed-test",         changefreq: "yearly",  priority: "0.3" },
-  { path: "/ad-choices",         changefreq: "yearly",  priority: "0.3" },
-  { path: "/media",              changefreq: "monthly", priority: "0.4" },
-  { path: "/gift-cards",         changefreq: "monthly", priority: "0.4" },
-  { path: "/cookie-preferences", changefreq: "yearly",  priority: "0.3" },
-  { path: "/legal-guarantee",    changefreq: "yearly",  priority: "0.3" },
+  { path: "/install", changefreq: "monthly", priority: "0.8" },
+  { path: "/follow-us", changefreq: "monthly", priority: "0.5" },
+  { path: "/contact", changefreq: "yearly", priority: "0.3" },
+  { path: "/help", changefreq: "yearly", priority: "0.3" },
+  { path: "/faq", changefreq: "monthly", priority: "0.5" },
+  { path: "/privacy", changefreq: "yearly", priority: "0.3" },
+  { path: "/terms", changefreq: "yearly", priority: "0.4" },
+  { path: "/legal-notices", changefreq: "yearly", priority: "0.3" },
+  { path: "/cookie-preferences", changefreq: "yearly", priority: "0.3" },
+  { path: "/speed-test", changefreq: "yearly", priority: "0.3" },
+  ...GENRES.map((g) => ({ path: `/genre/${g}`, changefreq: "weekly" as const, priority: "0.6" })),
+  // Dynamic route samples — /movie/:id, /tv/:id, /watch/movie/:tmdbId,
+  // /watch/tv/:tmdbId/:season/:episode, /movie/:tmdbId/watch, /anime/:id, /watch/:videoId
+  ...SAMPLE_MOVIE_IDS.flatMap((id) => [
+    { path: `/movie/${id}`, changefreq: "weekly" as const, priority: "0.7" },
+    { path: `/watch/movie/${id}`, changefreq: "weekly" as const, priority: "0.7" },
+    { path: `/movie/${id}/watch`, changefreq: "weekly" as const, priority: "0.6" },
+  ]),
+  ...SAMPLE_TV_IDS.flatMap((id) => [
+    { path: `/tv/${id}`, changefreq: "weekly" as const, priority: "0.7" },
+    { path: `/watch/tv/${id}/1/1`, changefreq: "weekly" as const, priority: "0.7" },
+  ]),
+  ...ANIME_MAL_IDS.map((id) => ({ path: `/anime/${id}`, changefreq: "weekly" as const, priority: "0.7" })),
+  { path: "/watch/dQw4w9WgXcQ", changefreq: "weekly", priority: "0.5" },
 ];
 
 const SITEMAP_NS = `xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"`;
 
 function generateSitemap(entries: SitemapEntry[]) {
   const description =
-    "BingBloom — stream and download movies, TV shows, anime, live TV channels, podcasts and music. " +
-    "Visit https://bingbloom.lovable.app";
+    "NowAnime — stream and download subbed & dubbed anime in HD. " +
+    "Visit https://nowanime.lovable.app";
   const urls = entries.map((e) => {
     const imgBlocks = (e.images || []).map((i) => [
       `    <image:image>`,

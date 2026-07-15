@@ -1,56 +1,69 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Loader2, AlertCircle, RefreshCw, ChevronRight, Maximize2, Shield, WifiOff, CloudDownload } from "lucide-react";
+import { Loader2, AlertCircle, RefreshCw, Maximize2, Shield, WifiOff, CloudDownload } from "lucide-react";
 import { Link } from "react-router-dom";
 import { recordStream, getCachedStream } from "@/lib/streamCache";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 import { isDownloaded } from "@/lib/offlineDownloads";
 import DownloadButton from "@/components/DownloadButton";
 
-export type ServerId = "hd" | "smashy" | "vidsrc" | "nontongo";
+export type ServerId = "hd" | "vidsrc" | "nontongo" | "smashy";
+
+interface ServerCtx {
+  tmdbId: string;
+  imdbId?: string | null;
+  type: "movie" | "tv";
+  season?: number;
+  episode?: number;
+}
 
 interface ServerDef {
   id: ServerId;
   label: string;
-  build: (tmdbId: string, type: "movie" | "tv", season?: number, episode?: number) => string;
+  requiresImdb?: boolean;
+  build: (ctx: ServerCtx) => string;
 }
 
 export const PLAYER_SERVERS: ServerDef[] = [
   {
     id: "hd",
-    label: "111Movies · HD",
-    build: (id, type, s, e) =>
-      type === "tv"
-        ? `https://111movies.com/tv/${id}/${s}/${e}`
-        : `https://111movies.com/movie/${id}`,
-  },
-  {
-    id: "smashy",
-    label: "SmashyStream",
-    build: (id, type, s, e) =>
-      type === "tv"
-        ? `https://embed.smashystream.com/playere.php?tmdb=${id}&season=${s}&episode=${e}`
-        : `https://embed.smashystream.com/playere.php?tmdb=${id}`,
+    label: "HD · 111Movies",
+    requiresImdb: true,
+    build: ({ imdbId, tmdbId, type, season, episode }) => {
+      const id = imdbId || tmdbId;
+      return type === "tv"
+        ? `https://111movies.com/tv/${id}/${season}/${episode}`
+        : `https://111movies.com/movie/${id}`;
+    },
   },
   {
     id: "vidsrc",
     label: "VidSrc",
-    build: (id, type, s, e) =>
+    build: ({ tmdbId, type, season, episode }) =>
       type === "tv"
-        ? `https://vidsrc.su/embed/tv/${id}/${s}/${e}`
-        : `https://vidsrc.su/embed/movie/${id}`,
+        ? `https://vidsrc.su/embed/tv/${tmdbId}/${season}/${episode}`
+        : `https://vidsrc.su/embed/movie/${tmdbId}`,
   },
   {
     id: "nontongo",
     label: "Nontongo",
-    build: (id, type, s, e) =>
+    build: ({ tmdbId, type, season, episode }) =>
       type === "tv"
-        ? `https://www.nontongo.win/embed/tv/${id}/${s}/${e}`
-        : `https://www.nontongo.win/embed/movie/${id}`,
+        ? `https://www.nontongo.win/embed/tv/${tmdbId}/${season}/${episode}`
+        : `https://www.nontongo.win/embed/movie/${tmdbId}`,
+  },
+  {
+    id: "smashy",
+    label: "Smashy",
+    build: ({ tmdbId, type, season, episode }) =>
+      type === "tv"
+        ? `https://embed.smashystream.com/playere.php?tmdb=${tmdbId}&season=${season}&episode=${episode}`
+        : `https://embed.smashystream.com/playere.php?tmdb=${tmdbId}`,
   },
 ];
 
 interface Props {
   tmdbId: string;
+  imdbId?: string | null;
   type?: "movie" | "tv";
   season?: number;
   episode?: number;
@@ -62,12 +75,10 @@ interface Props {
   backdrop?: string | null;
 }
 
-// When ad-block is ON: omit allow-top-navigation & allow-popups → blocks redirects
-// and pop-unders but keeps play/pause/seek/fullscreen working inside the iframe.
 const SANDBOX_BLOCKED = "allow-same-origin allow-scripts allow-forms allow-presentation";
 const SANDBOX_FULL = "allow-same-origin allow-scripts allow-popups allow-forms allow-presentation allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation";
 
-const MoviePlayer = ({ tmdbId, type = "movie", season = 1, episode = 1, serverId, onServerChange, title, year, poster, backdrop }: Props) => {
+const MoviePlayer = ({ tmdbId, imdbId, type = "movie", season = 1, episode = 1, serverId, onServerChange, title, year, poster, backdrop }: Props) => {
   const initialIdx = Math.max(0, PLAYER_SERVERS.findIndex((s) => s.id === serverId));
   const [serverIdx, setServerIdx] = useState(initialIdx === -1 ? 0 : initialIdx);
   const [loading, setLoading] = useState(true);
@@ -95,7 +106,7 @@ const MoviePlayer = ({ tmdbId, type = "movie", season = 1, episode = 1, serverId
   }, [serverId]);
 
   const server = PLAYER_SERVERS[serverIdx];
-  const builtSrc = server.build(tmdbId, type, season, episode);
+  const builtSrc = server.build({ tmdbId, imdbId, type, season, episode });
 
   // Resolve from cache first, then fall back to template URL.
   useEffect(() => {
@@ -231,29 +242,27 @@ const MoviePlayer = ({ tmdbId, type = "movie", season = 1, episode = 1, serverId
         </div>
       </div>
 
-      <div className="flex items-center gap-1.5 px-3 py-2" style={{ background: "hsl(var(--background))" }}>
-        {PLAYER_SERVERS.map((s, i) => (
-          <button
-            key={s.id}
-            onClick={() => selectServer(i)}
-            className="px-2.5 py-1 rounded-md text-[10.5px] font-semibold transition-colors"
-            style={{
-              background: i === serverIdx ? "hsl(var(--primary))" : "rgba(255,255,255,0.06)",
-              color: i === serverIdx ? "#fff" : "rgba(255,255,255,0.7)",
-              border: "1px solid rgba(255,255,255,0.08)",
-            }}
-          >
-            {s.label}
-          </button>
-        ))}
-        <button
-          onClick={() => selectServer(serverIdx + 1)}
-          title="Next server"
-          className="ml-auto flex items-center gap-1 px-2.5 py-1 rounded-md text-[10.5px] font-semibold text-white"
-          style={{ background: "#1f1f1f", border: "1px solid rgba(255,186,222,0.4)" }}
-        >
-          Next <ChevronRight className="w-3 h-3" />
-        </button>
+      <div className="flex items-center gap-1.5 px-3 py-2 overflow-x-auto scrollbar-hide" style={{ background: "hsl(var(--background))" }}>
+        <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground pr-1">Server</span>
+        {PLAYER_SERVERS.map((s, i) => {
+          const active = i === serverIdx;
+          const disabled = s.requiresImdb && !imdbId;
+          return (
+            <button
+              key={s.id}
+              onClick={() => !disabled && selectServer(i)}
+              disabled={disabled}
+              className="px-2.5 py-1 rounded-md text-[10.5px] font-semibold whitespace-nowrap transition-colors disabled:opacity-40"
+              style={{
+                background: active ? "var(--gradient-primary)" : "rgba(255,255,255,0.06)",
+                color: active ? "#fff" : "rgba(255,255,255,0.75)",
+                border: active ? "1px solid transparent" : "1px solid rgba(255,255,255,0.08)",
+              }}
+            >
+              {s.label}
+            </button>
+          );
+        })}
       </div>
 
       {title && (

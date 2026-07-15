@@ -91,7 +91,7 @@ const DailyChallenge = () => {
     <section className="px-[4%] my-4">
       <div className="flex items-center justify-between mb-2">
         <h2 className="text-[15px] font-bold text-foreground flex items-center gap-2">
-          <span className="w-1.5 h-4 rounded-sm bg-[#ffbade]" />
+          <span className="w-1.5 h-4 rounded-sm bg-[hsl(var(--primary))]" />
           Daily Challenges
         </h2>
         <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
@@ -108,11 +108,11 @@ const DailyChallenge = () => {
               className="min-w-[200px] max-w-[200px] rounded-xl border border-white/10 p-3 flex flex-col gap-2"
               style={{
                 background:
-                  "linear-gradient(140deg, rgba(255,186,222,0.18), rgba(20,20,20,0.85) 60%)",
+                  "linear-gradient(140deg, rgba(220,80,40,0.18), rgba(20,20,20,0.85) 60%)",
               }}
             >
               <div className="flex items-center justify-between">
-                <span className="grid place-items-center w-7 h-7 rounded-lg bg-[#ffbade]/20 text-[#ffbade]">
+                <span className="grid place-items-center w-7 h-7 rounded-lg bg-[hsl(var(--primary))]/20 text-[hsl(var(--primary))]">
                   <Icon className="w-3.5 h-3.5" />
                 </span>
                 {isDone && (
@@ -131,14 +131,14 @@ const DailyChallenge = () => {
                 <Link
                   to={c.action.href}
                   onClick={() => complete(c.id)}
-                  className="mt-auto text-center text-[11px] font-semibold py-1.5 rounded-md bg-white/10 hover:bg-[#ffbade] hover:text-white transition"
+                  className="mt-auto text-center text-[11px] font-semibold py-1.5 rounded-md bg-white/10 hover:bg-[hsl(var(--primary))] hover:text-white transition"
                 >
                   {isDone ? "Claimed" : c.action.label}
                 </Link>
               ) : (
                 <button
                   onClick={c.action.onClick}
-                  className="mt-auto text-center text-[11px] font-semibold py-1.5 rounded-md bg-white/10 hover:bg-[#ffbade] hover:text-white transition"
+                  className="mt-auto text-center text-[11px] font-semibold py-1.5 rounded-md bg-white/10 hover:bg-[hsl(var(--primary))] hover:text-white transition"
                 >
                   {isDone ? "Claimed" : c.action.label}
                 </button>

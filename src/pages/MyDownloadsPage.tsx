@@ -125,7 +125,7 @@ const MyDownloadsPage = () => {
           {ready ? (
             <p className="text-[10px] text-emerald-400 mt-0.5">Available offline · {fmtMB(v.size)}</p>
           ) : v.status === "error" ? (
-            <p className="text-[10px] text-[#ffbade] mt-0.5">Download failed</p>
+            <p className="text-[10px] text-[hsl(var(--primary))] mt-0.5">Download failed</p>
           ) : v.status === "paused" ? (
             <p className="text-[10px] text-white/55 mt-0.5">Paused · {pct}%</p>
           ) : (
@@ -135,7 +135,7 @@ const MyDownloadsPage = () => {
           )}
           {!ready && v.status !== "error" && (
             <div className="mt-1.5 h-1 w-full rounded-full bg-white/10 overflow-hidden">
-              <div className="h-full rounded-full bg-[#ffbade] transition-all" style={{ width: `${pct}%` }} />
+              <div className="h-full rounded-full bg-[hsl(var(--primary))] transition-all" style={{ width: `${pct}%` }} />
             </div>
           )}
         </div>
@@ -144,7 +144,7 @@ const MyDownloadsPage = () => {
             <Pause className="w-4 h-4" />
           </button>
         )}
-        <button onClick={() => removeOne(v.id)} className="p-2 text-white/55 hover:text-[#ffbade]" aria-label="Delete">
+        <button onClick={() => removeOne(v.id)} className="p-2 text-white/55 hover:text-[hsl(var(--primary))]" aria-label="Delete">
           <Trash2 className="w-4 h-4" />
         </button>
       </li>
@@ -171,16 +171,16 @@ const MyDownloadsPage = () => {
             value={query.trim()}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search downloads…"
-            className="w-full mb-3 px-3 py-2 rounded-lg bg-[#141414] border border-white/10 text-xs text-white placeholder:text-white/40 focus:outline-none focus:border-[#ffbade]/60"
+            className="w-full mb-3 px-3 py-2 rounded-lg bg-[#141414] border border-white/10 text-xs text-white placeholder:text-white/40 focus:outline-none focus:border-[hsl(var(--primary))]/60"
           />
         )}
 
         {empty ? (
           <div className="text-center py-16 text-white/55">
-            <CloudDownload className="w-10 h-10 mx-auto mb-3 text-[#ffbade]" />
+            <CloudDownload className="w-10 h-10 mx-auto mb-3 text-[hsl(var(--primary))]" />
             <p className="text-sm font-semibold text-white">No downloads yet</p>
             <p className="text-[11px] mt-1">Tap the download button on any movie or episode and it will appear here.</p>
-            <Link to="/movies" className="inline-block mt-4 px-4 py-2 rounded-lg text-[12px] font-semibold text-white" style={{ background: "#ffbade" }}>
+            <Link to="/movies" className="inline-block mt-4 px-4 py-2 rounded-lg text-[12px] font-semibold text-white" style={{ background: "hsl(var(--primary))" }}>
               Browse movies
             </Link>
           </div>
@@ -218,7 +218,7 @@ const MyDownloadsPage = () => {
                               {f.episodes.length} episode{f.episodes.length !== 1 ? "s" : ""} · {readyCount} ready offline
                             </p>
                           </button>
-                          <button onClick={() => removeFolder(f)} className="p-2 text-white/55 hover:text-[#ffbade]" aria-label="Delete series">
+                          <button onClick={() => removeFolder(f)} className="p-2 text-white/55 hover:text-[hsl(var(--primary))]" aria-label="Delete series">
                             <Trash2 className="w-4 h-4" />
                           </button>
                           <ChevronDown className={`w-4 h-4 text-white/45 transition-transform ${isOpen ? "rotate-180" : ""}`} />

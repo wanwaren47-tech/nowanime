@@ -20,18 +20,18 @@ const Welcome = () => {
   return (
     <div className="min-h-screen bg-black text-white relative overflow-hidden flex flex-col md:flex-row md:items-stretch">
       <SEO title="Welcome to NowAnime" description="Stream movies, TV shows, anime and live channels — free, ad-supported." />
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at top, rgba(255,186,222,0.25) 0%, transparent 60%)" }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at top, rgba(220,80,40,0.25) 0%, transparent 60%)" }} />
 
       {/* Desktop-only cinematic brand panel (hidden on mobile) */}
       <div className="hidden md:flex md:w-1/2 lg:w-3/5 relative items-center justify-center p-12 overflow-hidden">
         <div
           className="absolute inset-0"
-          style={{ background: "radial-gradient(circle at 30% 30%, rgba(255,186,222,0.35) 0%, transparent 55%), linear-gradient(135deg,#1a0e2a 0%,#000 70%)" }}
+          style={{ background: "radial-gradient(circle at 30% 30%, rgba(220,80,40,0.35) 0%, transparent 55%), linear-gradient(135deg,#1a0e2a 0%,#000 70%)" }}
         />
         <div className="relative max-w-lg">
           <BrandLogo size={96} wordmarkSize="lg" />
           <p className="mt-4 text-xs tracking-[0.4em] font-semibold">
-            <span className="text-white">STREAM.</span> <span className="text-white">DISCOVER.</span> <span style={{ color: "#ffbade" }}>BLOOM.</span>
+            <span className="text-white">STREAM.</span> <span className="text-white">DISCOVER.</span> <span style={{ color: "hsl(var(--primary))" }}>BLOOM.</span>
           </p>
           <h2 className="mt-6 text-4xl font-bold leading-tight">
             Thousands of anime series & movies.
@@ -42,7 +42,7 @@ const Welcome = () => {
           <div className="mt-8 flex gap-8">
             {features.map((f, i) => (
               <div key={i} className="flex items-center gap-2">
-                <f.icon className="w-5 h-5 text-[#ffbade]" strokeWidth={1.7} />
+                <f.icon className="w-5 h-5 text-[hsl(var(--primary))]" strokeWidth={1.7} />
                 <p className="text-sm text-white/75">{f.label}</p>
               </div>
             ))}
@@ -56,7 +56,7 @@ const Welcome = () => {
           <div className="relative flex-1 flex flex-col items-center justify-center text-center md:hidden">
             <BrandLogo size={64} wordmarkSize="md" />
             <p className="mt-2 text-[9px] tracking-[0.32em] font-semibold">
-              <span className="text-white">STREAM.</span> <span className="text-white">DISCOVER.</span> <span style={{ color: "#ffbade" }}>BLOOM.</span>
+              <span className="text-white">STREAM.</span> <span className="text-white">DISCOVER.</span> <span style={{ color: "hsl(var(--primary))" }}>BLOOM.</span>
             </p>
             <p className="mt-2 text-[11px] text-white/65 leading-relaxed max-w-xs">
               Thousands of anime series and movies — free, on every device.
@@ -65,7 +65,7 @@ const Welcome = () => {
             <div className="mt-4 grid grid-cols-3 gap-2 w-full max-w-sm">
               {features.map((f, i) => (
                 <div key={i} className="flex flex-col items-center text-center">
-                  <f.icon className="w-4 h-4 text-[#ffbade]" strokeWidth={1.7} />
+                  <f.icon className="w-4 h-4 text-[hsl(var(--primary))]" strokeWidth={1.7} />
                   <p className="text-[9.5px] text-white/70 mt-1">{f.label}</p>
                 </div>
               ))}
@@ -81,7 +81,7 @@ const Welcome = () => {
             <button
               onClick={() => navigate("/onboarding/genres")}
               className="w-full h-10 md:h-12 rounded-lg text-white font-semibold text-xs md:text-sm flex items-center justify-center gap-2 relative"
-              style={{ background: "linear-gradient(180deg,#ffbade 0%,#ffbade 100%)", boxShadow: "0 4px 14px rgba(255,186,222,0.35)" }}
+              style={{ background: "linear-gradient(180deg,hsl(var(--primary)) 0%,hsl(var(--primary)) 100%)", boxShadow: "0 4px 14px rgba(220,80,40,0.35)" }}
             >
               Get Started
               <ChevronRight className="w-4 h-4 absolute right-4" />

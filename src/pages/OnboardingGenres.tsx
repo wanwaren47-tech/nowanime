@@ -62,8 +62,8 @@ const OnboardingGenres = () => {
                 style={
                   on
                     ? {
-                        border: "1.5px solid #ffbade",
-                        boxShadow: "0 0 10px rgba(255,186,222,0.6), inset 0 0 8px rgba(255,186,222,0.18)",
+                        border: "1.5px solid hsl(var(--primary))",
+                        boxShadow: "0 0 10px rgba(220,80,40,0.6), inset 0 0 8px rgba(220,80,40,0.18)",
                       }
                     : { border: "1px solid rgba(255,255,255,0.06)" }
                 }
@@ -80,8 +80,8 @@ const OnboardingGenres = () => {
           disabled={picked.length < 3}
           className="w-full max-w-md md:max-w-sm mx-auto mt-5 md:mt-8 h-10 md:h-12 rounded-lg text-white text-xs md:text-sm font-semibold flex items-center justify-center relative disabled:opacity-50"
           style={{
-            background: "linear-gradient(180deg,#ffbade 0%,#c084fc 100%)",
-            boxShadow: "0 4px 14px rgba(255,186,222,0.35)",
+            background: "linear-gradient(180deg,hsl(var(--primary)) 0%,#c084fc 100%)",
+            boxShadow: "0 4px 14px rgba(220,80,40,0.35)",
           }}
         >
           Continue
