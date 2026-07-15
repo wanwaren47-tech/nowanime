@@ -1,18 +1,13 @@
 import { Link, useLocation, useNavigate, NavLink } from "react-router-dom";
-import { Search, X, Menu, Home, Film, Tv, Clapperboard, Radio, Palette, Camera, User, Mic2, Bookmark, Heart, Settings, Shield, Download } from "lucide-react";
+import { Search, X, Menu, Home, Flame, Clapperboard, User, Bookmark, Heart, Settings, Shield, Download } from "lucide-react";
 import { useState, useEffect } from "react";
 import ThemeToggle from "./ThemeToggle";
 import logoAsset from "@/assets/nowanime-logo.png.asset.json";
 
 const primaryNav = [
   { to: "/home", label: "Home", icon: Home },
-  { to: "/movies", label: "Movies", icon: Film },
-  { to: "/tv", label: "TV Shows", icon: Tv },
   { to: "/anime", label: "Anime", icon: Clapperboard },
-  { to: "/animation", label: "Animation", icon: Palette },
-  { to: "/documentary", label: "Documentary", icon: Camera },
-  { to: "/live-tv", label: "Live TV", icon: Radio },
-  { to: "/podcasts", label: "Podcasts", icon: Mic2 },
+  { to: "/search", label: "Explore", icon: Flame },
 ];
 
 const drawerExtras = [

@@ -139,6 +139,12 @@ export const tvRecommendations = (id: string | number) =>
 export const tvSimilar = (id: string | number) =>
   fetchList(`/tv/${id}/similar`, "tv");
 
+// External IDs (IMDb) — used by 111Movies embed
+export const movieExternalIds = (id: string | number) =>
+  tmdb<{ imdb_id: string | null }>(`/movie/${id}/external_ids`);
+export const tvExternalIds = (id: string | number) =>
+  tmdb<{ imdb_id: string | null; tvdb_id: number | null }>(`/tv/${id}/external_ids`);
+
 // Search & discover
 export const searchMulti = (query: string) =>
   fetchList(`/search/multi?query=${encodeURIComponent(query)}&include_adult=false`);

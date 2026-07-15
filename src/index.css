@@ -5,86 +5,86 @@
 @tailwind utilities;
 
 /* ==========================================
-   NowAnime — zenime-inspired anime theme
-   Deep desaturated purple background + pink accent (#ffbade)
+   NowAnime — bold red/orange anime theme
    ========================================== */
 :root {
-  --bg-pure: #0e0b18;
-  --bg-card: #1a1626;
-  --accent: #ffbade;
+  --bg-pure: #0a0806;
+  --bg-card: #1a1310;
+  --accent: #f97316;
   --text-main: #ffffff;
-  --text-muted: #b7b3c6;
+  --text-muted: #b8afa8;
 }
 
 @layer base {
   :root {
-    /* NowAnime dark anime palette */
-    --background: 262 20% 9%;         /* deep near-black purple */
-    --foreground: 300 20% 98%;
-    --card: 262 18% 14%;
-    --card-foreground: 300 15% 96%;
-    --popover: 262 18% 14%;
-    --popover-foreground: 300 15% 96%;
-    --primary: 338 100% 87%;          /* #ffbade zenime pink */
-    --primary-foreground: 262 25% 10%;
-    --secondary: 262 15% 18%;
-    --secondary-foreground: 300 15% 96%;
-    --muted: 262 15% 17%;
-    --muted-foreground: 275 12% 70%;
-    --accent: 338 100% 87%;
-    --accent-foreground: 262 25% 10%;
-    --destructive: 350 85% 60%;
+    --background: 18 20% 6%;
+    --foreground: 30 20% 98%;
+    --card: 18 18% 11%;
+    --card-foreground: 30 15% 96%;
+    --popover: 18 18% 11%;
+    --popover-foreground: 30 15% 96%;
+    --primary: 12 90% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 18 15% 15%;
+    --secondary-foreground: 30 15% 96%;
+    --muted: 18 15% 14%;
+    --muted-foreground: 28 10% 68%;
+    --accent: 28 100% 58%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 85% 55%;
     --destructive-foreground: 0 0% 100%;
-    --border: 262 15% 24%;
-    --input: 262 15% 20%;
-    --ring: 338 100% 87%;
+    --border: 18 15% 22%;
+    --input: 18 15% 18%;
+    --ring: 12 90% 55%;
     --radius: 0.625rem;
 
-    --surface: 262 18% 14%;
-    --surface-2: 262 16% 20%;
+    --surface: 18 18% 11%;
+    --surface-2: 18 16% 17%;
 
-    /* legacy bb tokens — aliased to new palette so existing code doesn't break */
-    --bb-purple: 275 60% 60%;
-    --bb-cyan: 190 80% 65%;
-    --bb-pink: 338 100% 87%;
-    --bb-gold: 45 90% 70%;
-    --bb-indigo: 250 60% 65%;
-    --bb-emerald: 155 55% 55%;
-    --bb-rose: 338 100% 87%;
-    --bb-amber: 35 90% 65%;
+    --bb-purple: 12 90% 55%;
+    --bb-cyan: 28 100% 58%;
+    --bb-pink: 12 90% 55%;
+    --bb-gold: 38 95% 58%;
+    --bb-indigo: 12 90% 55%;
+    --bb-emerald: 28 100% 58%;
+    --bb-rose: 12 90% 55%;
+    --bb-amber: 38 95% 58%;
 
-    --sidebar-background: 262 22% 7%;
-    --sidebar-foreground: 300 15% 96%;
-    --sidebar-primary: 338 100% 87%;
-    --sidebar-primary-foreground: 262 25% 10%;
-    --sidebar-accent: 262 15% 18%;
-    --sidebar-accent-foreground: 300 15% 96%;
-    --sidebar-border: 262 15% 22%;
-    --sidebar-ring: 338 100% 87%;
+    --sidebar-background: 18 22% 5%;
+    --sidebar-foreground: 30 15% 96%;
+    --sidebar-primary: 12 90% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 18 15% 15%;
+    --sidebar-accent-foreground: 30 15% 96%;
+    --sidebar-border: 18 15% 20%;
+    --sidebar-ring: 12 90% 55%;
+
+    --gradient-primary: linear-gradient(135deg, hsl(12 90% 55%), hsl(28 100% 58%));
+    --shadow-primary: 0 8px 24px -8px hsl(12 90% 55% / 0.55);
   }
 
   .light {
-    --background: 300 30% 98%;
-    --foreground: 262 25% 12%;
+    --background: 30 30% 98%;
+    --foreground: 18 25% 12%;
     --card: 0 0% 100%;
-    --card-foreground: 262 25% 12%;
+    --card-foreground: 18 25% 12%;
     --popover: 0 0% 100%;
-    --popover-foreground: 262 25% 12%;
-    --primary: 338 80% 62%;
+    --popover-foreground: 18 25% 12%;
+    --primary: 12 85% 50%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 300 20% 93%;
-    --secondary-foreground: 262 25% 12%;
-    --muted: 300 20% 95%;
-    --muted-foreground: 262 15% 40%;
-    --accent: 338 80% 62%;
+    --secondary: 30 20% 93%;
+    --secondary-foreground: 18 25% 12%;
+    --muted: 30 20% 95%;
+    --muted-foreground: 18 15% 40%;
+    --accent: 28 95% 52%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 350 85% 55%;
+    --destructive: 0 85% 55%;
     --destructive-foreground: 0 0% 100%;
-    --border: 300 20% 90%;
-    --input: 300 20% 90%;
-    --ring: 338 80% 62%;
-    --surface: 300 25% 96%;
-    --surface-2: 300 20% 92%;
+    --border: 30 20% 90%;
+    --input: 30 20% 90%;
+    --ring: 12 85% 50%;
+    --surface: 30 25% 96%;
+    --surface-2: 30 20% 92%;
   }
 }
 
