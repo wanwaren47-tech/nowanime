@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Loader2, AlertCircle, RefreshCw, ChevronRight, Maximize2, Shield, WifiOff, CloudDownload } from "lucide-react";
+import { Loader2, AlertCircle, RefreshCw, Maximize2, Shield, WifiOff, CloudDownload } from "lucide-react";
 import { Link } from "react-router-dom";
 import { recordStream, getCachedStream } from "@/lib/streamCache";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
@@ -242,29 +242,27 @@ const MoviePlayer = ({ tmdbId, imdbId, type = "movie", season = 1, episode = 1, 
         </div>
       </div>
 
-      <div className="flex items-center gap-1.5 px-3 py-2" style={{ background: "hsl(var(--background))" }}>
-        {PLAYER_SERVERS.map((s, i) => (
-          <button
-            key={s.id}
-            onClick={() => selectServer(i)}
-            className="px-2.5 py-1 rounded-md text-[10.5px] font-semibold transition-colors"
-            style={{
-              background: i === serverIdx ? "hsl(var(--primary))" : "rgba(255,255,255,0.06)",
-              color: i === serverIdx ? "#fff" : "rgba(255,255,255,0.7)",
-              border: "1px solid rgba(255,255,255,0.08)",
-            }}
-          >
-            {s.label}
-          </button>
-        ))}
-        <button
-          onClick={() => selectServer(serverIdx + 1)}
-          title="Next server"
-          className="ml-auto flex items-center gap-1 px-2.5 py-1 rounded-md text-[10.5px] font-semibold text-white"
-          style={{ background: "#1f1f1f", border: "1px solid rgba(255,186,222,0.4)" }}
-        >
-          Next <ChevronRight className="w-3 h-3" />
-        </button>
+      <div className="flex items-center gap-1.5 px-3 py-2 overflow-x-auto scrollbar-hide" style={{ background: "hsl(var(--background))" }}>
+        <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground pr-1">Server</span>
+        {PLAYER_SERVERS.map((s, i) => {
+          const active = i === serverIdx;
+          const disabled = s.requiresImdb && !imdbId;
+          return (
+            <button
+              key={s.id}
+              onClick={() => !disabled && selectServer(i)}
+              disabled={disabled}
+              className="px-2.5 py-1 rounded-md text-[10.5px] font-semibold whitespace-nowrap transition-colors disabled:opacity-40"
+              style={{
+                background: active ? "var(--gradient-primary)" : "rgba(255,255,255,0.06)",
+                color: active ? "#fff" : "rgba(255,255,255,0.75)",
+                border: active ? "1px solid transparent" : "1px solid rgba(255,255,255,0.08)",
+              }}
+            >
+              {s.label}
+            </button>
+          );
+        })}
       </div>
 
       {title && (
