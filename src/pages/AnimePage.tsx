@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import AppLayout from "@/components/AppLayout";
 import SEO from "@/components/SEO";
 import TmdbRow from "@/components/TmdbRow";
+import FanFavoritesRow from "@/components/FanFavoritesRow";
 import InlineAdRow from "@/components/InlineAdRow";
 import { fetchList, type TmdbItem } from "@/lib/tmdb";
 
@@ -96,6 +97,8 @@ const AnimePage = () => {
           ))}
         </div>
       </div>
+
+      <div className="pt-2"><FanFavoritesRow /></div>
 
       {ROWS.map((r, i) => (
         <div key={r.title} id={`anime-${slugify(r.title)}`} className="scroll-mt-28">
