@@ -4,41 +4,29 @@ import { Search, ArrowLeft, Loader2, TrendingUp, Star, Play } from "lucide-react
 import { useQuery } from "@tanstack/react-query";
 import AppLayout from "@/components/AppLayout";
 import SEO from "@/components/SEO";
-
 import InlineAdRow from "@/components/InlineAdRow";
 
-import {
-  searchMovies,
-  searchTv,
-  searchMulti,
-  discoverMovies,
-  discoverTv,
-  GENRES,
-  img,
-  type TmdbItem,
-} from "@/lib/tmdb";
+import { fetchList, searchTv, img, type TmdbItem } from "@/lib/tmdb";
 
-type ResultItem = TmdbItem & { _type: "movie" | "tv"; _bucket: FilterKey };
-type FilterKey = "all" | "movies" | "series" | "anime" | "animation";
+// Anime-only search: TMDB tv genre 16 (Animation) + Japanese origin.
+const searchAnime = async (q: string): Promise<TmdbItem[]> => {
+  if (!q.trim()) return [];
+  const results = await searchTv(q);
+  return results.filter(
+    (r: any) =>
+      r.genre_ids?.includes(16) && (r.original_language === "ja" || !r.original_language),
+  );
+};
 
-const FILTERS: { label: string; value: FilterKey }[] = [
-  { label: "All", value: "all" },
-  { label: "Movies", value: "movies" },
-  { label: "Series", value: "series" },
-  { label: "Anime", value: "anime" },
-  { label: "Animation", value: "animation" },
-];
-
-const isAnime = (item: TmdbItem) =>
-  item.genre_ids?.includes(GENRES.animation) && (item as any).original_language === "ja";
-const isAnimation = (item: TmdbItem) =>
-  item.genre_ids?.includes(GENRES.animation) && !isAnime(item);
-
-const SponsoredLabel = () => (
-  <p className="text-[9px] uppercase tracking-[0.18em] text-white/45 font-semibold mb-1.5">
-    Sponsored · Featured placements
-  </p>
-);
+const trendingAnime = () => {
+  const qs = new URLSearchParams({
+    sort_by: "popularity.desc",
+    with_genres: "16",
+    with_original_language: "ja",
+    include_adult: "false",
+  });
+  return fetchList(`/discover/tv?${qs.toString()}`, "tv");
+};
 
 const useDebounced = <T,>(value: T, delay = 250) => {
   const [v, setV] = useState(value);
@@ -49,9 +37,9 @@ const useDebounced = <T,>(value: T, delay = 250) => {
   return v;
 };
 
-const ResultRow = ({ item, onClick }: { item: ResultItem; onClick: () => void }) => {
-  const title = (item as any).title || (item as any).name || "Untitled";
-  const date = (item as any).release_date || (item as any).first_air_date || "";
+const ResultRow = ({ item, onClick }: { item: TmdbItem; onClick: () => void }) => {
+  const title = (item as any).name || item.title || "Untitled";
+  const date = (item as any).first_air_date || item.release_date || "";
   const poster = item.poster_path || item.backdrop_path;
   return (
     <button
@@ -61,7 +49,7 @@ const ResultRow = ({ item, onClick }: { item: ResultItem; onClick: () => void })
     >
       <div className="relative w-[58px] h-[82px] rounded-lg overflow-hidden bg-black flex-shrink-0">
         {poster ? (
-          <img src={img(poster, "w200")} alt={title} loading="lazy" className="w-full h-full object-cover" />
+          <img src={img(poster, "w200") || ""} alt={title} loading="lazy" className="w-full h-full object-cover" />
         ) : (
           <div className="w-full h-full grid place-items-center text-white/25 text-[9px]">No art</div>
         )}
@@ -71,9 +59,7 @@ const ResultRow = ({ item, onClick }: { item: ResultItem; onClick: () => void })
       </div>
       <div className="flex-1 min-w-0">
         <h3 className="text-[13px] font-bold text-white truncate">{title}</h3>
-        <p className="text-[10.5px] text-white/55 mt-0.5">
-          {item._type === "tv" ? "Series" : "Movie"}{date ? ` · ${date.slice(0, 4)}` : ""}
-        </p>
+        <p className="text-[10.5px] text-white/55 mt-0.5">Anime{date ? ` · ${date.slice(0, 4)}` : ""}</p>
         {!!item.vote_average && (
           <p className="text-[10.5px] text-amber-400 mt-0.5 flex items-center gap-1">
             <Star className="w-3 h-3 fill-amber-400" /> {item.vote_average.toFixed(1)}
@@ -93,69 +79,28 @@ const SearchPage = () => {
   const initialQ = searchParams.get("q") || "";
   const [query, setQuery] = useState(initialQ);
   const [searchQuery, setSearchQuery] = useState(initialQ);
-  const [filter, setFilter] = useState<FilterKey>("all");
   const [suggestOpen, setSuggestOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
-
   const debouncedQuery = useDebounced(query, 220);
 
-  // Live suggestions (YouTube-style) while typing
   const { data: liveSuggest = [] } = useQuery({
-    queryKey: ["search-live", debouncedQuery],
-    queryFn: async () => {
-      if (!debouncedQuery.trim()) return [];
-      const res = await searchMulti(debouncedQuery.trim());
-      return res
-        .filter((r: any) => r.media_type === "movie" || r.media_type === "tv")
-        .slice(0, 6);
-    },
+    queryKey: ["anime-search-live", debouncedQuery],
+    queryFn: () => searchAnime(debouncedQuery),
     enabled: debouncedQuery.trim().length > 1,
     staleTime: 1000 * 60,
   });
 
-  const { data: results = [], isFetching } = useQuery<ResultItem[]>({
-    queryKey: ["mixed-search", searchQuery],
-    queryFn: async () => {
-      const [movies, tv] = await Promise.all([
-        searchQuery.trim() ? searchMovies(searchQuery) : discoverMovies({}),
-        searchQuery.trim() ? searchTv(searchQuery) : discoverTv({}),
-      ]);
-      const decorated: ResultItem[] = [
-        ...movies.map((m) => {
-          let bucket: FilterKey = "movies";
-          if (isAnime(m)) bucket = "anime";
-          else if (isAnimation(m)) bucket = "animation";
-          return { ...m, _type: "movie" as const, _bucket: bucket };
-        }),
-        ...tv.map((t) => {
-          let bucket: FilterKey = "series";
-          if (isAnime(t)) bucket = "anime";
-          else if (isAnimation(t)) bucket = "animation";
-          return { ...t, _type: "tv" as const, _bucket: bucket };
-        }),
-      ];
-      return decorated.sort((a, b) => (b.vote_average || 0) - (a.vote_average || 0));
-    },
+  const { data: results = [], isFetching } = useQuery<TmdbItem[]>({
+    queryKey: ["anime-search", searchQuery],
+    queryFn: () => (searchQuery.trim() ? searchAnime(searchQuery) : trendingAnime()),
     staleTime: 1000 * 60 * 10,
   });
 
-  // Top searches / trending suggestions for empty state
   const { data: trending = [] } = useQuery({
-    queryKey: ["search-trending"],
-    queryFn: async () => {
-      const [m, t] = await Promise.all([discoverMovies({}), discoverTv({})]);
-      return [
-        ...m.slice(0, 8).map((x) => ({ ...x, _type: "movie" as const })),
-        ...t.slice(0, 8).map((x) => ({ ...x, _type: "tv" as const })),
-      ];
-    },
+    queryKey: ["anime-search-trending"],
+    queryFn: trendingAnime,
     staleTime: 1000 * 60 * 30,
   });
-
-  const filtered = useMemo(
-    () => results.filter((r) => (filter === "all" ? true : r._bucket === filter)),
-    [results, filter],
-  );
 
   const handleSearch = (q: string) => {
     setSearchQuery(q.trim());
@@ -163,16 +108,8 @@ const SearchPage = () => {
     setSuggestOpen(false);
   };
 
-  const openItem = (item: ResultItem) =>
-    navigate(item._type === "tv" ? `/tv/${item.id}` : `/movie/${item.id}`);
+  const openItem = (item: TmdbItem) => navigate(`/tv/${item.id}`);
 
-  const pickSuggestion = (item: any) => {
-    const t = item.media_type === "tv" ? "tv" : "movie";
-    navigate(t === "tv" ? `/tv/${item.id}` : `/movie/${item.id}`);
-    setSuggestOpen(false);
-  };
-
-  // Close suggestions on outside click
   useEffect(() => {
     const onDoc = (e: MouseEvent) => {
       if (!wrapRef.current?.contains(e.target as Node)) setSuggestOpen(false);
@@ -186,11 +123,10 @@ const SearchPage = () => {
   return (
     <AppLayout>
       <SEO
-        title={searchQuery ? `${searchQuery} – Search – NowAnime` : "Explore – NowAnime"}
-        description={searchQuery ? `Search results for "${searchQuery}" on NowAnime.` : "Explore movies, TV series, anime and animation on NowAnime."}
+        title={searchQuery ? `${searchQuery} – Search – NowAnime` : "Explore Anime – NowAnime"}
+        description={searchQuery ? `Anime search results for "${searchQuery}" on NowAnime.` : "Explore trending, popular and top-rated anime on NowAnime."}
       />
       <div className="px-5 pt-4" style={{ background: "#000" }}>
-        {/* Search bar */}
         <div ref={wrapRef} className="relative flex items-center gap-2 mb-4">
           <button onClick={() => navigate(-1)} className="p-1.5 rounded-lg hover:bg-white/5">
             <ArrowLeft className="w-4 h-4 text-white" />
@@ -203,7 +139,7 @@ const SearchPage = () => {
               onChange={(e) => { setQuery(e.target.value); setSuggestOpen(true); }}
               onFocus={() => setSuggestOpen(true)}
               onKeyDown={(e) => e.key === "Enter" && handleSearch(query)}
-              placeholder="Search movies, shows, genres..."
+              placeholder="Search anime titles, genres..."
               className="flex-1 bg-transparent text-white text-xs placeholder:text-white/50 outline-none"
             />
             {query && (
@@ -213,30 +149,26 @@ const SearchPage = () => {
             )}
           </div>
 
-          {/* YouTube-style live suggestions */}
           {suggestOpen && liveSuggest.length > 0 && (
             <div
               className="absolute left-9 right-0 top-full mt-1.5 z-50 rounded-xl overflow-hidden shadow-2xl"
               style={{ background: "#141414", border: "1px solid rgba(255,255,255,0.1)" }}
             >
-              {liveSuggest.map((s: any) => {
-                const t = s.media_type === "tv" ? "tv" : "movie";
-                const title = s.title || s.name || "Untitled";
-                const date = s.release_date || s.first_air_date || "";
+              {liveSuggest.slice(0, 6).map((s: any) => {
+                const title = s.name || s.title || "Untitled";
+                const date = s.first_air_date || "";
                 return (
                   <button
-                    key={`${t}-${s.id}`}
-                    onClick={() => pickSuggestion(s)}
+                    key={s.id}
+                    onClick={() => { navigate(`/tv/${s.id}`); setSuggestOpen(false); }}
                     className="w-full flex items-center gap-2.5 px-2.5 py-2 text-left hover:bg-white/5 border-b border-white/5 last:border-b-0"
                   >
                     <div className="w-9 h-12 rounded overflow-hidden bg-black/50 flex-shrink-0">
-                      {s.poster_path && <img src={img(s.poster_path, "w200")} alt="" className="w-full h-full object-cover" loading="lazy" />}
+                      {s.poster_path && <img src={img(s.poster_path, "w200") || ""} alt="" className="w-full h-full object-cover" loading="lazy" />}
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-[11.5px] font-semibold text-white truncate">{title}</p>
-                      <p className="text-[10px] text-white/50">
-                        {t === "tv" ? "Series" : "Movie"}{date ? ` · ${date.slice(0, 4)}` : ""}
-                      </p>
+                      <p className="text-[10px] text-white/50">Anime{date ? ` · ${date.slice(0, 4)}` : ""}</p>
                     </div>
                     <Search className="w-3 h-3 text-white/40" />
                   </button>
@@ -250,7 +182,7 @@ const SearchPage = () => {
           <>
             <div className="flex items-center gap-1.5 mb-3">
               <TrendingUp className="w-3.5 h-3.5" style={{ color: "hsl(var(--primary))" }} />
-              <h2 className="text-white text-sm font-bold">Trending now</h2>
+              <h2 className="text-white text-sm font-bold">Trending anime</h2>
             </div>
             {isFetching && results.length === 0 ? (
               <div className="flex items-center justify-center h-28">
@@ -258,13 +190,14 @@ const SearchPage = () => {
               </div>
             ) : (
               <div className="space-y-2 pb-4">
-                {(results as ResultItem[]).slice(0, 24).map((m, i) => (
-                  <div key={`sg-${m._type}-${m.id}`}>
+                {results.slice(0, 24).map((m, i) => (
+                  <div key={m.id}>
                     <ResultRow item={m} onClick={() => openItem(m)} />
-                    {/* 4 native ad rows interspersed every ~5 items */}
                     {(i === 4 || i === 9 || i === 14 || i === 19) && (
                       <div className="-mx-5 my-3">
-                        <SponsoredLabel />
+                        <p className="text-[9px] uppercase tracking-[0.18em] text-white/45 font-semibold mb-1.5">
+                          Sponsored · Featured placements
+                        </p>
                         <InlineAdRow count={4} />
                       </div>
                     )}
@@ -275,37 +208,19 @@ const SearchPage = () => {
           </>
         ) : (
           <>
-            {/* Type filter chips */}
-            <div className="flex gap-2 mb-3 overflow-x-auto scrollbar-hide">
-              {FILTERS.map((f) => (
-                <button
-                  key={f.value}
-                  onClick={() => setFilter(f.value)}
-                  className={`px-3 py-1 rounded-full text-[10.5px] font-medium whitespace-nowrap transition-all ${filter === f.value ? "text-white" : "text-white/60 border border-white/10"}`}
-                  style={filter === f.value ? { background: "hsl(var(--primary))" } : { background: "#141414" }}
-                >
-                  {f.label}
-                </button>
-              ))}
-            </div>
-
             {isFetching ? (
               <div className="flex items-center justify-center h-32">
                 <Loader2 className="w-5 h-5 animate-spin" style={{ color: "hsl(var(--primary))" }} />
               </div>
-            ) : filtered.length === 0 ? (
+            ) : results.length === 0 ? (
               <div className="py-6">
-                <p className="text-xs text-white/60 mb-4 text-center">No matches for "{searchQuery}".</p>
+                <p className="text-xs text-white/60 mb-4 text-center">No anime matches for "{searchQuery}".</p>
                 {trending.length > 0 && (
                   <div className="text-left">
                     <h3 className="text-[11px] font-semibold text-white/80 mb-2">You might like</h3>
                     <div className="space-y-2">
-                      {(trending as any[]).slice(0, 8).map((m: any) => (
-                        <ResultRow
-                          key={`sgg-${m._type}-${m.id}`}
-                          item={{ ...m, _bucket: "all" }}
-                          onClick={() => navigate(m._type === "tv" ? `/tv/${m.id}` : `/movie/${m.id}`)}
-                        />
+                      {(trending as TmdbItem[]).slice(0, 8).map((m) => (
+                        <ResultRow key={m.id} item={m} onClick={() => navigate(`/tv/${m.id}`)} />
                       ))}
                     </div>
                   </div>
@@ -314,15 +229,14 @@ const SearchPage = () => {
             ) : (
               <>
                 <p className="text-[10px] text-white/50 mb-2">
-                  {filtered.length} result{filtered.length === 1 ? "" : "s"} for "{searchQuery}"
+                  {results.length} anime result{results.length === 1 ? "" : "s"} for "{searchQuery}"
                 </p>
                 <div className="space-y-2 pb-4">
-                  {filtered.map((item, i) => (
-                    <div key={`${item._type}-${item.id}`}>
+                  {results.map((item, i) => (
+                    <div key={item.id}>
                       <ResultRow item={item} onClick={() => openItem(item)} />
-                      {(i + 1) % 6 === 0 && i < filtered.length - 1 && (
+                      {(i + 1) % 6 === 0 && i < results.length - 1 && (
                         <div className="-mx-5 my-2">
-                          <SponsoredLabel />
                           <InlineAdRow count={4} />
                         </div>
                       )}

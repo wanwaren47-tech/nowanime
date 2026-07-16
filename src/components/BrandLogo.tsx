@@ -7,26 +7,16 @@ interface Props {
   className?: string;
 }
 
-const BrandLogo = ({ size = 56, withWordmark = true, wordmarkSize = "md", className = "" }: Props) => {
-  const wm = {
-    sm: "text-base",
-    md: "text-xl",
-    lg: "text-3xl",
-    xl: "text-4xl",
-  }[wordmarkSize];
+// The official logo already contains the "NOW ANIME" wordmark, so we render
+// image only. `withWordmark` is kept for API compatibility but ignored.
+const BrandLogo = ({ size = 96, className = "" }: Props) => {
   return (
-    <div className={`flex flex-col items-center ${className}`}>
+    <div className={`flex items-center justify-center ${className}`}>
       <img
         src={logoAsset.url}
         alt="NowAnime"
         style={{ width: size, height: size, objectFit: "contain" }}
       />
-      {withWordmark && (
-        <p className={`${wm} font-extrabold tracking-tight mt-1.5 leading-none`}>
-          <span className="text-foreground">Now</span>
-          <span className="text-primary">Anime</span>
-        </p>
-      )}
     </div>
   );
 };
