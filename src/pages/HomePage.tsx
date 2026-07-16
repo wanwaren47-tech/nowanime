@@ -3,7 +3,7 @@ import AppLayout from "@/components/AppLayout";
 import SEO from "@/components/SEO";
 import TmdbHero from "@/components/TmdbHero";
 import TmdbRow from "@/components/TmdbRow";
-import TmdbContinueRow from "@/components/TmdbContinueRow";
+import FanFavoritesRow from "@/components/FanFavoritesRow";
 import InlineAdRow from "@/components/InlineAdRow";
 import { fetchList, type TmdbItem } from "@/lib/tmdb";
 import { useTrendingAnime, usePopularAnime, useTopRatedAnime, useAnimeByGenre } from "@/hooks/useAnimeContent";
@@ -69,7 +69,7 @@ const HomePage = () => {
 
       <InlineAdRow count={4} />
 
-      <TmdbContinueRow />
+      <FanFavoritesRow />
 
       <TmdbRow title="Trending Anime" items={trending.data} isLoading={trending.isLoading} type="tv" viewAll="/anime" ranked />
       <TmdbRow title="This Season" items={seasonal.data} isLoading={seasonal.isLoading} type="tv" viewAll="/anime" />

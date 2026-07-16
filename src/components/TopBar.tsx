@@ -1,13 +1,16 @@
 import { Link, useLocation, useNavigate, NavLink } from "react-router-dom";
-import { Search, X, Menu, Home, Flame, Clapperboard, User, Bookmark, Heart, Settings, Shield, Download } from "lucide-react";
+import { Search, X, Menu, Home, Flame, Clapperboard, User, Bookmark, Heart, Settings, Shield, Download, TrendingUp } from "lucide-react";
 import { useState, useEffect } from "react";
 import ThemeToggle from "./ThemeToggle";
+import CategoriesMenu from "./CategoriesMenu";
 import logoAsset from "@/assets/nowanime-logo.png.asset.json";
 
 const primaryNav = [
   { to: "/home", label: "Home", icon: Home },
   { to: "/anime", label: "Anime", icon: Clapperboard },
-  { to: "/search", label: "Explore", icon: Flame },
+  { to: "/search", label: "Trending", icon: TrendingUp },
+  { to: "/my-list", label: "My List", icon: Bookmark },
+  { to: "/my-downloads", label: "Downloads", icon: Download },
 ];
 
 const drawerExtras = [
@@ -23,7 +26,6 @@ const TopBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [query, setQuery] = useState("");
 
@@ -35,13 +37,11 @@ const TopBar = () => {
 
   useEffect(() => {
     setDrawerOpen(false);
-    setSearchOpen(false);
   }, [location.pathname]);
 
   const handleSearch = () => {
     if (query.trim()) {
       navigate(`/search?q=${encodeURIComponent(query.trim())}`);
-      setSearchOpen(false);
       setQuery("");
     }
   };
@@ -54,8 +54,8 @@ const TopBar = () => {
   return (
     <>
       <header className={`fixed top-0 left-0 right-0 z-40 transition-colors duration-300 ${bgClass}`}>
-        <div className="flex items-center gap-2 md:gap-3 px-2 md:px-6 h-12 md:h-14 max-w-[1600px] mx-auto">
-          {/* Hamburger on the LEFT (mobile) */}
+        <div className="flex items-center gap-2 md:gap-4 px-2 md:px-6 h-12 md:h-16 max-w-[1600px] mx-auto relative">
+          {/* Hamburger (mobile) */}
           <button
             onClick={() => setDrawerOpen(true)}
             aria-label="Open menu"
@@ -64,61 +64,58 @@ const TopBar = () => {
             <Menu className="h-[18px] w-[18px]" />
           </button>
 
-          {/* Logo */}
-          <Link to="/home" className="flex items-center gap-1.5 md:gap-2 flex-shrink-0">
-            <img
-              src={logoAsset.url}
-              alt="NowAnime"
-              className="h-7 w-7 md:h-8 md:w-8"
-              style={{ filter: "drop-shadow(0 0 8px rgba(255,186,222,0.55))" }}
-            />
-            <span className="hidden sm:inline text-base font-extrabold text-gradient-bb tracking-tight">NowAnime</span>
+          {/* Logo — left on desktop */}
+          <Link to="/home" className="flex items-center flex-shrink-0">
+            <img src={logoAsset.url} alt="NowAnime" className="h-8 w-8 md:h-10 md:w-10" />
           </Link>
 
-          {/* Desktop horizontal nav */}
-          <nav className="hidden md:flex items-center gap-0.5 ml-4 flex-1 overflow-x-auto scrollbar-hide">
+          {/* Centered pill nav (Dulo-style) — desktop only */}
+          <nav className="hidden md:flex items-center gap-0.5 absolute left-1/2 -translate-x-1/2 rounded-full bg-white/[0.04] backdrop-blur border border-white/[0.06] px-1.5 py-1">
             {primaryNav.map(({ to, label, icon: Icon }) => (
               <NavLink
                 key={to}
                 to={to}
                 className={({ isActive }) =>
-                  `flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[13px] font-semibold whitespace-nowrap transition-colors ${
+                  `flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[13px] font-semibold whitespace-nowrap transition-colors ${
                     isActive
-                      ? "text-foreground bg-secondary"
-                      : "text-muted-foreground hover:text-foreground hover:bg-secondary/60"
+                      ? "text-primary-foreground"
+                      : "text-muted-foreground hover:text-foreground hover:bg-white/5"
                   }`
+                }
+                style={({ isActive }: any) =>
+                  isActive ? { background: "var(--gradient-primary)" } : undefined
                 }
               >
                 <Icon className="w-3.5 h-3.5" />
                 {label}
               </NavLink>
             ))}
+            <CategoriesMenu />
           </nav>
 
-          {/* Desktop search input */}
-          <form
-            onSubmit={(e) => { e.preventDefault(); handleSearch(); }}
-            className="hidden md:flex md:ml-auto md:w-64"
-          >
-            <div className="flex w-full items-center rounded-full bg-secondary/70 px-3 py-1.5 ring-1 ring-transparent focus-within:ring-primary">
-              <Search className="mr-2 h-3.5 w-3.5 text-foreground/60" />
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search…"
-                className="w-full bg-transparent text-xs md:text-sm outline-none placeholder:text-foreground/50"
-              />
-            </div>
-          </form>
+          {/* Spacer to push right cluster */}
+          <div className="flex-1" />
 
-          {/* Spacer for mobile to push right cluster */}
-          <div className="flex-1 md:hidden" />
+          {/* Right cluster */}
+          <div className="flex items-center gap-1.5 md:gap-2 flex-shrink-0">
+            <form
+              onSubmit={(e) => { e.preventDefault(); handleSearch(); }}
+              className="hidden md:flex"
+            >
+              <div className="flex items-center rounded-full bg-white/[0.06] px-3 py-1.5 ring-1 ring-transparent focus-within:ring-primary transition">
+                <Search className="mr-2 h-3.5 w-3.5 text-foreground/60" />
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search anime…"
+                  className="w-40 lg:w-52 bg-transparent text-sm outline-none placeholder:text-foreground/50"
+                />
+              </div>
+            </form>
 
-          {/* Right cluster — mobile: install, search, profile, settings (rightmost) */}
-          <div className="flex items-center gap-1 flex-shrink-0">
             <Link
               to="/install"
-              className="md:hidden inline-flex items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-primary-foreground shadow-[0_2px_8px_rgba(255,186,222,0.45)]"
+              className="md:hidden inline-flex items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-primary-foreground"
               aria-label="Install App"
             >
               <Download className="h-3 w-3" /> Install
@@ -138,30 +135,18 @@ const TopBar = () => {
               <User className="h-4 w-4" />
             </Link>
             <div className="hidden md:block"><ThemeToggle /></div>
-            <Link
-              to="/settings"
-              aria-label="Settings"
-              className="md:hidden grid place-items-center h-8 w-8 rounded-full bg-secondary/70 text-foreground/80 hover:text-primary"
-            >
-              <Settings className="h-4 w-4" />
-            </Link>
           </div>
         </div>
       </header>
 
-
       {/* Mobile Drawer */}
       {drawerOpen && (
         <>
-          <div
-            className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm"
-            onClick={() => setDrawerOpen(false)}
-          />
-          <aside className="fixed top-0 left-0 bottom-0 z-[70] w-[82%] max-w-[300px] bg-card shadow-2xl flex flex-col animate-slide-in-right" style={{ animation: "slide-in-right 0.3s ease-out reverse" }}>
+          <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm" onClick={() => setDrawerOpen(false)} />
+          <aside className="fixed top-0 left-0 bottom-0 z-[70] w-[82%] max-w-[300px] bg-card shadow-2xl flex flex-col">
             <div className="flex items-center justify-between px-4 h-14 border-b border-border">
               <Link to="/home" onClick={() => setDrawerOpen(false)} className="flex items-center gap-2">
-                <img src={logoAsset.url} alt="" className="w-8 h-8" style={{ filter: "drop-shadow(0 0 6px rgba(255,186,222,0.6))" }} />
-                <span className="text-base font-extrabold text-gradient-bb">NowAnime</span>
+                <img src={logoAsset.url} alt="" className="w-9 h-9" />
               </Link>
               <button
                 onClick={() => setDrawerOpen(false)}
