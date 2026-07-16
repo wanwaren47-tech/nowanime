@@ -40,7 +40,7 @@ const FanFavoritesRow = () => {
       <div className="flex gap-3 px-[4%] overflow-x-auto scrollbar-hide pb-2">
         {(isLoading ? Array.from({ length: 10 }) : items).map((raw: any, i) => {
           const it = raw as TmdbItem | undefined;
-          const title = it?.name || (it as any)?.title || "Loading…";
+          const title = (it as any)?.name || it?.title || "Loading…";
           const year = ((it as any)?.first_air_date || (it as any)?.release_date || "").slice(0, 4);
           const score = it?.vote_average?.toFixed(1) || "—";
           const poster = img(it?.poster_path, "w500") || "/placeholder.svg";

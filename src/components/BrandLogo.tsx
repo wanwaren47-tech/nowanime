@@ -3,6 +3,7 @@ import logoAsset from "@/assets/nowanime-logo.png.asset.json";
 interface Props {
   size?: number;
   withWordmark?: boolean;
+  wordmarkSize?: "sm" | "md" | "lg" | "xl";
   className?: string;
 }
 
