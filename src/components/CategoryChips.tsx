@@ -2,14 +2,13 @@ import { Link, useLocation } from "react-router-dom";
 
 const chips = [
   { to: "/home", label: "Trending" },
-  { to: "/movies", label: "Movies" },
-  { to: "/tv", label: "TV" },
-  { to: "/anime", label: "Anime" },
-  { to: "/animation", label: "Animation" },
-  { to: "/documentary", label: "Docs" },
-  { to: "/live-tv", label: "Live" },
-  { to: "/genre/comedy", label: "Comedy" },
+  { to: "/anime", label: "All Anime" },
   { to: "/genre/action", label: "Action" },
+  { to: "/genre/adventure", label: "Adventure" },
+  { to: "/genre/comedy", label: "Comedy" },
+  { to: "/genre/drama", label: "Drama" },
+  { to: "/genre/fantasy", label: "Fantasy" },
+  { to: "/genre/romance", label: "Romance" },
   { to: "/genre/horror", label: "Horror" },
   { to: "/my-downloads", label: "Downloads" },
 ];

@@ -60,9 +60,9 @@ const DailyChallenge = () => {
     {
       id: "watch5",
       icon: Film,
-      title: "Watch 5 movies today",
+      title: "Watch 5 anime episodes today",
       prize: "Unlock 1 free download",
-      action: { label: "Browse", href: "/movies" },
+      action: { label: "Browse", href: "/anime" },
     },
     {
       id: "follow",
@@ -74,9 +74,9 @@ const DailyChallenge = () => {
     {
       id: "rate",
       icon: Star,
-      title: "Rate any title",
+      title: "Rate any anime",
       prize: "50 Bloom points",
-      action: { label: "Rate", href: "/movies" },
+      action: { label: "Rate", href: "/anime" },
     },
     {
       id: "explore",

@@ -4,7 +4,7 @@ import SEO from "@/components/SEO";
 import logoAsset from "@/assets/nowanime-official-logo.png.asset.json";
 
 const SUGGESTIONS = [
-  { label: "Trending now", to: "/movies", icon: Film },
+  { label: "Trending anime", to: "/anime", icon: Film },
   { label: "Explore catalog", to: "/search", icon: Compass },
   { label: "Back to home", to: "/", icon: Home },
 ];
@@ -41,7 +41,7 @@ const NotFound = () => {
           ))}
         </div>
         <Link to="/" className="block mt-6 text-xs text-white/40 hover:text-white/70">
-          NowAnime &mdash; stream movies & series
+          NowAnime &mdash; stream & download anime
         </Link>
       </div>
     </div>

@@ -1,52 +1,35 @@
 # NowAnime
 
-> Stream and download movies, TV shows, anime, live TV channels, podcasts, music and read novels — all in one corporate-grade cinematic streaming app. Stream. Discover. Bloom.
+> NowAnime is a free, ad-supported anime streaming and download app. Watch subbed and dubbed anime in HD, download episodes for offline viewing, no signup required.
 
-NowAnime is a free, ad-supported streaming platform aggregating entertainment from across the web: movies and TV from TMDB, anime from AniList/Jikan, 80+ live TV channels from IPTV-org, music from TheAudioDB and Deezer, and public-domain novels from Project Gutenberg and OpenLibrary. The web app is mobile-first and installable, and an Android APK is available for direct download.
+NowAnime aggregates anime metadata from AniList, Jikan and TMDB and streams via community-hosted embed providers (111Movies HD + SmashyStream fallback). The app is mobile-first, installable as a PWA, and available as a free Android APK. Everything is free — supported by non-intrusive ads.
+
+## What it is
+
+- **Free forever** — no subscription, no paywall, no signup.
+- **Anime only** — trending, seasonal, top-rated, classic subbed & dubbed anime series and movies.
+- **HD streaming** — 111Movies as the primary HD source, SmashyStream as automatic fallback.
+- **Offline downloads** — save episodes for offline playback through the built-in downloader.
+- **PWA + Android APK** — installable on any phone, tablet or desktop.
 
 ## Featured pages
 
-- [Home](https://nowanime.lovable.app/home): Personalized dashboard — continue-watching, trending rows, top-rated and recommended.
-- [Movies](https://nowanime.lovable.app/movies): Browse, search and stream movies with full TMDB metadata, cast and crew.
-- [TV Shows](https://nowanime.lovable.app/tv): Browse TV series with seasons and episode tracking.
-- [Anime](https://nowanime.lovable.app/anime): Anime catalog with episode lists.
-- [Animation](https://nowanime.lovable.app/animation): Animated films and series.
-- [Documentary](https://nowanime.lovable.app/documentary): Documentary films and series.
-- [Live TV](https://nowanime.lovable.app/live-tv): 80+ live TV channels worldwide.
-- [Novels](https://nowanime.lovable.app/novels): Read free public-domain novels in the in-app reader.
-- [Podcasts](https://nowanime.lovable.app/podcasts): Podcast discovery and playback.
-- [Music](https://nowanime.lovable.app/music): Music browser with persistent player bar.
-- [Search](https://nowanime.lovable.app/search): Universal search across all sources.
-- [My Downloads](https://nowanime.lovable.app/my-downloads): Manage saved/offline content.
-- [Install App](https://nowanime.lovable.app/install): Free Android APK download with install guide.
-- [Follow Us](https://nowanime.lovable.app/follow-us): Official TikTok, Instagram and WhatsApp channels.
-- [Profile](https://nowanime.lovable.app/profile): Stats, history and account.
-- [Settings](https://nowanime.lovable.app/settings): Playback, quality and 20+ preferences.
+- [Home](https://nowanime.lovable.app/): Fan favorites, trending anime, new releases and personalized rows.
+- [Anime](https://nowanime.lovable.app/anime): Full anime catalog with genre filters and seasonal picks.
+- [Search](https://nowanime.lovable.app/search): Search subbed & dubbed anime titles.
+- [My Downloads](https://nowanime.lovable.app/my-downloads): Manage saved episodes for offline playback.
+- [Install App](https://nowanime.lovable.app/install): Free Android APK with install guide.
+- [Settings](https://nowanime.lovable.app/settings): Playback quality, subtitles, download and privacy preferences.
+- [Profile](https://nowanime.lovable.app/profile): Watch history, my list and stats.
 
 ## Account & support
 
-- [Sign in](https://nowanime.lovable.app/signin)
-- [Register](https://nowanime.lovable.app/register)
 - [Contact](https://nowanime.lovable.app/contact)
 - [Help / Support](https://nowanime.lovable.app/support)
+- [FAQ](https://nowanime.lovable.app/faq)
 - [Privacy Policy](https://nowanime.lovable.app/privacy)
+- [Terms](https://nowanime.lovable.app/terms)
 
-## Social
+## Contact
 
-- TikTok: https://www.tiktok.com/@bing_bloom
-- Instagram: https://instagram.com/nowanime.co
-- WhatsApp channel: https://whatsapp.com/channel/0029VbD2CdHEwEjtJ5Utbo2n
-
-## Key images
-
-- Hero / brand: https://image.tmdb.org/t/p/w1280/49WJfeN0moxb9IPfGn8AIqMGskD.jpg
-- Trending backdrops: https://image.tmdb.org/t/p/w780/oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg
-- Trending backdrops: https://image.tmdb.org/t/p/w780/uDO8zWDhfWwoFdKS4fzkUJt0Rf0.jpg
-- Movies hero: https://image.tmdb.org/t/p/w780/d5NXSklXo0qyIYkgV94XAgMIckC.jpg
-- TV hero: https://image.tmdb.org/t/p/w780/4EYPN5mVIhKLfxGruy7Dy41dTVn.jpg
-- Anime hero: https://image.tmdb.org/t/p/w780/u3bZgnGQ9T01sWNhyveQz0wH0Hl.jpg
-- Animation: https://image.tmdb.org/t/p/w780/askg3SMvhqEl4OL52YuvdtY40Yb.jpg
-- Documentary: https://image.tmdb.org/t/p/w780/xJHokMbljvjADYdit5fK5VQsXEG.jpg
-- Music: https://image.tmdb.org/t/p/w780/uOw5JD8IlD546feZ6oxbIjvN66P.jpg
-- Podcasts: https://image.tmdb.org/t/p/w780/zfwEPjB1cASgGCw5ercAh50WiHl.jpg
-- Live TV: https://image.tmdb.org/t/p/w780/qhb1qOilapbapxWQn9jtRCMwXJF.jpg
+Email: hello.nowanime@gmail.com
