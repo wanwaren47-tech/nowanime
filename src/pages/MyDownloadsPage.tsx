@@ -179,9 +179,9 @@ const MyDownloadsPage = () => {
           <div className="text-center py-16 text-white/55">
             <CloudDownload className="w-10 h-10 mx-auto mb-3 text-[hsl(var(--primary))]" />
             <p className="text-sm font-semibold text-white">No downloads yet</p>
-            <p className="text-[11px] mt-1">Tap the download button on any movie or episode and it will appear here.</p>
-            <Link to="/movies" className="inline-block mt-4 px-4 py-2 rounded-lg text-[12px] font-semibold text-white" style={{ background: "hsl(var(--primary))" }}>
-              Browse movies
+            <p className="text-[11px] mt-1">Tap the download button on any anime episode and it will appear here.</p>
+            <Link to="/anime" className="inline-block mt-4 px-4 py-2 rounded-lg text-[12px] font-semibold text-white" style={{ background: "hsl(var(--primary))" }}>
+              Browse anime
             </Link>
           </div>
         ) : (
