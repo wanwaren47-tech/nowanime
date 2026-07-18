@@ -23,7 +23,7 @@ const MovieWatchPage = () => {
   const topRated = useTopRatedAnime();
   const suggestions = trending.data || [];
   const cast = (data?.credits?.cast || []).slice(0, 15);
-  const [server, setServer] = useState<ServerId>("hd");
+  const [server, setServer] = useState<ServerId>("moviebox");
 
   useLayoutEffect(() => { window.scrollTo(0, 0); }, []);
 
