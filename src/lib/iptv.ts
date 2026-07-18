@@ -1,3 +1,5 @@
+import { SUPABASE_URL } from "@/integrations/supabase/client";
+
 // IPTV-org M3U parser + thetvapp.to channel directory.
 // Source: https://iptv-org.github.io/iptv/index.m3u (CORS-enabled)
 
@@ -61,8 +63,7 @@ export const CURATED_SPORTS_CHANNELS: IptvChannel[] = [
 ];
 
 const proxiedStreamUrl = (url: string) => {
-  const ref = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-  return `https://${ref}.supabase.co/functions/v1/proxy?any=1&url=${encodeURIComponent(url)}`;
+  return `${SUPABASE_URL}/functions/v1/proxy?any=1&url=${encodeURIComponent(url)}`;
 };
 
 const attr = (line: string, key: string) => {

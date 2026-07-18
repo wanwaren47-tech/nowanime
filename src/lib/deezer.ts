@@ -1,7 +1,8 @@
 // Deezer client (via deezer-proxy edge function).
-const PROJECT_REF = import.meta.env.VITE_SUPABASE_PROJECT_ID as string;
-const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
-const PROXY_BASE = `https://${PROJECT_REF}.supabase.co/functions/v1/deezer-proxy`;
+import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/integrations/supabase/client";
+
+const SUPABASE_KEY = SUPABASE_PUBLISHABLE_KEY;
+const PROXY_BASE = `${SUPABASE_URL}/functions/v1/deezer-proxy`;
 
 export interface DeezerArtist {
   id: number;
