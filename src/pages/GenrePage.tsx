@@ -2,20 +2,16 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import AppLayout from "@/components/AppLayout";
 import SEO from "@/components/SEO";
-import type { NormalizedVideo } from "@/hooks/useKenyaContent";
-
-const TMDB_BASE = "https://api.themoviedb.org/3";
-const TMDB_IMG = "https://image.tmdb.org/t/p";
-const TMDB_KEY = import.meta.env.VITE_TMDB_API_KEY || "";
+import { fetchList, img } from "@/lib/tmdb";
 
 const GENRE_MAP: Record<string, { name: string; id: number }> = {
-  action: { name: "Action", id: 28 },
+  action: { name: "Action", id: 10759 },
   comedy: { name: "Comedy", id: 35 },
-  horror: { name: "Horror", id: 27 },
+  horror: { name: "Horror", id: 9648 },
   drama: { name: "Drama", id: 18 },
-  scifi: { name: "Sci-Fi", id: 878 },
+  scifi: { name: "Sci-Fi", id: 10765 },
   romance: { name: "Romance", id: 10749 },
-  thriller: { name: "Thriller", id: 53 },
+  thriller: { name: "Thriller", id: 9648 },
   animation: { name: "Animation", id: 16 },
   documentary: { name: "Documentary", id: 99 },
   trending: { name: "Trending", id: 0 },
@@ -29,45 +25,48 @@ const GenrePage = () => {
   const { data: movies = [], isLoading } = useQuery({
     queryKey: ["tmdb-genre", genre],
     queryFn: async () => {
-      let url: string;
+      const qs = new URLSearchParams({
+        sort_by: "popularity.desc",
+        with_genres: "16",
+        with_original_language: "ja",
+        include_adult: "false",
+      });
       if (genre === "trending") {
-        url = `${TMDB_BASE}/trending/movie/week?api_key=${TMDB_KEY}`;
+        qs.set("sort_by", "popularity.desc");
       } else if (genre === "new-releases") {
-        url = `${TMDB_BASE}/movie/now_playing?api_key=${TMDB_KEY}`;
+        qs.set("sort_by", "first_air_date.desc");
       } else {
-        url = `${TMDB_BASE}/discover/movie?api_key=${TMDB_KEY}&with_genres=${info.id}&sort_by=popularity.desc`;
+        qs.set("with_genres", info.id === 16 ? "16" : `16,${info.id}`);
       }
-      const res = await fetch(url);
-      const data = await res.json();
-      return (data.results || []).map((m: any) => ({
+      const data = await fetchList(`/discover/tv?${qs.toString()}`, "tv");
+      return data.map((m: any) => ({
         id: `tmdb-${m.id}`,
         tmdbId: m.id,
         title: m.title || m.name || "",
-        thumbnail: m.poster_path ? `${TMDB_IMG}/w500${m.poster_path}` : "",
+        thumbnail: img(m.poster_path, "w500"),
         channel: "",
         views: `${(m.vote_average || 0).toFixed(1)}`,
         duration: "",
-        backdrop: m.backdrop_path ? `${TMDB_IMG}/w780${m.backdrop_path}` : "",
+        backdrop: img(m.backdrop_path, "w780"),
       }));
     },
-    enabled: !!TMDB_KEY,
   });
 
   return (
     <AppLayout>
       <SEO
-        title={`${info.name} Movies – NowAnime`}
-        description={`Discover ${info.name.toLowerCase()} movies on NowAnime. Trending, top-rated and new releases all in one place.`}
+          title={`${info.name} Anime – NowAnime`}
+          description={`Discover ${info.name.toLowerCase()} anime on NowAnime. Trending, top-rated and new releases all in one place.`}
         jsonLd={{
           "@type": "CollectionPage",
-          name: `${info.name} Movies – NowAnime`,
-          description: `Discover ${info.name.toLowerCase()} movies on NowAnime.`,
+            name: `${info.name} Anime – NowAnime`,
+            description: `Discover ${info.name.toLowerCase()} anime on NowAnime.`,
           url: `https://nowanime.lovable.app/genre/${genre}`,
         }}
       />
       <div className="px-[4%] pt-6 pb-2">
         <h1 className="text-2xl font-semibold text-white">{info.name}</h1>
-        <p className="text-sm text-[#A1A1A1] mt-1">Discover {info.name.toLowerCase()} movies</p>
+        <p className="text-sm text-[#A1A1A1] mt-1">Discover {info.name.toLowerCase()} anime</p>
       </div>
 
       <div className="px-[4%] pb-10">
@@ -80,7 +79,7 @@ const GenrePage = () => {
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-5 mt-4">
             {movies.map((m: any) => (
-              <a key={m.id} href={`/movie/${m.tmdbId}`} className="group">
+              <a key={m.id} href={`/tv/${m.tmdbId}`} className="group">
                 <div className="aspect-[2/3] rounded-lg overflow-hidden bg-[#1A1A1A] relative shadow-md group-hover:shadow-xl transition-all duration-200 group-hover:scale-105">
                   {m.thumbnail ? (
                     <img src={m.thumbnail} alt={m.title} className="w-full h-full object-cover" loading="lazy" />

@@ -1,5 +1,6 @@
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/integrations/supabase/client";
+
+const SUPABASE_KEY = SUPABASE_PUBLISHABLE_KEY;
 
 async function pipedFetch(path: string): Promise<any> {
   const url = `${SUPABASE_URL}/functions/v1/piped-proxy?path=${encodeURIComponent(path)}`;
