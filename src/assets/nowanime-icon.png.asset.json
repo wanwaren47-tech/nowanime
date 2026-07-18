@@ -1,11 +1,11 @@
 {
-  "version": 1,
   "asset_id": "9dcf5f35-cdb8-455f-a6e2-ca18bbf4159b",
-  "project_id": "96c68b68-2deb-46de-8436-d11db4036ca5",
-  "url": "/__l5e/assets-v1/9dcf5f35-cdb8-455f-a6e2-ca18bbf4159b/nowanime-icon.png",
-  "r2_key": "a/v1/96c68b68-2deb-46de-8436-d11db4036ca5/9dcf5f35-cdb8-455f-a6e2-ca18bbf4159b/nowanime-icon.png",
-  "original_filename": "nowanime-icon.png",
-  "size": 1157445,
   "content_type": "image/png",
-  "created_at": "2026-07-13T18:02:28Z"
+  "created_at": "2026-07-13T18:02:28Z",
+  "original_filename": "nowanime-icon.png",
+  "project_id": "d16d8728-5374-4a39-b636-0c8ad892d8da",
+  "r2_key": "a/v1/d16d8728-5374-4a39-b636-0c8ad892d8da/9dcf5f35-cdb8-455f-a6e2-ca18bbf4159b/nowanime-icon.png",
+  "size": 1157445,
+  "url": "/__l5e/assets-v1/9dcf5f35-cdb8-455f-a6e2-ca18bbf4159b/nowanime-icon.png",
+  "version": 1
 }
