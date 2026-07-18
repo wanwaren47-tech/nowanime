@@ -3,6 +3,7 @@
 // the proxy edge function so the browser can fetch them (the CDN requires a
 // Referer header the browser cannot set).
 import { supabase } from "@/integrations/supabase/client";
+import { SUPABASE_URL } from "@/integrations/supabase/client";
 
 export interface MovieboxDownload {
   resolution: number; // 1080 / 720 / 480 / 360
@@ -55,8 +56,7 @@ export async function resolveMovieboxDownloads(args: ResolveArgs): Promise<Movie
 // Wrap a MovieBox CDN URL through the proxy edge function (adds the required
 // Referer + permissive CORS so the browser can download/stream it).
 export function movieboxProxyUrl(url: string): string {
-  const ref = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-  return `https://${ref}.supabase.co/functions/v1/proxy?url=${encodeURIComponent(url)}`;
+  return `${SUPABASE_URL}/functions/v1/proxy?url=${encodeURIComponent(url)}`;
 }
 
 export function formatBytes(bytes: number): string {

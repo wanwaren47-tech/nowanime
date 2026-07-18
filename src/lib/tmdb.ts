@@ -1,9 +1,9 @@
 // Centralized TMDB API client. Routes through the `tmdb-proxy` edge function
 // so the TMDB_API_KEY stays server-side. Returns normalized shapes.
 
-const PROJECT_REF = import.meta.env.VITE_SUPABASE_PROJECT_ID as string;
-const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
-const PROXY_BASE = `https://${PROJECT_REF}.supabase.co/functions/v1/tmdb-proxy`;
+import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/integrations/supabase/client";
+
+const PROXY_BASE = `${SUPABASE_URL}/functions/v1/tmdb-proxy`;
 
 export const TMDB_IMG = "https://image.tmdb.org/t/p";
 
@@ -54,7 +54,7 @@ export async function tmdb<T = any>(path: string, params: Record<string, string 
   const qs = search.toString();
   const url = `${PROXY_BASE}${normalized}${qs ? `?${qs}` : ""}`;
   const res = await fetch(url, {
-    headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` },
+    headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY}` },
   });
   if (!res.ok) throw new Error(`TMDB ${res.status}`);
   return res.json();
