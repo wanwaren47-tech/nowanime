@@ -1,15 +1,20 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Loader2, AlertCircle, RefreshCw, Expand, WifiOff, CloudDownload } from "lucide-react";
+import { Loader2, AlertCircle, RefreshCw, Expand, WifiOff, CloudDownload, Play } from "lucide-react";
 import { Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { recordStream, getCachedStream } from "@/lib/streamCache";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 import { isDownloaded } from "@/lib/offlineDownloads";
 import DownloadButton from "@/components/DownloadButton";
-import { PROVIDERS, type ServerId } from "@/lib/streamProviders";
+import {
+  resolveMovieboxDownloads,
+  movieboxProxyUrl,
+  resolutionLabel,
+  formatBytes,
+  type MovieboxDownload,
+} from "@/lib/moviebox";
 
-export type { ServerId };
-export const PLAYER_SERVERS = PROVIDERS;
+// Legacy type kept as a no-op export so existing imports don't break.
+export type ServerId = "moviebox";
+export const PLAYER_SERVERS = [{ id: "moviebox", label: "MovieBox", short: "HD" }] as const;
 
 interface Props {
   tmdbId: string;
@@ -17,6 +22,7 @@ interface Props {
   type?: "movie" | "tv";
   season?: number;
   episode?: number;
+  /** Kept for backwards compatibility; unused. */
   serverId?: ServerId;
   onServerChange?: (id: ServerId) => void;
   title?: string;
@@ -25,29 +31,25 @@ interface Props {
   backdrop?: string | null;
 }
 
-const SANDBOX = "allow-same-origin allow-scripts allow-forms allow-presentation";
+// Preferred order of resolutions we surface in the selector.
+const PREFERRED = [1080, 720, 480];
 
 const MoviePlayer = ({
   tmdbId,
-  imdbId,
   type = "movie",
   season = 1,
   episode = 1,
-  serverId,
-  onServerChange,
   title,
   year,
   poster,
   backdrop,
 }: Props) => {
-  const initialIdx = Math.max(0, PROVIDERS.findIndex((s) => s.id === serverId));
-  const [serverIdx, setServerIdx] = useState(initialIdx === -1 ? 0 : initialIdx);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-  const [resolvedSrc, setResolvedSrc] = useState<string>("");
-  const [kind, setKind] = useState<"embed" | "hls" | "mp4">("embed");
+  const [error, setError] = useState<string | null>(null);
+  const [downloads, setDownloads] = useState<MovieboxDownload[]>([]);
+  const [selected, setSelected] = useState<MovieboxDownload | null>(null);
+  const [playing, setPlaying] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const timerRef = useRef<ReturnType<typeof setTimeout>>();
   const online = useOnlineStatus();
   const [savedOffline, setSavedOffline] = useState(false);
 
@@ -59,91 +61,54 @@ const MoviePlayer = ({
     return () => { active = false; };
   }, [type, tmdbId]);
 
-  useEffect(() => {
-    if (!serverId) return;
-    const i = PROVIDERS.findIndex((s) => s.id === serverId);
-    if (i >= 0 && i !== serverIdx) setServerIdx(i);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [serverId]);
-
-  const server = PROVIDERS[serverIdx];
-
-  useEffect(() => {
-    let active = true;
+  const fetchStreams = useCallback(async () => {
+    if (!title) return;
     setLoading(true);
-    setError(false);
-    setResolvedSrc("");
-    setKind("embed");
-    (async () => {
-      // Cache first
-      const cached = await getCachedStream(
-        tmdbId, type, server.id,
-        type === "tv" ? season : undefined,
-        type === "tv" ? episode : undefined,
-      );
-      if (!active) return;
-      if (cached?.url) {
-        setResolvedSrc(cached.url);
-        return;
-      }
-      try {
-        const { data, error: fnErr } = await supabase.functions.invoke("resolve-stream", {
-          body: {
-            provider: server.resolveProvider,
-            tmdbId,
-            imdbId,
-            type,
-            season: type === "tv" ? season : undefined,
-            episode: type === "tv" ? episode : undefined,
-            title,
-            year,
-          },
-        });
-        if (!active) return;
-        if (fnErr || !data?.ok || !data?.streamUrl) {
-          setError(true);
-          return;
-        }
-        setKind(data.kind === "hls" || data.kind === "mp4" ? data.kind : "embed");
-        setResolvedSrc(data.streamUrl);
-      } catch {
-        if (active) setError(true);
-      }
-    })();
-    return () => { active = false; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [serverIdx, tmdbId, type, season, episode]);
+    setError(null);
+    setPlaying(false);
+    setSelected(null);
+    const res = await resolveMovieboxDownloads({
+      title,
+      year,
+      mediaType: type === "tv" ? "tv" : "anime",
+      season: type === "tv" ? season : undefined,
+      episode: type === "tv" ? episode : undefined,
+    });
+    if (!res.ok || !res.downloads?.length) {
+      setError(res.reason || "No stream available for this title.");
+      setDownloads([]);
+      setLoading(false);
+      return;
+    }
+    // Pick best available for each preferred rung, then keep any extras.
+    const byRes = new Map<number, MovieboxDownload>();
+    for (const d of res.downloads) {
+      const existing = byRes.get(d.resolution);
+      if (!existing || (d.size || 0) > (existing.size || 0)) byRes.set(d.resolution, d);
+    }
+    const ordered: MovieboxDownload[] = [];
+    for (const r of PREFERRED) {
+      const hit = byRes.get(r);
+      if (hit) ordered.push(hit);
+    }
+    // Include any other resolutions not in preferred list, highest first.
+    Array.from(byRes.values())
+      .filter((d) => !PREFERRED.includes(d.resolution))
+      .sort((a, b) => b.resolution - a.resolution)
+      .forEach((d) => ordered.push(d));
+    setDownloads(ordered);
+    // Default highlight to 1080p or the best available.
+    setSelected(ordered[0] || null);
+    setLoading(false);
+  }, [title, year, type, season, episode]);
 
   useEffect(() => {
-    if (!resolvedSrc) return;
-    clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => {
-      setError(true);
-      recordStream(
-        tmdbId, type, server.id, resolvedSrc, false,
-        type === "tv" ? season : undefined,
-        type === "tv" ? episode : undefined,
-      );
-    }, 15000);
-    return () => clearTimeout(timerRef.current);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resolvedSrc]);
+    fetchStreams();
+  }, [fetchStreams]);
 
-  const selectServer = useCallback((idx: number) => {
-    const i = ((idx % PROVIDERS.length) + PROVIDERS.length) % PROVIDERS.length;
-    setServerIdx(i);
-    onServerChange?.(PROVIDERS[i].id);
-  }, [onServerChange]);
-
-  const handleLoad = () => {
-    clearTimeout(timerRef.current);
-    setLoading(false);
-    setError(false);
-    recordStream(
-      tmdbId, type, server.id, resolvedSrc, true,
-      type === "tv" ? season : undefined,
-      type === "tv" ? episode : undefined,
-    );
+  const startPlayback = (d: MovieboxDownload) => {
+    setSelected(d);
+    setPlaying(true);
   };
 
   const toggleFullscreen = useCallback(() => {
@@ -189,79 +154,114 @@ const MoviePlayer = ({
     );
   }
 
+  const proxied = selected ? movieboxProxyUrl(selected.url) : "";
+
   return (
     <div className="w-full" style={{ background: "hsl(var(--background))" }}>
       <div ref={containerRef} className="relative w-full aspect-video overflow-hidden bg-black">
-        {resolvedSrc && kind === "embed" && (
-          <iframe
-            key={resolvedSrc}
-            src={resolvedSrc}
-            className="absolute inset-0 w-full h-full"
-            onLoad={handleLoad}
-            allowFullScreen
-            allow="autoplay; fullscreen; picture-in-picture; encrypted-media; clipboard-write"
-            sandbox={SANDBOX}
-            referrerPolicy="origin"
-            title="NowAnime Player"
-            style={{ border: 0, aspectRatio: "16/9" }}
-          />
-        )}
-        {resolvedSrc && kind !== "embed" && (
+        {playing && proxied && (
           <video
-            key={resolvedSrc}
-            src={resolvedSrc}
+            key={proxied}
+            src={proxied}
             className="absolute inset-0 w-full h-full bg-black"
             controls
             autoPlay
             playsInline
             crossOrigin="anonymous"
-            onLoadedData={handleLoad}
-            onError={() => setError(true)}
+            onError={() => setError("Playback failed. Try a different quality.")}
+            poster={backdrop || poster || undefined}
           />
         )}
 
-        {loading && !error && (
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center pointer-events-none" style={{ background: "hsl(var(--background))" }}>
-            <Loader2 className="w-9 h-9 animate-spin mb-2" style={{ color: "hsl(var(--primary))" }} />
-            <p className="text-white text-xs font-medium">Loading {server.label}…</p>
+        {!playing && !loading && !error && downloads.length > 0 && (
+          <div
+            className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 px-6 text-center"
+            style={{
+              background: backdrop
+                ? `linear-gradient(rgba(0,0,0,0.72), rgba(0,0,0,0.85)), url(${backdrop}) center/cover no-repeat`
+                : "hsl(var(--background))",
+            }}
+          >
+            <p className="text-white text-xs font-semibold uppercase tracking-wider opacity-80">Select quality</p>
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              {downloads.map((d) => {
+                const active = selected?.resolution === d.resolution;
+                return (
+                  <button
+                    key={d.resolution + d.url}
+                    onClick={() => setSelected(d)}
+                    className="px-3.5 py-1.5 rounded-lg text-[11.5px] font-semibold transition-colors"
+                    style={{
+                      background: active ? "var(--gradient-primary, hsl(var(--primary)))" : "rgba(255,255,255,0.09)",
+                      color: "#fff",
+                      border: active ? "1px solid transparent" : "1px solid rgba(255,255,255,0.14)",
+                    }}
+                  >
+                    {resolutionLabel(d.resolution)}
+                    {d.size ? <span className="ml-1.5 opacity-70 font-normal">{formatBytes(d.size)}</span> : null}
+                  </button>
+                );
+              })}
+            </div>
+            <button
+              onClick={() => selected && startPlayback(selected)}
+              disabled={!selected}
+              className="mt-1 inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-[12px] font-bold text-white disabled:opacity-50"
+              style={{ background: "hsl(var(--primary))" }}
+            >
+              <Play className="w-3.5 h-3.5 fill-white" /> Watch now
+            </button>
           </div>
         )}
 
-        {error && (
+        {loading && (
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center pointer-events-none" style={{ background: "hsl(var(--background))" }}>
+            <Loader2 className="w-9 h-9 animate-spin mb-2" style={{ color: "hsl(var(--primary))" }} />
+            <p className="text-white text-xs font-medium">Finding stream…</p>
+          </div>
+        )}
+
+        {error && !loading && (
           <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-2 px-6 text-center" style={{ background: "hsl(var(--background))" }}>
             <AlertCircle className="w-8 h-8" style={{ color: "hsl(var(--primary))" }} />
-            <p className="text-white text-xs font-medium">Couldn't load {server.label}.</p>
+            <p className="text-white text-xs font-medium">{error}</p>
             <button
-              onClick={() => selectServer(serverIdx + 1)}
+              onClick={fetchStreams}
               className="flex items-center gap-1.5 text-white text-[11px] px-3 py-1.5 rounded-md font-semibold"
               style={{ background: "hsl(var(--primary))" }}
             >
-              <RefreshCw className="w-3 h-3" /> Try next server
+              <RefreshCw className="w-3 h-3" /> Retry
             </button>
           </div>
         )}
       </div>
 
+      {/* Toolbar: quality switcher (while playing) + download + fullscreen */}
       <div className="flex items-center gap-1.5 px-3 py-2" style={{ background: "hsl(var(--background))", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
         <div className="flex-1 flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground pr-1 flex-shrink-0">Server</span>
-          {PROVIDERS.map((s, i) => {
-            const active = i === serverIdx;
+          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground pr-1 flex-shrink-0">
+            Quality
+          </span>
+          {downloads.map((d) => {
+            const active = selected?.resolution === d.resolution;
             return (
               <button
-                key={s.id}
-                onClick={() => selectServer(i)}
+                key={d.resolution + d.url}
+                onClick={() => { setSelected(d); setPlaying(true); }}
                 className="px-2.5 py-1 rounded-md text-[10.5px] font-semibold whitespace-nowrap transition-colors flex-shrink-0"
                 style={{
-                  background: active ? "var(--gradient-primary)" : "rgba(255,255,255,0.06)",
+                  background: active ? "var(--gradient-primary, hsl(var(--primary)))" : "rgba(255,255,255,0.06)",
                   color: active ? "#fff" : "rgba(255,255,255,0.75)",
                   border: active ? "1px solid transparent" : "1px solid rgba(255,255,255,0.08)",
                 }}
               >
-                {s.short}
+                {resolutionLabel(d.resolution)}
               </button>
             );
           })}
+          {!downloads.length && (
+            <span className="text-[10.5px] text-white/45">Waiting for stream…</span>
+          )}
         </div>
 
         {title && (
