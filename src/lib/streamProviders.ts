@@ -1,8 +1,8 @@
-// Central registry of iframe stream providers used by MoviePlayer.
-// Reduced to 2 providers: 111Movies (HD, IMDb-based, default) with
-// SmashyStream as automatic fallback.
+// Central registry of stream providers used by MoviePlayer.
+// Order: FastStreams (#1 default) → HD (MovieBox direct) → Mirror (NetMirror).
+// All three resolve through the `resolve-stream` edge function.
 
-export type ServerId = "hd" | "smashy";
+export type ServerId = "faststreams" | "hd" | "mirror";
 
 export interface ProviderCtx {
   tmdbId: string;
@@ -10,38 +10,22 @@ export interface ProviderCtx {
   type: "movie" | "tv";
   season?: number;
   episode?: number;
+  title?: string;
+  year?: string;
 }
 
 export interface Provider {
   id: ServerId;
   label: string;
   short: string;
-  requiresImdb?: boolean;
-  build: (ctx: ProviderCtx) => string;
+  /** Passed as `provider` to the resolve-stream edge function. */
+  resolveProvider: ServerId;
 }
 
 export const PROVIDERS: Provider[] = [
-  {
-    id: "hd",
-    label: "HD · 111Movies",
-    short: "HD",
-    requiresImdb: true,
-    build: ({ imdbId, tmdbId, type, season, episode }) => {
-      const id = imdbId || tmdbId;
-      return type === "tv"
-        ? `https://111movies.com/tv/${id}/${season}/${episode}`
-        : `https://111movies.com/movie/${id}`;
-    },
-  },
-  {
-    id: "smashy",
-    label: "SmashyStream",
-    short: "Smashy",
-    build: ({ tmdbId, type, season, episode }) =>
-      type === "tv"
-        ? `https://embed.smashystream.com/playere.php?tmdb=${tmdbId}&season=${season}&episode=${episode}`
-        : `https://embed.smashystream.com/playere.php?tmdb=${tmdbId}`,
-  },
+  { id: "faststreams", label: "FastStreams", short: "Fast", resolveProvider: "faststreams" },
+  { id: "hd", label: "HD", short: "HD", resolveProvider: "hd" },
+  { id: "mirror", label: "Mirror", short: "Mirror", resolveProvider: "mirror" },
 ];
 
 export const getProvider = (id: ServerId) =>
