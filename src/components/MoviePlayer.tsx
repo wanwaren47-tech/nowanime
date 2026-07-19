@@ -255,12 +255,45 @@ const MoviePlayer = ({
         )}
       </div>
 
-      {/* Toolbar: quality switcher (while playing) + download + fullscreen */}
+      {/* MovieBox-style toolbar: transport controls · subtitles · quality · download · fullscreen */}
       <div className="flex items-center gap-1.5 px-3 py-2" style={{ background: "hsl(var(--background))", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
-        <div className="flex-1 flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground pr-1 flex-shrink-0">
-            Quality
-          </span>
+        {/* Transport controls */}
+        <div className="flex items-center gap-1 flex-shrink-0">
+          <button
+            onClick={() => onPrevious?.()}
+            disabled={!onPrevious}
+            title="Previous"
+            aria-label="Previous"
+            className="grid place-items-center h-7 w-7 rounded-md text-white disabled:opacity-30"
+            style={{ background: "rgba(255,255,255,0.08)" }}
+          >
+            <SkipBack className="w-3.5 h-3.5" />
+          </button>
+          <button
+            onClick={() => selected && startPlayback(selected)}
+            disabled={!selected}
+            title="Play"
+            aria-label="Play"
+            className="grid place-items-center h-7 w-7 rounded-md text-white disabled:opacity-30"
+            style={{ background: "hsl(var(--primary))" }}
+          >
+            <Play className="w-3.5 h-3.5 fill-white" />
+          </button>
+          <button
+            onClick={() => onNext?.()}
+            disabled={!onNext}
+            title="Next"
+            aria-label="Next"
+            className="grid place-items-center h-7 w-7 rounded-md text-white disabled:opacity-30"
+            style={{ background: "rgba(255,255,255,0.08)" }}
+          >
+            <SkipForward className="w-3.5 h-3.5" />
+          </button>
+        </div>
+
+        {/* Quality selector */}
+        <div className="flex-1 flex items-center gap-1.5 overflow-x-auto scrollbar-hide pl-1">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground pr-1 flex-shrink-0">Quality</span>
           {downloads.map((d) => {
             const active = selected?.resolution === d.resolution;
             return (
@@ -282,6 +315,20 @@ const MoviePlayer = ({
             <span className="text-[10.5px] text-white/45">Waiting for stream…</span>
           )}
         </div>
+
+        {/* Subtitles (placeholder — resolver payload doesn't yet include tracks) */}
+        <button
+          title="Subtitles"
+          aria-label="Subtitles"
+          className="flex-shrink-0 grid place-items-center h-7 w-7 rounded-md text-white/70 hover:text-white"
+          style={{ background: "rgba(255,255,255,0.06)" }}
+          onClick={() => {
+            // Native <video controls> exposes browser-provided caption UI when tracks exist.
+            // MovieBox streams currently ship without external tracks; this is here for UX parity.
+          }}
+        >
+          <Subtitles className="w-3.5 h-3.5" />
+        </button>
 
         {title && (
           <DownloadButton
