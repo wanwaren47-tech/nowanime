@@ -24,6 +24,7 @@ import AnimePage from "./pages/AnimePage";
 import AnimeDetailPage from "./pages/AnimeDetailPage";
 import SettingsPage from "./pages/SettingsPage";
 import PrivacyPage from "./pages/PrivacyPage";
+import TrendingPage from "./pages/TrendingPage";
 
 import MyDownloadsPage from "./pages/MyDownloadsPage";
 import DownloadPage from "./pages/DownloadPage";
@@ -95,6 +96,7 @@ const App = () => (
             <Route path="/anime/:id" element={<AnimeDetailPage />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/watch/:videoId" element={<WatchPage />} />
+            <Route path="/trending" element={<TrendingPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/my-list" element={<MyListPage />} />
             <Route path="/library" element={<LibraryPage />} />
