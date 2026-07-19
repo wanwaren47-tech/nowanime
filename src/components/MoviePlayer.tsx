@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Loader2, AlertCircle, RefreshCw, Expand, WifiOff, CloudDownload, Play } from "lucide-react";
+import { Loader2, AlertCircle, RefreshCw, Expand, WifiOff, CloudDownload, Play, SkipBack, SkipForward, Subtitles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 import { isDownloaded } from "@/lib/offlineDownloads";
@@ -29,6 +29,9 @@ interface Props {
   year?: string;
   poster?: string | null;
   backdrop?: string | null;
+  onEnded?: () => void;
+  onNext?: () => void;
+  onPrevious?: () => void;
 }
 
 // Preferred order of resolutions we surface in the selector.
@@ -43,6 +46,9 @@ const MoviePlayer = ({
   year,
   poster,
   backdrop,
+  onEnded,
+  onNext,
+  onPrevious,
 }: Props) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -111,11 +117,23 @@ const MoviePlayer = ({
     setPlaying(true);
   };
 
-  const toggleFullscreen = useCallback(() => {
+  const toggleFullscreen = useCallback(async () => {
     const el = containerRef.current;
     if (!el) return;
-    if (!document.fullscreenElement) el.requestFullscreen?.();
-    else document.exitFullscreen?.();
+    try {
+      if (!document.fullscreenElement) {
+        await el.requestFullscreen?.();
+        // Lock landscape on touch devices where supported.
+        const orientation: any = (screen as any).orientation;
+        if (orientation?.lock && window.matchMedia("(pointer: coarse)").matches) {
+          try { await orientation.lock("landscape"); } catch { /* ignore */ }
+        }
+      } else {
+        const orientation: any = (screen as any).orientation;
+        try { orientation?.unlock?.(); } catch { /* ignore */ }
+        await document.exitFullscreen?.();
+      }
+    } catch { /* ignore */ }
   }, []);
 
   useEffect(() => {
@@ -169,6 +187,7 @@ const MoviePlayer = ({
             playsInline
             crossOrigin="anonymous"
             onError={() => setError("Playback failed. Try a different quality.")}
+            onEnded={() => onEnded?.()}
             poster={backdrop || poster || undefined}
           />
         )}
