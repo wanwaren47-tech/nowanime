@@ -81,7 +81,7 @@ const TvWatchPage = () => {
 
         <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-4 lg:px-4 lg:py-3">
           <div className="min-w-0">
-            <div className="w-full lg:rounded-lg lg:overflow-hidden">
+            <div className="w-full lg:rounded-lg lg:overflow-hidden relative">
               <MoviePlayer
                 tmdbId={tmdbId || ""}
                 imdbId={ext.data?.imdb_id || null}
@@ -94,7 +94,18 @@ const TvWatchPage = () => {
                 year={(data?.first_air_date || "").slice(0, 4)}
                 poster={data?.poster_path ? img(data.poster_path, "w500") : null}
                 backdrop={data?.backdrop_path ? img(data.backdrop_path, "w780") : null}
+                onEnded={handleEnded}
+                onNext={goNext}
+                onPrevious={episodeNum > 1 ? goPrev : undefined}
               />
+              {upNext && data && (
+                <UpNextOverlay
+                  title={`${data.name} · S${upNext.season} E${upNext.episode}`}
+                  subtitle="Next episode"
+                  onPlay={() => navigate(`/watch/tv/${tmdbId}/${upNext.season}/${upNext.episode}`)}
+                  onCancel={() => setUpNext(null)}
+                />
+              )}
             </div>
 
         {data && (
