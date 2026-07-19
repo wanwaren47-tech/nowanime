@@ -1,6 +1,8 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Download, Check, ChevronDown } from "lucide-react";
 import { useEffect, useLayoutEffect, useState } from "react";
+import UpNextOverlay from "@/components/player/UpNextOverlay";
+import { getNextEpisode, getAutoplayEnabled } from "@/lib/autoplay";
 import MoviePlayer, { ServerId } from "@/components/MoviePlayer";
 import SEO from "@/components/SEO";
 import InlineAdRow from "@/components/InlineAdRow";
@@ -13,6 +15,7 @@ import { recordContinue } from "@/components/TmdbContinueRow";
 
 const TvWatchPage = () => {
   const { tmdbId, season, episode } = useParams<{ tmdbId: string; season: string; episode: string }>();
+  const navigate = useNavigate();
   const { data } = useTvDetail(tmdbId);
   const seasonNum = Number(season || 1);
   const episodeNum = Number(episode || 1);
@@ -39,7 +42,25 @@ const TvWatchPage = () => {
     }
   }, [data, seasonNum, episodeNum]);
 
-  const upNext = (trending.data || []).slice(0, 15);
+  const upNextList = (trending.data || []).slice(0, 15);
+  const [upNext, setUpNext] = useState<{ season: number; episode: number } | null>(null);
+
+  const handleEnded = async () => {
+    if (!getAutoplayEnabled()) return;
+    const nx = await getNextEpisode(tmdbId || "", seasonNum, episodeNum);
+    if (nx) setUpNext({ season: nx.season, episode: nx.episode });
+  };
+  const goNext = async () => {
+    if (upNext) {
+      navigate(`/watch/tv/${tmdbId}/${upNext.season}/${upNext.episode}`);
+      return;
+    }
+    const nx = await getNextEpisode(tmdbId || "", seasonNum, episodeNum);
+    if (nx) navigate(`/watch/tv/${tmdbId}/${nx.season}/${nx.episode}`);
+  };
+  const goPrev = () => {
+    if (episodeNum > 1) navigate(`/watch/tv/${tmdbId}/${seasonNum}/${episodeNum - 1}`);
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -60,7 +81,7 @@ const TvWatchPage = () => {
 
         <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-4 lg:px-4 lg:py-3">
           <div className="min-w-0">
-            <div className="w-full lg:rounded-lg lg:overflow-hidden">
+            <div className="w-full lg:rounded-lg lg:overflow-hidden relative">
               <MoviePlayer
                 tmdbId={tmdbId || ""}
                 imdbId={ext.data?.imdb_id || null}
@@ -73,7 +94,18 @@ const TvWatchPage = () => {
                 year={(data?.first_air_date || "").slice(0, 4)}
                 poster={data?.poster_path ? img(data.poster_path, "w500") : null}
                 backdrop={data?.backdrop_path ? img(data.backdrop_path, "w780") : null}
+                onEnded={handleEnded}
+                onNext={goNext}
+                onPrevious={episodeNum > 1 ? goPrev : undefined}
               />
+              {upNext && data && (
+                <UpNextOverlay
+                  title={`${data.name} · S${upNext.season} E${upNext.episode}`}
+                  subtitle="Next episode"
+                  onPlay={() => navigate(`/watch/tv/${tmdbId}/${upNext.season}/${upNext.episode}`)}
+                  onCancel={() => setUpNext(null)}
+                />
+              )}
             </div>
 
         {data && (
@@ -174,7 +206,7 @@ const TvWatchPage = () => {
             <div className="sticky top-14">
               <h3 className="text-[12px] font-semibold text-foreground mb-2 px-1">Up Next</h3>
               <div className="flex flex-col gap-2">
-                {upNext.map((m: any) => (
+                {upNextList.map((m: any) => (
                   <Link key={m.id} to={`/watch/tv/${m.id}/1/1`} className="flex gap-2 rounded-lg p-1.5 hover:bg-white/5 transition">
                     <div className="relative flex-shrink-0 w-[150px] aspect-video rounded-md overflow-hidden bg-surface-2">
                       {(m.backdrop_path || m.poster_path) && (

@@ -1,7 +1,10 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Play } from "lucide-react";
 import { useEffect, useLayoutEffect, useState } from "react";
 import MoviePlayer, { ServerId } from "@/components/MoviePlayer";
+import UpNextOverlay from "@/components/player/UpNextOverlay";
+import { getNextMovie } from "@/lib/autoplay";
+import { getAutoplayEnabled } from "@/lib/autoplay";
 import SEO from "@/components/SEO";
 import InlineAdRow from "@/components/InlineAdRow";
 import TmdbRow from "@/components/TmdbRow";
@@ -16,6 +19,7 @@ import { recordContinue } from "@/components/TmdbContinueRow";
 
 const MovieWatchPage = () => {
   const { tmdbId } = useParams<{ tmdbId: string }>();
+  const navigate = useNavigate();
   const { data } = useMovieDetail(tmdbId);
   const ext = useMovieExternalIds(tmdbId);
   const trending = useTrendingAnime();
@@ -24,6 +28,17 @@ const MovieWatchPage = () => {
   const suggestions = trending.data || [];
   const cast = (data?.credits?.cast || []).slice(0, 15);
   const [server, setServer] = useState<ServerId>("moviebox");
+  const [upNext, setUpNext] = useState<{ id: number; title: string } | null>(null);
+
+  const handleEnded = async () => {
+    if (!getAutoplayEnabled()) return;
+    const next = await getNextMovie(tmdbId || "");
+    if (next) setUpNext(next);
+  };
+  const goNext = async () => {
+    const next = upNext || (await getNextMovie(tmdbId || ""));
+    if (next) navigate(`/watch/movie/${next.id}`);
+  };
 
   useLayoutEffect(() => { window.scrollTo(0, 0); }, []);
 
@@ -56,7 +71,7 @@ const MovieWatchPage = () => {
         <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-4 lg:px-4 lg:py-3">
           {/* LEFT: player + content */}
           <div className="min-w-0">
-            <div className="w-full lg:rounded-lg lg:overflow-hidden">
+            <div className="w-full lg:rounded-lg lg:overflow-hidden relative">
               <MoviePlayer
                 tmdbId={tmdbId || ""}
                 imdbId={ext.data?.imdb_id || null}
@@ -67,7 +82,17 @@ const MovieWatchPage = () => {
                 year={year}
                 poster={data?.poster_path ? img(data.poster_path, "w500") : null}
                 backdrop={data?.backdrop_path ? img(data.backdrop_path, "w780") : null}
+                onEnded={handleEnded}
+                onNext={goNext}
               />
+              {upNext && (
+                <UpNextOverlay
+                  title={upNext.title}
+                  subtitle="Similar anime"
+                  onPlay={() => navigate(`/watch/movie/${upNext.id}`)}
+                  onCancel={() => setUpNext(null)}
+                />
+              )}
             </div>
 
         {data && (
