@@ -1,12 +1,12 @@
-import { Home, Flame, CloudDownload, User, Settings } from "lucide-react";
+import { Home, Compass, Flame, Bookmark, CloudDownload } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 const tabs = [
   { to: "/home", icon: Home, label: "Home", match: (p: string) => p === "/" || p === "/home" },
-  { to: "/anime", icon: Flame, label: "Explore", match: (p: string) => p.startsWith("/anime") || p.startsWith("/search") },
+  { to: "/search", icon: Compass, label: "Explore", match: (p: string) => p.startsWith("/search") || p.startsWith("/anime") },
+  { to: "/trending", icon: Flame, label: "Trending", match: (p: string) => p.startsWith("/trending") },
+  { to: "/my-list", icon: Bookmark, label: "My List", match: (p: string) => p.startsWith("/my-list") || p.startsWith("/library") || p.startsWith("/liked") },
   { to: "/my-downloads", icon: CloudDownload, label: "Downloads", match: (p: string) => p.startsWith("/my-downloads") || p.startsWith("/download") },
-  { to: "/profile", icon: User, label: "Profile", match: (p: string) => p.startsWith("/profile") },
-  { to: "/settings", icon: Settings, label: "Settings", match: (p: string) => p.startsWith("/settings") },
 ];
 
 const BottomNav = () => {
@@ -28,11 +28,7 @@ const BottomNav = () => {
                   active ? "text-primary" : "text-muted-foreground"
                 }`}
               >
-                <Icon
-                  className="h-[22px] w-[22px]"
-                  strokeWidth={active ? 2.4 : 1.9}
-                  style={t.label === "Explore" ? { filter: "drop-shadow(0 0 6px hsl(var(--accent)))" } : undefined}
-                />
+                <Icon className="h-[22px] w-[22px]" strokeWidth={active ? 2.4 : 1.9} />
                 <span className="truncate max-w-full">{t.label}</span>
                 {active && (
                   <span className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[2.5px] w-7 rounded-full bg-primary" />
