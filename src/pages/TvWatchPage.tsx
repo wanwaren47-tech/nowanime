@@ -195,7 +195,7 @@ const TvWatchPage = () => {
             <div className="sticky top-14">
               <h3 className="text-[12px] font-semibold text-foreground mb-2 px-1">Up Next</h3>
               <div className="flex flex-col gap-2">
-                {upNext.map((m: any) => (
+                {upNextList.map((m: any) => (
                   <Link key={m.id} to={`/watch/tv/${m.id}/1/1`} className="flex gap-2 rounded-lg p-1.5 hover:bg-white/5 transition">
                     <div className="relative flex-shrink-0 w-[150px] aspect-video rounded-md overflow-hidden bg-surface-2">
                       {(m.backdrop_path || m.poster_path) && (
