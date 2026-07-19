@@ -51,9 +51,12 @@ const TvWatchPage = () => {
     if (nx) setUpNext({ season: nx.season, episode: nx.episode });
   };
   const goNext = async () => {
-    const nx = upNext || (await getNextEpisode(tmdbId || "", seasonNum, episodeNum))?.let;
-    const target = upNext || (await getNextEpisode(tmdbId || "", seasonNum, episodeNum));
-    if (target) navigate(`/watch/tv/${tmdbId}/${target.season}/${target.episode}`);
+    if (upNext) {
+      navigate(`/watch/tv/${tmdbId}/${upNext.season}/${upNext.episode}`);
+      return;
+    }
+    const nx = await getNextEpisode(tmdbId || "", seasonNum, episodeNum);
+    if (nx) navigate(`/watch/tv/${tmdbId}/${nx.season}/${nx.episode}`);
   };
   const goPrev = () => {
     if (episodeNum > 1) navigate(`/watch/tv/${tmdbId}/${seasonNum}/${episodeNum - 1}`);
