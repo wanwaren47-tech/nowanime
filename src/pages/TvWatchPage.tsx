@@ -1,6 +1,8 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Download, Check, ChevronDown } from "lucide-react";
 import { useEffect, useLayoutEffect, useState } from "react";
+import UpNextOverlay from "@/components/player/UpNextOverlay";
+import { getNextEpisode, getAutoplayEnabled } from "@/lib/autoplay";
 import MoviePlayer, { ServerId } from "@/components/MoviePlayer";
 import SEO from "@/components/SEO";
 import InlineAdRow from "@/components/InlineAdRow";
@@ -13,6 +15,7 @@ import { recordContinue } from "@/components/TmdbContinueRow";
 
 const TvWatchPage = () => {
   const { tmdbId, season, episode } = useParams<{ tmdbId: string; season: string; episode: string }>();
+  const navigate = useNavigate();
   const { data } = useTvDetail(tmdbId);
   const seasonNum = Number(season || 1);
   const episodeNum = Number(episode || 1);
@@ -39,7 +42,22 @@ const TvWatchPage = () => {
     }
   }, [data, seasonNum, episodeNum]);
 
-  const upNext = (trending.data || []).slice(0, 15);
+  const upNextList = (trending.data || []).slice(0, 15);
+  const [upNext, setUpNext] = useState<{ season: number; episode: number } | null>(null);
+
+  const handleEnded = async () => {
+    if (!getAutoplayEnabled()) return;
+    const nx = await getNextEpisode(tmdbId || "", seasonNum, episodeNum);
+    if (nx) setUpNext({ season: nx.season, episode: nx.episode });
+  };
+  const goNext = async () => {
+    const nx = upNext || (await getNextEpisode(tmdbId || "", seasonNum, episodeNum))?.let;
+    const target = upNext || (await getNextEpisode(tmdbId || "", seasonNum, episodeNum));
+    if (target) navigate(`/watch/tv/${tmdbId}/${target.season}/${target.episode}`);
+  };
+  const goPrev = () => {
+    if (episodeNum > 1) navigate(`/watch/tv/${tmdbId}/${seasonNum}/${episodeNum - 1}`);
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
