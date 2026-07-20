@@ -118,6 +118,26 @@ const MoviePlayer = ({
     fetchStreams();
   }, [fetchStreams]);
 
+  // Fetch subtitle tracks when title/episode changes.
+  useEffect(() => {
+    let active = true;
+    setSubs([]);
+    setActiveSubFileId(null);
+    if (!tmdbId) return;
+    listSubtitles({
+      type: type === "tv" ? "episode" : "movie",
+      tmdbId,
+      imdbId: imdbId || undefined,
+      season: type === "tv" ? season : undefined,
+      episode: type === "tv" ? episode : undefined,
+      languages: "en",
+    }).then((tracks) => {
+      if (!active) return;
+      setSubs(tracks);
+    });
+    return () => { active = false; };
+  }, [tmdbId, imdbId, type, season, episode]);
+
   const startPlayback = (d: MovieboxDownload) => {
     setSelected(d);
     setPlaying(true);
