@@ -22,7 +22,7 @@ export async function getCachedStream(
   episode?: number,
 ): Promise<StreamSource | null> {
   try {
-    const q = supabase
+    const q = (supabase as any)
       .from("stream_sources")
       .select("*")
       .eq("tmdb_id", tmdbId)
@@ -33,7 +33,7 @@ export async function getCachedStream(
     if (episode != null) q.eq("episode", episode);
     const { data } = await q.limit(1).maybeSingle();
     if (!data) return null;
-    const age = Date.now() - new Date(data.verified_at).getTime();
+    const age = Date.now() - new Date((data as any).verified_at).getTime();
     if (age > SEVEN_DAYS) return null;
     return data as StreamSource;
   } catch {
