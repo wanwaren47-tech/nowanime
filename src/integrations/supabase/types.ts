@@ -14,13 +14,141 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      comments: {
+        Row: {
+          author_name: string
+          comment_text: string
+          created_at: string
+          id: string
+          user_id: string | null
+          video_id: string
+        }
+        Insert: {
+          author_name?: string
+          comment_text: string
+          created_at?: string
+          id?: string
+          user_id?: string | null
+          video_id: string
+        }
+        Update: {
+          author_name?: string
+          comment_text?: string
+          created_at?: string
+          id?: string
+          user_id?: string | null
+          video_id?: string
+        }
+        Relationships: []
+      }
+      likes: {
+        Row: {
+          count: number
+          id: string
+          updated_at: string | null
+          video_id: string
+        }
+        Insert: {
+          count?: number
+          id?: string
+          updated_at?: string | null
+          video_id: string
+        }
+        Update: {
+          count?: number
+          id?: string
+          updated_at?: string | null
+          video_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          email: string | null
+          id: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      stream_sources: {
+        Row: {
+          created_at: string
+          episode: number | null
+          id: string
+          media_type: string
+          season: number | null
+          server: string
+          tmdb_id: string
+          url: string
+          verified_at: string
+          working: boolean
+        }
+        Insert: {
+          created_at?: string
+          episode?: number | null
+          id?: string
+          media_type: string
+          season?: number | null
+          server: string
+          tmdb_id: string
+          url: string
+          verified_at?: string
+          working?: boolean
+        }
+        Update: {
+          created_at?: string
+          episode?: number | null
+          id?: string
+          media_type?: string
+          season?: number | null
+          server?: string
+          tmdb_id?: string
+          url?: string
+          verified_at?: string
+          working?: boolean
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      record_stream_source: {
+        Args: {
+          p_episode?: number
+          p_media_type: string
+          p_season?: number
+          p_server: string
+          p_tmdb_id: string
+          p_url: string
+          p_working: boolean
+        }
+        Returns: undefined
+      }
+      toggle_like: {
+        Args: { p_delta: number; p_video_id: string }
+        Returns: number
+      }
     }
     Enums: {
       [_ in never]: never

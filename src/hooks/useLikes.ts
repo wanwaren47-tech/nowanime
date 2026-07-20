@@ -8,12 +8,12 @@ export function useLikeCount(videoId: string | undefined) {
 
   const fetchCount = useCallback(async () => {
     if (!videoId) return;
-    const { data } = await (supabase as any)
+    const { data } = await supabase
       .from("likes")
       .select("count")
       .eq("video_id", videoId)
       .maybeSingle();
-    if (data) setCount((data as any).count);
+    if (data) setCount(data.count);
   }, [videoId]);
 
   useEffect(() => {

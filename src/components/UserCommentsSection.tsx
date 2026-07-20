@@ -24,7 +24,7 @@ const UserCommentsSection = ({ videoId }: { videoId: string }) => {
   })();
 
   const fetchComments = useCallback(async () => {
-    const { data } = await (supabase as any)
+    const { data } = await supabase
       .from("comments")
       .select("*")
       .eq("video_id", videoId)
@@ -53,7 +53,7 @@ const UserCommentsSection = ({ videoId }: { videoId: string }) => {
   const postComment = async () => {
     if (!text.trim() || posting) return;
     setPosting(true);
-    await (supabase as any).from("comments").insert({
+    await supabase.from("comments").insert({
       video_id: videoId,
       author_name: userName,
       comment_text: text.trim(),
