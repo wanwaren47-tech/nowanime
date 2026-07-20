@@ -205,6 +205,7 @@ const MoviePlayer = ({
       <div ref={containerRef} className="relative w-full aspect-video overflow-hidden bg-black">
         {playing && proxied && (
           <video
+            ref={videoRef}
             key={proxied}
             src={proxied}
             className="absolute inset-0 w-full h-full bg-black"
@@ -215,7 +216,18 @@ const MoviePlayer = ({
             onError={() => setError("Playback failed. Try a different quality.")}
             onEnded={() => onEnded?.()}
             poster={backdrop || poster || undefined}
-          />
+          >
+            {activeSubFileId && (
+              <track
+                key={activeSubFileId}
+                kind="subtitles"
+                srcLang="en"
+                label="English"
+                src={subtitleVttUrl(activeSubFileId)}
+                default
+              />
+            )}
+          </video>
         )}
 
         {!playing && !loading && !error && downloads.length > 0 && (
