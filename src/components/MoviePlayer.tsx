@@ -354,19 +354,51 @@ const MoviePlayer = ({
           )}
         </div>
 
-        {/* Subtitles (placeholder — resolver payload doesn't yet include tracks) */}
-        <button
-          title="Subtitles"
-          aria-label="Subtitles"
-          className="flex-shrink-0 grid place-items-center h-7 w-7 rounded-md text-white/70 hover:text-white"
-          style={{ background: "rgba(255,255,255,0.06)" }}
-          onClick={() => {
-            // Native <video controls> exposes browser-provided caption UI when tracks exist.
-            // MovieBox streams currently ship without external tracks; this is here for UX parity.
-          }}
-        >
-          <Subtitles className="w-3.5 h-3.5" />
-        </button>
+        {/* Subtitles menu (OpenSubtitles) */}
+        <div className="relative flex-shrink-0">
+          <button
+            title="Subtitles"
+            aria-label="Subtitles"
+            className="grid place-items-center h-7 w-7 rounded-md text-white/70 hover:text-white"
+            style={{
+              background: activeSubFileId ? "hsl(var(--primary))" : "rgba(255,255,255,0.06)",
+              color: activeSubFileId ? "#fff" : undefined,
+            }}
+            onClick={() => setSubsMenuOpen((v) => !v)}
+          >
+            <Subtitles className="w-3.5 h-3.5" />
+          </button>
+          {subsMenuOpen && (
+            <div
+              className="absolute right-0 bottom-9 z-40 w-56 max-h-64 overflow-y-auto rounded-lg border border-white/10 bg-[#111] shadow-xl p-1"
+              onMouseLeave={() => setSubsMenuOpen(false)}
+            >
+              <button
+                onClick={() => { setActiveSubFileId(null); setSubsMenuOpen(false); }}
+                className={`w-full text-left px-2.5 py-1.5 rounded text-[11px] ${!activeSubFileId ? "bg-white/10 text-white" : "text-white/70 hover:bg-white/5"}`}
+              >
+                Off
+              </button>
+              {subs.length === 0 && (
+                <p className="px-2.5 py-2 text-[10.5px] text-white/45">No subtitles found</p>
+              )}
+              {subs.map((s) => {
+                const active = activeSubFileId === s.fileId;
+                return (
+                  <button
+                    key={s.fileId}
+                    onClick={() => { setActiveSubFileId(s.fileId); setSubsMenuOpen(false); }}
+                    className={`w-full text-left px-2.5 py-1.5 rounded text-[11px] truncate ${active ? "bg-white/10 text-white" : "text-white/75 hover:bg-white/5"}`}
+                    title={s.release || s.languageName}
+                  >
+                    <span className="uppercase text-[9.5px] font-bold mr-1.5 opacity-70">{s.language}</span>
+                    {s.release || s.languageName}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
 
         {title && (
           <DownloadButton
