@@ -57,8 +57,12 @@ const MoviePlayer = ({
   const [selected, setSelected] = useState<MovieboxDownload | null>(null);
   const [playing, setPlaying] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const online = useOnlineStatus();
   const [savedOffline, setSavedOffline] = useState(false);
+  const [subs, setSubs] = useState<SubtitleTrack[]>([]);
+  const [activeSubFileId, setActiveSubFileId] = useState<number | null>(null);
+  const [subsMenuOpen, setSubsMenuOpen] = useState(false);
 
   useEffect(() => {
     let active = true;
