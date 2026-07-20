@@ -24,7 +24,7 @@ const UserCommentsSection = ({ videoId }: { videoId: string }) => {
   })();
 
   const fetchComments = useCallback(async () => {
-    const { data } = await supabase
+    const { data } = await (supabase as any)
       .from("comments")
       .select("*")
       .eq("video_id", videoId)
