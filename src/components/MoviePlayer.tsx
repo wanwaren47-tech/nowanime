@@ -11,6 +11,7 @@ import {
   formatBytes,
   type MovieboxDownload,
 } from "@/lib/moviebox";
+import { listSubtitles, subtitleVttUrl, type SubtitleTrack } from "@/lib/subtitles";
 
 // Legacy type kept as a no-op export so existing imports don't break.
 export type ServerId = "moviebox";
@@ -39,6 +40,7 @@ const PREFERRED = [1080, 720, 480];
 
 const MoviePlayer = ({
   tmdbId,
+  imdbId,
   type = "movie",
   season = 1,
   episode = 1,
@@ -56,8 +58,12 @@ const MoviePlayer = ({
   const [selected, setSelected] = useState<MovieboxDownload | null>(null);
   const [playing, setPlaying] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const online = useOnlineStatus();
   const [savedOffline, setSavedOffline] = useState(false);
+  const [subs, setSubs] = useState<SubtitleTrack[]>([]);
+  const [activeSubFileId, setActiveSubFileId] = useState<number | null>(null);
+  const [subsMenuOpen, setSubsMenuOpen] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -111,6 +117,26 @@ const MoviePlayer = ({
   useEffect(() => {
     fetchStreams();
   }, [fetchStreams]);
+
+  // Fetch subtitle tracks when title/episode changes.
+  useEffect(() => {
+    let active = true;
+    setSubs([]);
+    setActiveSubFileId(null);
+    if (!tmdbId) return;
+    listSubtitles({
+      type: type === "tv" ? "episode" : "movie",
+      tmdbId,
+      imdbId: imdbId || undefined,
+      season: type === "tv" ? season : undefined,
+      episode: type === "tv" ? episode : undefined,
+      languages: "en",
+    }).then((tracks) => {
+      if (!active) return;
+      setSubs(tracks);
+    });
+    return () => { active = false; };
+  }, [tmdbId, imdbId, type, season, episode]);
 
   const startPlayback = (d: MovieboxDownload) => {
     setSelected(d);
@@ -179,6 +205,7 @@ const MoviePlayer = ({
       <div ref={containerRef} className="relative w-full aspect-video overflow-hidden bg-black">
         {playing && proxied && (
           <video
+            ref={videoRef}
             key={proxied}
             src={proxied}
             className="absolute inset-0 w-full h-full bg-black"
@@ -189,7 +216,18 @@ const MoviePlayer = ({
             onError={() => setError("Playback failed. Try a different quality.")}
             onEnded={() => onEnded?.()}
             poster={backdrop || poster || undefined}
-          />
+          >
+            {activeSubFileId && (
+              <track
+                key={activeSubFileId}
+                kind="subtitles"
+                srcLang="en"
+                label="English"
+                src={subtitleVttUrl(activeSubFileId)}
+                default
+              />
+            )}
+          </video>
         )}
 
         {!playing && !loading && !error && downloads.length > 0 && (
@@ -316,19 +354,51 @@ const MoviePlayer = ({
           )}
         </div>
 
-        {/* Subtitles (placeholder — resolver payload doesn't yet include tracks) */}
-        <button
-          title="Subtitles"
-          aria-label="Subtitles"
-          className="flex-shrink-0 grid place-items-center h-7 w-7 rounded-md text-white/70 hover:text-white"
-          style={{ background: "rgba(255,255,255,0.06)" }}
-          onClick={() => {
-            // Native <video controls> exposes browser-provided caption UI when tracks exist.
-            // MovieBox streams currently ship without external tracks; this is here for UX parity.
-          }}
-        >
-          <Subtitles className="w-3.5 h-3.5" />
-        </button>
+        {/* Subtitles menu (OpenSubtitles) */}
+        <div className="relative flex-shrink-0">
+          <button
+            title="Subtitles"
+            aria-label="Subtitles"
+            className="grid place-items-center h-7 w-7 rounded-md text-white/70 hover:text-white"
+            style={{
+              background: activeSubFileId ? "hsl(var(--primary))" : "rgba(255,255,255,0.06)",
+              color: activeSubFileId ? "#fff" : undefined,
+            }}
+            onClick={() => setSubsMenuOpen((v) => !v)}
+          >
+            <Subtitles className="w-3.5 h-3.5" />
+          </button>
+          {subsMenuOpen && (
+            <div
+              className="absolute right-0 bottom-9 z-40 w-56 max-h-64 overflow-y-auto rounded-lg border border-white/10 bg-[#111] shadow-xl p-1"
+              onMouseLeave={() => setSubsMenuOpen(false)}
+            >
+              <button
+                onClick={() => { setActiveSubFileId(null); setSubsMenuOpen(false); }}
+                className={`w-full text-left px-2.5 py-1.5 rounded text-[11px] ${!activeSubFileId ? "bg-white/10 text-white" : "text-white/70 hover:bg-white/5"}`}
+              >
+                Off
+              </button>
+              {subs.length === 0 && (
+                <p className="px-2.5 py-2 text-[10.5px] text-white/45">No subtitles found</p>
+              )}
+              {subs.map((s) => {
+                const active = activeSubFileId === s.fileId;
+                return (
+                  <button
+                    key={s.fileId}
+                    onClick={() => { setActiveSubFileId(s.fileId); setSubsMenuOpen(false); }}
+                    className={`w-full text-left px-2.5 py-1.5 rounded text-[11px] truncate ${active ? "bg-white/10 text-white" : "text-white/75 hover:bg-white/5"}`}
+                    title={s.release || s.languageName}
+                  >
+                    <span className="uppercase text-[9.5px] font-bold mr-1.5 opacity-70">{s.language}</span>
+                    {s.release || s.languageName}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
 
         {title && (
           <DownloadButton
