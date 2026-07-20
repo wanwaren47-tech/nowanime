@@ -1,44 +1,66 @@
-# NowAnime — 5 Task Plan
+# NowAnime — 10 Task Plan
 
-## Task 1 — Autoplay engine (TV + Movies)
-- Add `src/lib/autoplay.ts` with:
-  - `getNextEpisode(tvId, season, episode)` — uses TMDB `/tv/{id}/season/{n}` to check total episodes; rolls to next season when needed; returns `null` at series end.
-  - `getNextMovie(movieId)` — uses TMDB `/movie/{id}/similar`, returns the first anime‑tagged result.
-- Add `useAutoplay` hook that:
-  - Reads `localStorage.nowanime_autoplay` (default `true`).
-  - Preloads the next stream via existing `resolve-stream` edge function while the current one is still playing (last 30s) so playback is instant.
-  - Emits a 5‑second countdown overlay on `ended` with **Play now / Cancel** buttons.
-- Wire the `ended` event in `MoviePlayer.tsx` (native player) and via `postMessage` for iframe servers where supported; fallback: show a manual "Play Next" button after 100% progress or when iframe reports end.
+> Note: paste your **OpenSubtitles API key** in chat when ready. I'll store it as `OPENSUBTITLES_API_KEY` via `add_secret` and wire it into a new edge function before shipping Task 4.
 
-## Task 2 — YouTube/MovieBox‑style player controls bar
-Redesign the bar under the player (in `WatchMoviePage` / `WatchTVPage`):
-- Left cluster: **Play/Pause · Previous · Next** (Next/Prev use the autoplay resolver; on movies, Previous = last watched from history).
-- Middle cluster: **Subtitles** picker (fetch tracks from resolver payload; user selects language, applied to `<track>` on native, appended as query param on iframe servers that support it).
-- Right cluster: **Quality** selector (uses resolver `qualities[]`, persists choice), **Download**, **Fullscreen**.
-- Fullscreen on mobile: request `screen.orientation.lock('landscape')` after `requestFullscreen()`; unlock on exit. Desktop keeps current constrained size.
+## Task 1 — New moon-icon brand asset everywhere
+- Extract just the red crescent-moon mark from the uploaded logo (no wordmark, transparent bg) via `imagegen--edit_image`.
+- Export at 512, 192, 180 (apple-touch), and 32 (favicon.png). Overwrite `public/favicon.png`, `public/apple-touch-icon.png`, `public/icon-192.png`, `public/icon-512.png`.
+- Update `src/assets/nowanime-icon-v2.png.asset.json` + `nowanime-mark.png.asset.json` pointers so every `BrandLogo` / TopBar / BottomNav / splash / OG image uses the new mark.
+- Update `public/manifest.json` name, short_name, theme_color (#E53935), icons.
 
-## Task 3 — Bottom nav restructure
-Update `src/components/BottomNav.tsx` to exactly: **Home · Explore · Trending · My List · Downloads**.
-- Add `/trending` route pulling TMDB `/trending/tv/week` filtered to anime (genre 16 + `original_language=ja`).
-- `My List` = existing likes/watchlist page (rename route to `/my-list`).
-- Remove any leftover Movies tab; redirect `/movies*` → `/home`.
+## Task 2 — Splash screen animation
+- New `src/components/SplashScreen.tsx`: full-screen dark bg, moon mark spins 360° for 6s, then a red-orange glow pulse (`box-shadow` + `filter: drop-shadow`), then "NOW ANIME" wordmark fades in with a "Continue" CTA linking to `/home`.
+- Show once per session (sessionStorage `nowanime_splash_seen`), mounted at the top of `AppLayout` before route content.
+- Respect `prefers-reduced-motion` (skip spin, straight fade).
 
-## Task 4 — Movies purge + Movie details cleanup
-- Investigate `MovieDetailPage.tsx` and any movie rails; remove non‑working movie sections and any residual "Movies" navigation, since the app is anime‑only.
-- Keep the file only if reused for anime films (TMDB movie genre 16 + `original_language=ja`); otherwise delete route and imports.
-- Grep for `movie` UI strings and align to anime terminology; keep backend `resolve-stream` movie path (used by anime films).
+## Task 3 — Mobile quality selector = dropdown
+- In `MoviePlayer.tsx` toolbar, on `md:` and up keep the current pill row; on mobile replace with a shadcn `<Select>` triggered by a chevron button showing current resolution (e.g. "1080p ▾"). Options list all `downloads[]`. Selecting a quality swaps `selected` and restarts playback at current time when possible.
 
-## Task 5 — SEO, favicon & indexing
-- Generate a bold NowAnime app icon (red/orange gradient bg, phoenix mark, high‑contrast) at 512/192/apple‑touch/favicon.ico, wired in `index.html` and `manifest.webmanifest`.
-- `public/robots.txt`: `User-agent: *` / `Allow: /` / `Sitemap: https://nowanime.lovable.app/sitemap.xml`.
-- Ensure `scripts/generate-sitemap.ts` emits dynamic anime routes and runs on `prebuild`/`predev`.
-- Confirm Google Search Console META token is live (already in `index.html`), then via the connector: verify site, submit sitemap, request indexing on key routes.
-- Add IndexNow: generate key file at `public/{key}.txt` and ping `https://www.bing.com/indexnow` from a tiny post‑build script for the top routes.
-- Verify `<meta name="robots">` is not `noindex` anywhere and canonical/og:url self‑reference each route via `react-helmet-async`.
+## Task 4 — OpenSubtitles integration
+- New edge function `supabase/functions/opensubtitles/index.ts`: accepts `{tmdbId, type, season?, episode?, languages?}`, calls `https://api.opensubtitles.com/api/v1/subtitles` with `Api-Key: OPENSUBTITLES_API_KEY`, then resolves a download URL via `/download`. Returns `[{lang, label, url}]`. Includes CORS + JWT check.
+- New `src/lib/subtitles.ts` client helper.
+- In `MoviePlayer.tsx`: on stream load, fetch subtitle tracks. Replace the placeholder subtitles icon with a shadcn `<Popover>` listing languages ("Off" + each track). Selected track becomes a `<track kind="subtitles" src=... default>` on the native `<video>`; store choice in `localStorage.nowanime_sub_lang`.
+- Fallback UI when list is empty: "No subtitles found — try another episode."
+
+## Task 5 — Ads loading reliably
+- Audit `AdBanner.tsx` + `NativeAd.tsx`: ensure Adsterra scripts inject on mount (not during SSR), re-inject on route change with unique container IDs, and set `key={route}` on wrappers so React recreates the DOM. Add `data-adsterra-loaded` marker + fallback placeholder.
+- Add a lightweight `AdsProvider` that appends the Adsterra loader once to `<head>` and exposes `useAdSlot(zone)` to render individual zones deterministically.
+- Verify with Playwright: navigate 3 pages, assert each ad container has children.
+
+## Task 6 — Library hub (renamed from Downloads)
+- Rename `/my-downloads` → `/library` (keep redirect). New `src/pages/LibraryPage.tsx` with segmented tabs: **Watchlist · Saved · Downloads**.
+  - Watchlist tab → embeds current `MyListPage` content.
+  - Saved tab → new list backed by `useSavedItems` hook (localStorage `nowanime_saved`).
+  - Downloads tab → existing `MyDownloadsPage` content.
+- Update `BottomNav.tsx` to Home · Explore · Trending · My List · **Library** (icon: Library from lucide).
+
+## Task 7 — Save + Add to Watchlist buttons on detail pages
+- New `src/components/ActionButtons.tsx` with two buttons: **Save** (bookmark icon, toggles `useSavedItems`) and **Add to Watchlist** (plus icon, toggles `useMyList`). Toast on toggle.
+- Wire into `AnimeDetailPage.tsx`, `TVDetailPage.tsx`, `MovieDetailPage.tsx` under the hero.
+
+## Task 8 — Sitemap covers everything (25 categories + top titles)
+- Extend `scripts/generate-sitemap.ts`:
+  - Static routes: `/`, `/home`, `/anime`, `/trending`, `/search`, `/library`, `/settings`, `/welcome`, all footer/legal pages.
+  - `/genre/{slug}` for all 25 categories from `src/lib/animeGenres.ts`.
+  - Fetch top ~100 anime from TMDB (genre 16 + JP) and emit `/anime/{id}`, `/watch/tv/{id}/1/1`.
+  - `<image:image>` entries per URL pointing to poster/backdrop (image sitemap).
+- Runs on `predev` + `prebuild`; writes `public/sitemap.xml`.
+
+## Task 9 — robots.txt + Google Search Console submission
+- `public/robots.txt`: `User-agent: * / Allow: / / Sitemap: https://nowanime.lovable.app/sitemap.xml`.
+- After deploy: call GSC connector to (a) verify `https://nowanime.lovable.app/` via existing META token, (b) `PUT sites/…`, (c) `PUT sitemaps/…/sitemap.xml`, (d) URL-inspect top routes to request indexing.
+- Add IndexNow: generate `public/{key}.txt` and a tiny `scripts/indexnow-ping.ts` invoked from `postbuild` that POSTs top routes to `https://www.bing.com/indexnow`.
+
+## Task 10 — SEO polish & verify
+- Per-route `<SEO>` metadata via `react-helmet-async`: unique title, description, canonical, `og:image` = poster for detail pages.
+- Add JSON-LD: `TVSeries` / `Movie` on detail pages, `FAQPage` on FAQ, `BreadcrumbList` on library/genre.
+- Ensure no `noindex` anywhere. Run Playwright smoke: `/`, `/home`, `/anime`, `/genre/action`, `/library`, `/watch/tv/1429/1/1` — screenshot + assert no console errors, ads present, subtitles button visible.
 
 ## Technical notes
-- Autoplay preloading uses an off‑screen `<video preload="auto">` for native streams and a hidden `<iframe>` warmup for embed servers.
-- Countdown overlay is a small component in `src/components/player/UpNextOverlay.tsx`, reused by TV and movie pages.
-- Setting toggle lives in `SettingsPage` under a new "Playback" row; state stored in `localStorage` and mirrored to a lightweight `useAutoplaySetting` hook.
-- Subtitle tracks: extend `resolve-stream` response type with `subtitles: {lang, url}[]`; UI falls back gracefully when empty.
-- All new UI uses existing semantic tokens (red/orange theme) — no hardcoded colors.
+- OpenSubtitles: uses REST v1 — key goes in `Api-Key` header, plus `User-Agent: NowAnime v1`. `/subtitles` search then `/download` to get temporary CDN URL (VTT preferred; convert SRT→VTT server-side if needed).
+- Splash uses CSS keyframes (`@keyframes spin-slow` 6s linear + `@keyframes glow-pulse` 1.2s ease-out) — no extra deps.
+- Library tabs use shadcn `Tabs`; each tab lazy-loads its content to keep first paint fast.
+- Ads: Adsterra requires unique numeric `key` per zone — keep zone IDs in `src/lib/adZones.ts`.
+- All new UI uses existing red/orange semantic tokens.
+
+Reply **go** to build all 10 in one pass, and paste the OpenSubtitles key when you have it.
