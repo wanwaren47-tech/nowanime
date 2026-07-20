@@ -11,6 +11,7 @@ import {
   formatBytes,
   type MovieboxDownload,
 } from "@/lib/moviebox";
+import { listSubtitles, subtitleVttUrl, type SubtitleTrack } from "@/lib/subtitles";
 
 // Legacy type kept as a no-op export so existing imports don't break.
 export type ServerId = "moviebox";
