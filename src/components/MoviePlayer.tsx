@@ -40,6 +40,7 @@ const PREFERRED = [1080, 720, 480];
 
 const MoviePlayer = ({
   tmdbId,
+  imdbId,
   type = "movie",
   season = 1,
   episode = 1,
