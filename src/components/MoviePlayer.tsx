@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef, useCallback } from "react";
-import { Loader2, AlertCircle, RefreshCw, Expand, WifiOff, CloudDownload, Play, SkipBack, SkipForward, Subtitles } from "lucide-react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { Loader2, AlertCircle, RefreshCw, Expand, WifiOff, CloudDownload, Play, SkipBack, SkipForward, Subtitles, Settings2, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 import { isDownloaded } from "@/lib/offlineDownloads";
@@ -8,9 +8,10 @@ import {
   resolveMovieboxDownloads,
   movieboxProxyUrl,
   resolutionLabel,
-  formatBytes,
   type MovieboxDownload,
+  type MovieboxCaption,
 } from "@/lib/moviebox";
+import { loadCaptionAsVtt, languageName } from "@/lib/subtitles";
 
 // Legacy type kept as a no-op export so existing imports don't break.
 export type ServerId = "moviebox";
@@ -22,7 +23,6 @@ interface Props {
   type?: "movie" | "tv";
   season?: number;
   episode?: number;
-  /** Kept for backwards compatibility; unused. */
   serverId?: ServerId;
   onServerChange?: (id: ServerId) => void;
   title?: string;
@@ -34,8 +34,12 @@ interface Props {
   onPrevious?: () => void;
 }
 
-// Preferred order of resolutions we surface in the selector.
 const PREFERRED = [1080, 720, 480];
+
+interface PreparedCaption extends MovieboxCaption {
+  fullName: string;
+  vttUrl?: string;
+}
 
 const MoviePlayer = ({
   tmdbId,
@@ -54,8 +58,12 @@ const MoviePlayer = ({
   const [error, setError] = useState<string | null>(null);
   const [downloads, setDownloads] = useState<MovieboxDownload[]>([]);
   const [selected, setSelected] = useState<MovieboxDownload | null>(null);
-  const [playing, setPlaying] = useState(false);
+  const [captions, setCaptions] = useState<PreparedCaption[]>([]);
+  const [selectedCaption, setSelectedCaption] = useState<string | null>(null); // fullName or null=off
+  const [qualityOpen, setQualityOpen] = useState(false);
+  const [subsOpen, setSubsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const online = useOnlineStatus();
   const [savedOffline, setSavedOffline] = useState(false);
 
@@ -71,8 +79,9 @@ const MoviePlayer = ({
     if (!title) return;
     setLoading(true);
     setError(null);
-    setPlaying(false);
     setSelected(null);
+    setCaptions([]);
+    setSelectedCaption(null);
     const res = await resolveMovieboxDownloads({
       title,
       year,
@@ -86,7 +95,6 @@ const MoviePlayer = ({
       setLoading(false);
       return;
     }
-    // Pick best available for each preferred rung, then keep any extras.
     const byRes = new Map<number, MovieboxDownload>();
     for (const d of res.downloads) {
       const existing = byRes.get(d.resolution);
@@ -97,25 +105,53 @@ const MoviePlayer = ({
       const hit = byRes.get(r);
       if (hit) ordered.push(hit);
     }
-    // Include any other resolutions not in preferred list, highest first.
     Array.from(byRes.values())
       .filter((d) => !PREFERRED.includes(d.resolution))
       .sort((a, b) => b.resolution - a.resolution)
       .forEach((d) => ordered.push(d));
     setDownloads(ordered);
-    // Default highlight to 1080p or the best available.
     setSelected(ordered[0] || null);
+
+    // Prepare captions (fetch + convert to VTT lazily via proxy so browser can load them).
+    const rawCaps = res.captions || [];
+    const prepared: PreparedCaption[] = rawCaps.map((c) => ({
+      ...c,
+      fullName: languageName(c.lang),
+    }));
+    setCaptions(prepared);
+    // Default to English if present, otherwise off.
+    const en = prepared.find((c) => c.fullName.toLowerCase() === "english");
+    if (en) setSelectedCaption(en.fullName);
     setLoading(false);
   }, [title, year, type, season, episode]);
 
-  useEffect(() => {
-    fetchStreams();
-  }, [fetchStreams]);
+  useEffect(() => { fetchStreams(); }, [fetchStreams]);
 
-  const startPlayback = (d: MovieboxDownload) => {
-    setSelected(d);
-    setPlaying(true);
-  };
+  // Materialize the selected caption to a same-origin VTT blob URL when needed.
+  useEffect(() => {
+    if (!selectedCaption) return;
+    const cap = captions.find((c) => c.fullName === selectedCaption);
+    if (!cap || cap.vttUrl) return;
+    let cancelled = false;
+    loadCaptionAsVtt(movieboxProxyUrl(cap.url))
+      .then((vttUrl) => {
+        if (cancelled) { URL.revokeObjectURL(vttUrl); return; }
+        setCaptions((prev) => prev.map((c) => (c.fullName === cap.fullName ? { ...c, vttUrl } : c)));
+      })
+      .catch(() => { /* ignore — subtitle just won't appear */ });
+    return () => { cancelled = true; };
+  }, [selectedCaption, captions]);
+
+  // Toggle native track visibility whenever selection changes.
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    const tracks = v.textTracks;
+    for (let i = 0; i < tracks.length; i++) {
+      const t = tracks[i];
+      t.mode = selectedCaption && t.label === selectedCaption ? "showing" : "disabled";
+    }
+  }, [selectedCaption, captions]);
 
   const toggleFullscreen = useCallback(async () => {
     const el = containerRef.current;
@@ -123,7 +159,6 @@ const MoviePlayer = ({
     try {
       if (!document.fullscreenElement) {
         await el.requestFullscreen?.();
-        // Lock landscape on touch devices where supported.
         const orientation: any = (screen as any).orientation;
         if (orientation?.lock && window.matchMedia("(pointer: coarse)").matches) {
           try { await orientation.lock("landscape"); } catch { /* ignore */ }
@@ -149,6 +184,8 @@ const MoviePlayer = ({
     return () => window.removeEventListener("keydown", onKey);
   }, [toggleFullscreen]);
 
+  const proxied = useMemo(() => (selected ? movieboxProxyUrl(selected.url) : ""), [selected]);
+
   if (!online && !savedOffline) {
     return (
       <div className="w-full" style={{ background: "hsl(var(--background))" }}>
@@ -172,14 +209,13 @@ const MoviePlayer = ({
     );
   }
 
-  const proxied = selected ? movieboxProxyUrl(selected.url) : "";
-
   return (
     <div className="w-full" style={{ background: "hsl(var(--background))" }}>
       <div ref={containerRef} className="relative w-full aspect-video overflow-hidden bg-black">
-        {playing && proxied && (
+        {proxied && (
           <video
             key={proxied}
+            ref={videoRef}
             src={proxied}
             className="absolute inset-0 w-full h-full bg-black"
             controls
@@ -189,48 +225,20 @@ const MoviePlayer = ({
             onError={() => setError("Playback failed. Try a different quality.")}
             onEnded={() => onEnded?.()}
             poster={backdrop || poster || undefined}
-          />
-        )}
-
-        {!playing && !loading && !error && downloads.length > 0 && (
-          <div
-            className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 px-6 text-center"
-            style={{
-              background: backdrop
-                ? `linear-gradient(rgba(0,0,0,0.72), rgba(0,0,0,0.85)), url(${backdrop}) center/cover no-repeat`
-                : "hsl(var(--background))",
-            }}
           >
-            <p className="text-white text-xs font-semibold uppercase tracking-wider opacity-80">Select quality</p>
-            <div className="flex flex-wrap items-center justify-center gap-2">
-              {downloads.map((d) => {
-                const active = selected?.resolution === d.resolution;
-                return (
-                  <button
-                    key={d.resolution + d.url}
-                    onClick={() => setSelected(d)}
-                    className="px-3.5 py-1.5 rounded-lg text-[11.5px] font-semibold transition-colors"
-                    style={{
-                      background: active ? "var(--gradient-primary, hsl(var(--primary)))" : "rgba(255,255,255,0.09)",
-                      color: "#fff",
-                      border: active ? "1px solid transparent" : "1px solid rgba(255,255,255,0.14)",
-                    }}
-                  >
-                    {resolutionLabel(d.resolution)}
-                    {d.size ? <span className="ml-1.5 opacity-70 font-normal">{formatBytes(d.size)}</span> : null}
-                  </button>
-                );
-              })}
-            </div>
-            <button
-              onClick={() => selected && startPlayback(selected)}
-              disabled={!selected}
-              className="mt-1 inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-[12px] font-bold text-white disabled:opacity-50"
-              style={{ background: "hsl(var(--primary))" }}
-            >
-              <Play className="w-3.5 h-3.5 fill-white" /> Watch now
-            </button>
-          </div>
+            {captions
+              .filter((c) => c.vttUrl)
+              .map((c) => (
+                <track
+                  key={c.fullName}
+                  kind="subtitles"
+                  label={c.fullName}
+                  srcLang={(c.lang || "").slice(0, 2).toLowerCase() || "en"}
+                  src={c.vttUrl}
+                  default={selectedCaption === c.fullName}
+                />
+              ))}
+          </video>
         )}
 
         {loading && (
@@ -255,9 +263,8 @@ const MoviePlayer = ({
         )}
       </div>
 
-      {/* MovieBox-style toolbar: transport controls · subtitles · quality · download · fullscreen */}
-      <div className="flex items-center gap-1.5 px-3 py-2" style={{ background: "hsl(var(--background))", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
-        {/* Transport controls */}
+      {/* Toolbar: transport · subtitles · quality · download · fullscreen */}
+      <div className="relative flex items-center gap-1.5 px-3 py-2" style={{ background: "hsl(var(--background))", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
         <div className="flex items-center gap-1 flex-shrink-0">
           <button
             onClick={() => onPrevious?.()}
@@ -270,11 +277,10 @@ const MoviePlayer = ({
             <SkipBack className="w-3.5 h-3.5" />
           </button>
           <button
-            onClick={() => selected && startPlayback(selected)}
-            disabled={!selected}
+            onClick={() => videoRef.current?.play()}
             title="Play"
             aria-label="Play"
-            className="grid place-items-center h-7 w-7 rounded-md text-white disabled:opacity-30"
+            className="grid place-items-center h-7 w-7 rounded-md text-white"
             style={{ background: "hsl(var(--primary))" }}
           >
             <Play className="w-3.5 h-3.5 fill-white" />
@@ -291,44 +297,78 @@ const MoviePlayer = ({
           </button>
         </div>
 
-        {/* Quality selector */}
-        <div className="flex-1 flex items-center gap-1.5 overflow-x-auto scrollbar-hide pl-1">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground pr-1 flex-shrink-0">Quality</span>
-          {downloads.map((d) => {
-            const active = selected?.resolution === d.resolution;
-            return (
+        <div className="flex-1" />
+
+        {/* Subtitles picker */}
+        <div className="relative flex-shrink-0">
+          <button
+            onClick={() => { setSubsOpen((s) => !s); setQualityOpen(false); }}
+            title="Subtitles"
+            aria-label="Subtitles"
+            className="inline-flex items-center gap-1 h-7 px-2 rounded-md text-white text-[10.5px] font-semibold"
+            style={{ background: selectedCaption ? "hsl(var(--primary))" : "rgba(255,255,255,0.08)" }}
+          >
+            <Subtitles className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">{selectedCaption || "Subtitles"}</span>
+          </button>
+          {subsOpen && (
+            <div className="absolute right-0 bottom-full mb-2 z-30 min-w-[180px] max-h-[240px] overflow-y-auto rounded-lg border border-white/10 bg-[#141414] py-1 shadow-2xl">
               <button
-                key={d.resolution + d.url}
-                onClick={() => { setSelected(d); setPlaying(true); }}
-                className="px-2.5 py-1 rounded-md text-[10.5px] font-semibold whitespace-nowrap transition-colors flex-shrink-0"
-                style={{
-                  background: active ? "var(--gradient-primary, hsl(var(--primary)))" : "rgba(255,255,255,0.06)",
-                  color: active ? "#fff" : "rgba(255,255,255,0.75)",
-                  border: active ? "1px solid transparent" : "1px solid rgba(255,255,255,0.08)",
-                }}
+                onClick={() => { setSelectedCaption(null); setSubsOpen(false); }}
+                className="w-full flex items-center justify-between px-3 py-1.5 text-[11px] text-white hover:bg-white/5"
               >
-                {resolutionLabel(d.resolution)}
+                <span>Off</span>
+                {!selectedCaption && <Check className="w-3 h-3" />}
               </button>
-            );
-          })}
-          {!downloads.length && (
-            <span className="text-[10.5px] text-white/45">Waiting for stream…</span>
+              {captions.length === 0 && (
+                <div className="px-3 py-2 text-[10.5px] text-white/45">No subtitles available</div>
+              )}
+              {captions.map((c) => (
+                <button
+                  key={c.fullName}
+                  onClick={() => { setSelectedCaption(c.fullName); setSubsOpen(false); }}
+                  className="w-full flex items-center justify-between px-3 py-1.5 text-[11px] text-white hover:bg-white/5"
+                >
+                  <span>{c.fullName}</span>
+                  {selectedCaption === c.fullName && <Check className="w-3 h-3" />}
+                </button>
+              ))}
+            </div>
           )}
         </div>
 
-        {/* Subtitles (placeholder — resolver payload doesn't yet include tracks) */}
-        <button
-          title="Subtitles"
-          aria-label="Subtitles"
-          className="flex-shrink-0 grid place-items-center h-7 w-7 rounded-md text-white/70 hover:text-white"
-          style={{ background: "rgba(255,255,255,0.06)" }}
-          onClick={() => {
-            // Native <video controls> exposes browser-provided caption UI when tracks exist.
-            // MovieBox streams currently ship without external tracks; this is here for UX parity.
-          }}
-        >
-          <Subtitles className="w-3.5 h-3.5" />
-        </button>
+        {/* Single Quality button + dropdown */}
+        <div className="relative flex-shrink-0">
+          <button
+            onClick={() => { setQualityOpen((s) => !s); setSubsOpen(false); }}
+            disabled={!downloads.length}
+            title="Quality"
+            aria-label="Quality"
+            className="inline-flex items-center gap-1 h-7 px-2 rounded-md text-white text-[10.5px] font-semibold disabled:opacity-40"
+            style={{ background: "rgba(255,255,255,0.08)" }}
+          >
+            <Settings2 className="w-3.5 h-3.5" />
+            <span>{selected ? resolutionLabel(selected.resolution) : "Quality"}</span>
+          </button>
+          {qualityOpen && downloads.length > 0 && (
+            <div className="absolute right-0 bottom-full mb-2 z-30 min-w-[160px] rounded-lg border border-white/10 bg-[#141414] py-1 shadow-2xl">
+              <div className="px-3 py-1 text-[9.5px] uppercase tracking-wider text-white/45 font-bold">Quality</div>
+              {downloads.map((d) => {
+                const active = selected?.resolution === d.resolution;
+                return (
+                  <button
+                    key={d.resolution + d.url}
+                    onClick={() => { setSelected(d); setQualityOpen(false); }}
+                    className="w-full flex items-center justify-between px-3 py-1.5 text-[11px] text-white hover:bg-white/5"
+                  >
+                    <span>{resolutionLabel(d.resolution)}</span>
+                    {active && <Check className="w-3 h-3" />}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
 
         {title && (
           <DownloadButton

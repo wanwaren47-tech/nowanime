@@ -21,7 +21,9 @@ import {
   formatBytes,
   resolutionLabel,
   type MovieboxDownload,
+  type MovieboxCaption,
 } from "@/lib/moviebox";
+import { languageName } from "@/lib/subtitles";
 import { startDownload } from "@/lib/offlineDownloads";
 
 type Source = "fast" | "external";
@@ -59,6 +61,7 @@ const DownloadSourceSheet = ({
   const [step, setStep] = useState<Step>("choose");
   const [source, setSource] = useState<Source>("fast");
   const [downloads, setDownloads] = useState<MovieboxDownload[]>([]);
+  const [captions, setCaptions] = useState<MovieboxCaption[]>([]);
   const [errorMsg, setErrorMsg] = useState("");
   const [resolvedTitle, setResolvedTitle] = useState(title);
 
@@ -90,6 +93,7 @@ const DownloadSourceSheet = ({
     }
     setResolvedTitle(res.title || title);
     setDownloads(res.downloads);
+    setCaptions(res.captions || []);
     setStep("list");
   };
 
@@ -117,6 +121,11 @@ const DownloadSourceSheet = ({
     const displayTitle = isSeries
       ? `${resolvedTitle} · S${season ?? 1}E${episode ?? 1}`
       : resolvedTitle;
+    const captionArgs = captions.map((c) => ({
+      label: languageName(c.lang),
+      lang: (c.lang || "en").slice(0, 2).toLowerCase(),
+      url: movieboxProxyUrl(c.url),
+    }));
     void startDownload({
       id: itemId,
       type,
@@ -129,10 +138,12 @@ const DownloadSourceSheet = ({
       backdrop: backdrop || undefined,
       sourceUrl: movieboxProxyUrl(d.url),
       mime: "video/mp4",
+      captions: captionArgs,
     }).catch(() => {
       toast.error("Download failed. Please try again.");
     });
-    toast.success(`Downloading ${resolutionLabel(d.resolution)} · check Downloads`);
+    const subsMsg = captionArgs.length ? ` · ${captionArgs.length} subtitle${captionArgs.length !== 1 ? "s" : ""}` : "";
+    toast.success(`Downloading ${resolutionLabel(d.resolution)}${subsMsg} · check Downloads`);
     close(false);
   };
 

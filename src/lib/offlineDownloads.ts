@@ -6,6 +6,12 @@ const DB_VERSION = 1;
 const STORE_META = "videos";     // metadata + completed blob
 const STORE_CHUNKS = "chunks";   // per-video temp chunks during download
 
+export interface OfflineCaption {
+  label: string;               // full language name for the <track> UI
+  lang: string;                // short code (en, es, ja…)
+  blob: Blob;                  // WebVTT text blob
+}
+
 export interface OfflineVideo {
   id: string;                  // `${type}-${tmdbId}` (or per-episode for tv)
   type: "movie" | "tv" | "anime";
@@ -23,6 +29,7 @@ export interface OfflineVideo {
   status: "queued" | "downloading" | "paused" | "ready" | "error";
   error?: string;
   blob?: Blob;                 // present once status==="ready"
+  captions?: OfflineCaption[]; // downloaded subtitles for offline playback
   createdAt: number;
   updatedAt: number;
 }
@@ -149,6 +156,8 @@ export function isPaused(id: string) {
   return pauseFlags.get(id) === true;
 }
 
+interface CaptionArg { label: string; lang: string; url: string; }
+
 interface StartArgs {
   id: string;
   type: OfflineVideo["type"];
@@ -161,6 +170,7 @@ interface StartArgs {
   backdrop?: string | null;
   sourceUrl: string;
   mime?: string;
+  captions?: CaptionArg[];
   onProgress?: ProgressFn;
 }
 
@@ -316,6 +326,25 @@ export async function startDownload(args: StartArgs): Promise<OfflineVideo> {
     meta.blob = finalBlob;
     meta.size = finalBlob.size;
     meta.downloaded = finalBlob.size;
+
+    // Fetch subtitle tracks (converted to WebVTT) alongside the video so they
+    // work fully offline. Failures per-track are ignored.
+    if (args.captions?.length) {
+      const caps: OfflineCaption[] = [];
+      for (const c of args.captions) {
+        try {
+          const r = await fetch(c.url);
+          const text = await r.text();
+          const isVtt = text.trim().toUpperCase().startsWith("WEBVTT");
+          const vtt = isVtt
+            ? text
+            : "WEBVTT\n\n" + text.replace(/^\uFEFF/, "").replace(/\r/g, "").replace(/(\d{2}:\d{2}:\d{2}),(\d{3})/g, "$1.$2");
+          caps.push({ label: c.label, lang: c.lang, blob: new Blob([vtt], { type: "text/vtt" }) });
+        } catch { /* skip failed captions */ }
+      }
+      meta.captions = caps;
+    }
+
     meta.status = "ready";
     meta.updatedAt = Date.now();
     await putMeta(meta);

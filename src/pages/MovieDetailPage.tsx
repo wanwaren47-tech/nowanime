@@ -8,6 +8,7 @@ import TrailerModal from "@/components/TrailerModal";
 import { useMovieDetail, useMovieSimilar, useMovieRecommendations, useTrendingMovies, usePopularMovies, useTopRatedMovies } from "@/hooks/useTmdb";
 import { img } from "@/lib/tmdb";
 import DownloadButton from "@/components/DownloadButton";
+import WatchlistButton from "@/components/WatchlistButton";
 
 const MovieDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -141,6 +142,7 @@ const MovieDetailPage = () => {
                   poster={img(data.poster_path, "w500")}
                   backdrop={img(data.backdrop_path, "w780")}
                 />
+                <WatchlistButton item={{ id: data.id, type: "movie", title: data.title, poster_path: data.poster_path, backdrop_path: data.backdrop_path, year: (data.release_date || "").slice(0, 4) }} />
               </div>
             </div>
 

@@ -5,6 +5,7 @@ import AppLayout from "@/components/AppLayout";
 import SEO from "@/components/SEO";
 import TmdbRow from "@/components/TmdbRow";
 import DownloadButton from "@/components/DownloadButton";
+import WatchlistButton from "@/components/WatchlistButton";
 import { useTvDetail, useTvSeason, useTvSimilar, useTvRecommendations, useTrendingTv, usePopularTv, useTopRatedTv } from "@/hooks/useTmdb";
 import { img } from "@/lib/tmdb";
 
@@ -141,6 +142,7 @@ const TVDetailPage = () => {
                   season={activeSeason}
                   episode={1}
                 />
+                <WatchlistButton item={{ id: data.id, type: "tv", title: data.name, poster_path: data.poster_path, backdrop_path: data.backdrop_path, year: (data.first_air_date || "").slice(0, 4) }} />
               </div>
             </div>
           </div>

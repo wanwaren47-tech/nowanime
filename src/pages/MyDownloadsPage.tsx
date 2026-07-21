@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Play, ChevronLeft, Search, Trash2, CloudDownload, X, Pause, Loader2, Folder, ChevronDown } from "lucide-react";
 import AppLayout from "@/components/AppLayout";
 import SEO from "@/components/SEO";
-import { getAllDownloads, deleteDownload, getDownloadBlobUrl, pauseDownload, type OfflineVideo } from "@/lib/offlineDownloads";
+import { getAllDownloads, deleteDownload, getDownload, getDownloadBlobUrl, pauseDownload, type OfflineVideo, type OfflineCaption } from "@/lib/offlineDownloads";
 import { toast } from "sonner";
 
 function fmtMB(bytes: number) {
@@ -26,18 +26,29 @@ const MyDownloadsPage = () => {
   const [query, setQuery] = useState("");
   const [playUrl, setPlayUrl] = useState<string | null>(null);
   const [playTitle, setPlayTitle] = useState("");
+  const [playCaptions, setPlayCaptions] = useState<{ label: string; lang: string; url: string }[]>([]);
   const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({});
   const navigate = useNavigate();
 
   const playOffline = async (v: OfflineVideo) => {
     const url = await getDownloadBlobUrl(v.id);
     if (!url) { toast.error("This download isn't ready yet."); return; }
+    // Load captions from IDB and expose as blob URLs for <track> tags.
+    const full = await getDownload(v.id);
+    const capUrls = (full?.captions || []).map((c: OfflineCaption) => ({
+      label: c.label,
+      lang: c.lang,
+      url: URL.createObjectURL(c.blob),
+    }));
     setPlayTitle(v.title);
+    setPlayCaptions(capUrls);
     setPlayUrl(url);
   };
 
   const closePlayer = () => {
     if (playUrl) URL.revokeObjectURL(playUrl);
+    playCaptions.forEach((c) => URL.revokeObjectURL(c.url));
+    setPlayCaptions([]);
     setPlayUrl(null);
   };
 
@@ -256,7 +267,11 @@ const MyDownloadsPage = () => {
             </button>
           </div>
           <div className="flex-1 grid place-items-center px-2 pb-4" onClick={(e) => e.stopPropagation()}>
-            <video src={playUrl} controls autoPlay playsInline className="w-full md:max-w-3xl max-h-full rounded-lg bg-black" />
+            <video src={playUrl} controls autoPlay playsInline crossOrigin="anonymous" className="w-full md:max-w-3xl max-h-full rounded-lg bg-black">
+              {playCaptions.map((c, i) => (
+                <track key={c.lang + i} kind="subtitles" src={c.url} srcLang={c.lang} label={c.label} default={i === 0} />
+              ))}
+            </video>
           </div>
         </div>
       )}
