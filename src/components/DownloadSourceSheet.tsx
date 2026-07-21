@@ -121,6 +121,11 @@ const DownloadSourceSheet = ({
     const displayTitle = isSeries
       ? `${resolvedTitle} · S${season ?? 1}E${episode ?? 1}`
       : resolvedTitle;
+    const captionArgs = captions.map((c) => ({
+      label: languageName(c.lang),
+      lang: (c.lang || "en").slice(0, 2).toLowerCase(),
+      url: movieboxProxyUrl(c.url),
+    }));
     void startDownload({
       id: itemId,
       type,
@@ -133,10 +138,12 @@ const DownloadSourceSheet = ({
       backdrop: backdrop || undefined,
       sourceUrl: movieboxProxyUrl(d.url),
       mime: "video/mp4",
+      captions: captionArgs,
     }).catch(() => {
       toast.error("Download failed. Please try again.");
     });
-    toast.success(`Downloading ${resolutionLabel(d.resolution)} · check Downloads`);
+    const subsMsg = captionArgs.length ? ` · ${captionArgs.length} subtitle${captionArgs.length !== 1 ? "s" : ""}` : "";
+    toast.success(`Downloading ${resolutionLabel(d.resolution)}${subsMsg} · check Downloads`);
     close(false);
   };
 
