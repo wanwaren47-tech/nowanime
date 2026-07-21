@@ -93,6 +93,7 @@ const DownloadSourceSheet = ({
     }
     setResolvedTitle(res.title || title);
     setDownloads(res.downloads);
+    setCaptions(res.captions || []);
     setStep("list");
   };
 
