@@ -156,6 +156,8 @@ export function isPaused(id: string) {
   return pauseFlags.get(id) === true;
 }
 
+interface CaptionArg { label: string; lang: string; url: string; }
+
 interface StartArgs {
   id: string;
   type: OfflineVideo["type"];
@@ -168,6 +170,7 @@ interface StartArgs {
   backdrop?: string | null;
   sourceUrl: string;
   mime?: string;
+  captions?: CaptionArg[];
   onProgress?: ProgressFn;
 }
 
