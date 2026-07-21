@@ -326,6 +326,25 @@ export async function startDownload(args: StartArgs): Promise<OfflineVideo> {
     meta.blob = finalBlob;
     meta.size = finalBlob.size;
     meta.downloaded = finalBlob.size;
+
+    // Fetch subtitle tracks (converted to WebVTT) alongside the video so they
+    // work fully offline. Failures per-track are ignored.
+    if (args.captions?.length) {
+      const caps: OfflineCaption[] = [];
+      for (const c of args.captions) {
+        try {
+          const r = await fetch(c.url);
+          const text = await r.text();
+          const isVtt = text.trim().toUpperCase().startsWith("WEBVTT");
+          const vtt = isVtt
+            ? text
+            : "WEBVTT\n\n" + text.replace(/^\uFEFF/, "").replace(/\r/g, "").replace(/(\d{2}:\d{2}:\d{2}),(\d{3})/g, "$1.$2");
+          caps.push({ label: c.label, lang: c.lang, blob: new Blob([vtt], { type: "text/vtt" }) });
+        } catch { /* skip failed captions */ }
+      }
+      meta.captions = caps;
+    }
+
     meta.status = "ready";
     meta.updatedAt = Date.now();
     await putMeta(meta);
