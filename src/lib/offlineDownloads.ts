@@ -6,6 +6,12 @@ const DB_VERSION = 1;
 const STORE_META = "videos";     // metadata + completed blob
 const STORE_CHUNKS = "chunks";   // per-video temp chunks during download
 
+export interface OfflineCaption {
+  label: string;               // full language name for the <track> UI
+  lang: string;                // short code (en, es, ja…)
+  blob: Blob;                  // WebVTT text blob
+}
+
 export interface OfflineVideo {
   id: string;                  // `${type}-${tmdbId}` (or per-episode for tv)
   type: "movie" | "tv" | "anime";
@@ -23,6 +29,7 @@ export interface OfflineVideo {
   status: "queued" | "downloading" | "paused" | "ready" | "error";
   error?: string;
   blob?: Blob;                 // present once status==="ready"
+  captions?: OfflineCaption[]; // downloaded subtitles for offline playback
   createdAt: number;
   updatedAt: number;
 }
