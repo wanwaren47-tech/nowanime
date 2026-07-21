@@ -26,18 +26,29 @@ const MyDownloadsPage = () => {
   const [query, setQuery] = useState("");
   const [playUrl, setPlayUrl] = useState<string | null>(null);
   const [playTitle, setPlayTitle] = useState("");
+  const [playCaptions, setPlayCaptions] = useState<{ label: string; lang: string; url: string }[]>([]);
   const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({});
   const navigate = useNavigate();
 
   const playOffline = async (v: OfflineVideo) => {
     const url = await getDownloadBlobUrl(v.id);
     if (!url) { toast.error("This download isn't ready yet."); return; }
+    // Load captions from IDB and expose as blob URLs for <track> tags.
+    const full = await getDownload(v.id);
+    const capUrls = (full?.captions || []).map((c: OfflineCaption) => ({
+      label: c.label,
+      lang: c.lang,
+      url: URL.createObjectURL(c.blob),
+    }));
     setPlayTitle(v.title);
+    setPlayCaptions(capUrls);
     setPlayUrl(url);
   };
 
   const closePlayer = () => {
     if (playUrl) URL.revokeObjectURL(playUrl);
+    playCaptions.forEach((c) => URL.revokeObjectURL(c.url));
+    setPlayCaptions([]);
     setPlayUrl(null);
   };
 
