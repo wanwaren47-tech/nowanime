@@ -267,7 +267,11 @@ const MyDownloadsPage = () => {
             </button>
           </div>
           <div className="flex-1 grid place-items-center px-2 pb-4" onClick={(e) => e.stopPropagation()}>
-            <video src={playUrl} controls autoPlay playsInline className="w-full md:max-w-3xl max-h-full rounded-lg bg-black" />
+            <video src={playUrl} controls autoPlay playsInline crossOrigin="anonymous" className="w-full md:max-w-3xl max-h-full rounded-lg bg-black">
+              {playCaptions.map((c, i) => (
+                <track key={c.lang + i} kind="subtitles" src={c.url} srcLang={c.lang} label={c.label} default={i === 0} />
+              ))}
+            </video>
           </div>
         </div>
       )}
