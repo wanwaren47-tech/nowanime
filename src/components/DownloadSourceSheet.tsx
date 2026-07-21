@@ -61,6 +61,7 @@ const DownloadSourceSheet = ({
   const [step, setStep] = useState<Step>("choose");
   const [source, setSource] = useState<Source>("fast");
   const [downloads, setDownloads] = useState<MovieboxDownload[]>([]);
+  const [captions, setCaptions] = useState<MovieboxCaption[]>([]);
   const [errorMsg, setErrorMsg] = useState("");
   const [resolvedTitle, setResolvedTitle] = useState(title);
 
