@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Play, ChevronLeft, Search, Trash2, CloudDownload, X, Pause, Loader2, Folder, ChevronDown } from "lucide-react";
 import AppLayout from "@/components/AppLayout";
 import SEO from "@/components/SEO";
-import { getAllDownloads, deleteDownload, getDownloadBlobUrl, pauseDownload, type OfflineVideo } from "@/lib/offlineDownloads";
+import { getAllDownloads, deleteDownload, getDownload, getDownloadBlobUrl, pauseDownload, type OfflineVideo, type OfflineCaption } from "@/lib/offlineDownloads";
 import { toast } from "sonner";
 
 function fmtMB(bytes: number) {
