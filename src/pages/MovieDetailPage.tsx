@@ -141,6 +141,7 @@ const MovieDetailPage = () => {
                   poster={img(data.poster_path, "w500")}
                   backdrop={img(data.backdrop_path, "w780")}
                 />
+                <WatchlistButton item={{ id: data.id, type: "movie", title: data.title, poster_path: data.poster_path, backdrop_path: data.backdrop_path, year: (data.release_date || "").slice(0, 4) }} />
               </div>
             </div>
 
