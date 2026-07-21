@@ -21,7 +21,9 @@ import {
   formatBytes,
   resolutionLabel,
   type MovieboxDownload,
+  type MovieboxCaption,
 } from "@/lib/moviebox";
+import { languageName } from "@/lib/subtitles";
 import { startDownload } from "@/lib/offlineDownloads";
 
 type Source = "fast" | "external";
