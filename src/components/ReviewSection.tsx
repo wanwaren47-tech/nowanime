@@ -25,13 +25,14 @@ const ReviewSection = ({ videoId }: { videoId: string }) => {
   })();
 
   const fetchReviews = useCallback(async () => {
-    const { data } = await supabase
+    const { data } = await (supabase as any)
       .from("comments")
       .select("*")
       .eq("video_id", videoId)
       .order("created_at", { ascending: false })
       .limit(50);
     setReviews((data as UserComment[]) || []);
+
     setLoading(false);
   }, [videoId]);
 
