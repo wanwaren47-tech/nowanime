@@ -50,11 +50,12 @@ const ReviewSection = ({ videoId }: { videoId: string }) => {
     if (!text.trim() || posting) return;
     setPosting(true);
     const starPrefix = rating > 0 ? `${"★".repeat(rating)}${"☆".repeat(5 - rating)} ` : "";
-    await supabase.from("comments").insert({
+    await (supabase as any).from("comments").insert({
       video_id: videoId,
       author_name: userName,
       comment_text: starPrefix + text.trim(),
     });
+
     setText(""); setRating(0); setPosting(false);
   };
 
