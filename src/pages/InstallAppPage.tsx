@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
 import SEO from "@/components/SEO";
 import logoAsset from "@/assets/nowanime-logo.png.asset.json";
-import apkAsset from "@/assets/nowanime-app.apk.asset.json";
+
 
 const SCREENSHOTS = [
   "https://image.tmdb.org/t/p/w300/49WJfeN0moxb9IPfGn8AIqMGskD.jpg",
