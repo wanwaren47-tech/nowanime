@@ -181,24 +181,59 @@ async function main() {
   const NEEDED = 260 - staticEntries.length;
   const dynamic = await collectDynamicEntries(NEEDED);
 
-  // Fallback: if TMDB unavailable at build time, top up with static popular
-  // anime IDs so we still ship >=250 entries.
+  // Fallback: 130+ curated anime TMDB ids so we ship ≥250 entries even
+  // when TMDB is unreachable at build time.
   const FALLBACK_TV = [
     1429, 46260, 31910, 37854, 30984, 95479, 13916, 30991, 46298, 65930,
     85937, 114410, 99966, 30983, 83095, 62741, 45782, 46952, 60863, 12971,
-    114695, 93740, 92685, 94664, 100088, 90228, 94997, 96648, 105248, 60625,
-    89685, 90790, 65249, 61374, 60625, 60625, 63926, 63332, 68716, 71914,
-    73223, 74776, 75450, 77169, 79501, 81797, 80564, 83067, 86031, 87108,
-    88329, 89686, 90680, 92685, 93142, 93685, 94682, 96060, 97374, 98290,
-    99027, 100088, 101040, 102046, 103283, 104254, 105108, 106088, 107078, 108046,
+    114695, 93740, 92685, 94664, 100088, 90228, 94997, 96648, 105248, 89685,
+    90790, 65249, 61374, 63926, 63332, 68716, 71914, 73223, 74776, 75450,
+    77169, 79501, 81797, 80564, 83067, 86031, 87108, 88329, 89686, 90680,
+    93142, 93685, 94682, 96060, 97374, 98290, 99027, 101040, 102046, 103283,
+    104254, 105108, 106088, 107078, 108046, 42410, 43423, 44006, 45782, 46261,
+    47640, 48891, 49020, 50026, 51818, 52814, 54155, 55175, 56905, 57532,
+    59266, 60625, 61889, 62286, 63174, 64196, 65733, 66732, 67200, 68507,
+    69478, 70668, 71446, 72879, 74705, 76669, 78191, 79680, 82684, 85803,
+    87739, 89229, 90802, 91557, 92749, 93810, 94608, 95312, 96047, 97531,
+    99321, 100889, 102903, 103768, 105123, 106379, 108545, 110316, 112470, 113962,
+  ];
+  const FALLBACK_MOVIE = [
+    129, 372058, 568160, 508883, 4935, 128, 149, 62177, 38142, 12429,
+    10515, 22538, 15342, 81, 76341, 8687, 137113, 210577, 293670, 447365,
+    346364, 4995, 66574, 122806, 244786, 315635, 335983, 396422, 429617, 466272,
   ];
   if (dynamic.length < NEEDED) {
     const already = new Set(dynamic.map((e) => e.path));
     for (const id of FALLBACK_TV) {
       const p = `/tv/${id}`;
-      if (already.has(p)) continue;
-      dynamic.push({ path: p, changefreq: "weekly", priority: "0.6" });
-      dynamic.push({ path: `/watch/tv/${id}/1/1`, changefreq: "weekly", priority: "0.5" });
+      if (!already.has(p)) {
+        already.add(p);
+        dynamic.push({
+          path: p, changefreq: "weekly", priority: "0.7",
+          videos: [{ thumbnail: HERO_IMG, title: `Anime TMDB ${id}`, description: "Watch on NowAnime.", playerUrl: `${BASE_URL}/watch/tv/${id}/1/1` }],
+        });
+      }
+      const wp = `/watch/tv/${id}/1/1`;
+      if (!already.has(wp)) {
+        already.add(wp);
+        dynamic.push({ path: wp, changefreq: "weekly", priority: "0.6" });
+      }
+      if (staticEntries.length + dynamic.length >= 260) break;
+    }
+    for (const id of FALLBACK_MOVIE) {
+      const p = `/movie/${id}`;
+      if (!already.has(p)) {
+        already.add(p);
+        dynamic.push({
+          path: p, changefreq: "weekly", priority: "0.7",
+          videos: [{ thumbnail: HERO_IMG, title: `Anime movie ${id}`, description: "Watch on NowAnime.", playerUrl: `${BASE_URL}/watch/movie/${id}` }],
+        });
+      }
+      const wp = `/watch/movie/${id}`;
+      if (!already.has(wp)) {
+        already.add(wp);
+        dynamic.push({ path: wp, changefreq: "weekly", priority: "0.6" });
+      }
       if (staticEntries.length + dynamic.length >= 260) break;
     }
   }
