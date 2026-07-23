@@ -18,11 +18,12 @@ const InstallAppPage = () => {
   const [done, setDone] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
 
+  const INSTALL_URL = "https://nowanimeapp.lovable.app";
+
   const handleInstall = () => {
     setDownloading(true);
     const a = document.createElement("a");
-    a.href = apkAsset.url;
-    a.download = "NowAnime.apk";
+    a.href = INSTALL_URL;
     a.rel = "noopener";
     a.target = "_blank";
     document.body.appendChild(a);

@@ -54,7 +54,7 @@ const TopBar = () => {
   return (
     <>
       <header className={`fixed top-0 left-0 right-0 z-40 transition-colors duration-300 ${bgClass}`}>
-        <div className="flex items-center gap-2 md:gap-4 px-2 md:px-6 h-12 md:h-16 max-w-[1600px] mx-auto relative">
+        <div className="flex items-center gap-2 md:gap-4 px-2 md:px-6 h-12 md:h-16 max-w-[1600px] mx-auto">
           {/* Hamburger (mobile) */}
           <button
             onClick={() => setDrawerOpen(true)}
@@ -64,19 +64,20 @@ const TopBar = () => {
             <Menu className="h-[18px] w-[18px]" />
           </button>
 
-          {/* Logo — left on desktop */}
-          <Link to="/home" className="flex items-center flex-shrink-0">
+          {/* Logo — left */}
+          <Link to="/home" className="flex items-center gap-2 flex-shrink-0">
             <img src={logoAsset.url} alt="NowAnime" className="h-8 w-8 md:h-10 md:w-10" />
+            <span className="hidden md:inline text-sm font-black tracking-wide text-foreground">NowAnime</span>
           </Link>
 
-          {/* Centered pill nav (Dulo-style) — desktop only */}
-          <nav className="hidden md:flex items-center gap-0.5 absolute left-1/2 -translate-x-1/2 rounded-full bg-white/[0.04] backdrop-blur border border-white/[0.06] px-1.5 py-1">
+          {/* Centered pill nav — desktop */}
+          <nav className="hidden md:flex items-center gap-0.5 mx-4 rounded-full bg-white/[0.04] backdrop-blur border border-white/[0.06] px-1.5 py-1">
             {primaryNav.map(({ to, label, icon: Icon }) => (
               <NavLink
                 key={to}
                 to={to}
                 className={({ isActive }) =>
-                  `flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[13px] font-semibold whitespace-nowrap transition-colors ${
+                  `flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-semibold whitespace-nowrap transition-colors ${
                     isActive
                       ? "text-primary-foreground"
                       : "text-muted-foreground hover:text-foreground hover:bg-white/5"
@@ -93,26 +94,45 @@ const TopBar = () => {
             <CategoriesMenu />
           </nav>
 
-          {/* Spacer to push right cluster */}
-          <div className="flex-1" />
-
-          {/* Right cluster */}
-          <div className="flex items-center gap-1.5 md:gap-2 flex-shrink-0">
-            <form
-              onSubmit={(e) => { e.preventDefault(); handleSearch(); }}
-              className="hidden md:flex"
+          {/* Inline ad slot — desktop only, between nav and search */}
+          <div className="hidden lg:flex flex-1 justify-center min-w-0 px-2">
+            <div
+              aria-label="Advertisement"
+              className="w-full max-w-[468px] h-10 rounded-md bg-white/[0.03] border border-white/[0.05] flex items-center justify-center overflow-hidden"
             >
-              <div className="flex items-center rounded-full bg-white/[0.06] px-3 py-1.5 ring-1 ring-transparent focus-within:ring-primary transition">
-                <Search className="mr-2 h-3.5 w-3.5 text-foreground/60" />
-                <input
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search anime…"
-                  className="w-40 lg:w-52 bg-transparent text-sm outline-none placeholder:text-foreground/50"
-                />
-              </div>
-            </form>
+              <iframe
+                title="topnav-ad"
+                scrolling="no"
+                frameBorder={0}
+                srcDoc={`<!doctype html><html><head><meta charset='utf-8'><style>html,body{margin:0;padding:0;background:transparent;overflow:hidden;height:100%}#c{width:100%;height:100%;display:flex;align-items:center;justify-content:center}</style></head><body><script async data-cfasync='false' src='https://disturbknockedcaterpillar.com/ba3fd22b78c6d97f709385e2e0894584/invoke.js'><\/script><div id='container-ba3fd22b78c6d97f709385e2e0894584'></div></body></html>`}
+                className="w-full h-full block border-0"
+              />
+            </div>
+          </div>
 
+          {/* Spacer for md-only (no ad) */}
+          <div className="hidden md:block lg:hidden flex-1" />
+          <div className="flex-1 md:hidden" />
+
+          {/* Search — always visible on desktop */}
+          <form
+            onSubmit={(e) => { e.preventDefault(); handleSearch(); }}
+            className="hidden md:flex flex-shrink-0"
+          >
+            <div className="flex items-center rounded-full bg-white/[0.06] px-3 py-1.5 ring-1 ring-transparent focus-within:ring-primary transition">
+              <Search className="mr-2 h-3.5 w-3.5 text-foreground/60" />
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search anime…"
+                className="w-40 lg:w-56 bg-transparent text-sm outline-none placeholder:text-foreground/50"
+                aria-label="Search anime"
+              />
+            </div>
+          </form>
+
+          {/* Right cluster (mobile helpers + profile) */}
+          <div className="flex items-center gap-1.5 md:gap-2 flex-shrink-0">
             <Link
               to="/install"
               className="md:hidden inline-flex items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-primary-foreground"
