@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Star, Play } from "lucide-react";
 import { TmdbItem, img } from "@/lib/tmdb";
+import { subDubLabel } from "@/lib/animeSubDub";
 
 interface TmdbCardProps {
   item: TmdbItem;
@@ -46,7 +47,7 @@ const TmdbCard = ({ item, type, width, fill, rank }: TmdbCardProps) => {
           </div>
         )}
         <div className="absolute top-1 right-1 rounded-sm bg-primary/90 px-1 py-[1px] text-[8px] font-bold uppercase tracking-wide text-primary-foreground">
-          {(item as any).original_language === "ja" ? "SUB" : "DUB"}
+          {subDubLabel(item.id, item.original_language)}
         </div>
         {rank !== undefined && (
           <div className="absolute bottom-0 left-0 flex h-full w-7 flex-col items-center justify-end bg-gradient-to-t from-black/90 to-transparent">
