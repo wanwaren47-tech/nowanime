@@ -283,19 +283,71 @@ const MyDownloadsPage = () => {
       </div>
 
       {playUrl && (
-        <div className="fixed inset-0 z-[100] bg-black/95 flex flex-col" onClick={closePlayer}>
-          <div className="flex items-center justify-between px-4 h-12 flex-shrink-0">
-            <h2 className="text-xs font-semibold text-white truncate pr-3">{playTitle}</h2>
-            <button onClick={closePlayer} className="w-8 h-8 grid place-items-center rounded-full hover:bg-white/10 text-white" aria-label="Close">
+        <div className="fixed inset-0 z-[100] bg-background overflow-y-auto">
+          <div className="sticky top-0 z-10 flex items-center justify-between px-4 h-12 bg-background/95 backdrop-blur border-b border-border/40">
+            <h2 className="text-xs font-semibold text-foreground truncate pr-3">{playTitle}</h2>
+            <button onClick={closePlayer} className="w-8 h-8 grid place-items-center rounded-full hover:bg-white/10 text-foreground" aria-label="Close">
               <X className="w-4 h-4" />
             </button>
           </div>
-          <div className="flex-1 grid place-items-center px-2 pb-4" onClick={(e) => e.stopPropagation()}>
-            <video src={playUrl} controls autoPlay playsInline crossOrigin="anonymous" className="w-full md:max-w-3xl max-h-full rounded-lg bg-black">
-              {playCaptions.map((c, i) => (
-                <track key={c.lang + i} kind="subtitles" src={c.url} srcLang={c.lang} label={c.label} default={i === 0} />
-              ))}
-            </video>
+
+          <div className="max-w-[1600px] mx-auto px-3 md:px-6 py-4 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_360px] gap-6">
+            <div>
+              <div className="relative bg-black rounded-lg overflow-hidden">
+                <video
+                  ref={videoRef}
+                  src={playUrl}
+                  controls
+                  autoPlay
+                  playsInline
+                  crossOrigin="anonymous"
+                  className="w-full max-h-[70vh] bg-black"
+                >
+                  {playCaptions.map((c) => (
+                    <track key={c.lang} kind="subtitles" src={c.url} srcLang={c.lang} label={c.label} />
+                  ))}
+                </video>
+
+                {playCaptions.length > 0 && (
+                  <div className="absolute top-2 right-2">
+                    <button
+                      onClick={() => setCcOpen((o) => !o)}
+                      className={`grid place-items-center h-8 px-2 rounded-md text-[11px] font-bold gap-1 ${activeCc ? "bg-primary text-primary-foreground" : "bg-black/70 text-white"}`}
+                      aria-label="Subtitles"
+                    >
+                      <Captions className="w-3.5 h-3.5" /> CC
+                    </button>
+                    {ccOpen && (
+                      <div className="absolute right-0 mt-1 min-w-[160px] rounded-md bg-black/90 border border-white/10 py-1 text-xs text-white shadow-xl">
+                        <button
+                          onClick={() => { setActiveCc(""); setCcOpen(false); }}
+                          className={`w-full text-left px-3 py-1.5 hover:bg-white/10 ${!activeCc ? "text-primary font-semibold" : ""}`}
+                        >
+                          Off
+                        </button>
+                        {playCaptions.map((c) => (
+                          <button
+                            key={c.lang}
+                            onClick={() => { setActiveCc(c.lang); setCcOpen(false); }}
+                            className={`w-full text-left px-3 py-1.5 hover:bg-white/10 ${activeCc === c.lang ? "text-primary font-semibold" : ""}`}
+                          >
+                            {c.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-4 lg:hidden">
+                <PlayerRecommendations tmdbId={playTmdbId} type={playType} />
+              </div>
+            </div>
+
+            <aside className="hidden lg:block">
+              <PlayerRecommendations tmdbId={playTmdbId} type={playType} />
+            </aside>
           </div>
         </div>
       )}
