@@ -27,14 +27,18 @@ const MyDownloadsPage = () => {
   const [query, setQuery] = useState("");
   const [playUrl, setPlayUrl] = useState<string | null>(null);
   const [playTitle, setPlayTitle] = useState("");
+  const [playTmdbId, setPlayTmdbId] = useState<string>("");
+  const [playType, setPlayType] = useState<"movie" | "tv">("tv");
   const [playCaptions, setPlayCaptions] = useState<{ label: string; lang: string; url: string }[]>([]);
+  const [ccOpen, setCcOpen] = useState(false);
+  const [activeCc, setActiveCc] = useState<string>(""); // lang currently showing (empty = off)
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({});
   const navigate = useNavigate();
 
   const playOffline = async (v: OfflineVideo) => {
     const url = await getDownloadBlobUrl(v.id);
     if (!url) { toast.error("This download isn't ready yet."); return; }
-    // Load captions from IDB and expose as blob URLs for <track> tags.
     const full = await getDownload(v.id);
     const capUrls = (full?.captions || []).map((c: OfflineCaption) => ({
       label: c.label,
@@ -42,16 +46,35 @@ const MyDownloadsPage = () => {
       url: URL.createObjectURL(c.blob),
     }));
     setPlayTitle(v.title);
+    setPlayTmdbId(v.tmdbId);
+    setPlayType(v.type === "movie" ? "movie" : "tv");
     setPlayCaptions(capUrls);
+    const saved = localStorage.getItem("nowanime-offline-cc") || "";
+    setActiveCc(saved && capUrls.some((c) => c.lang === saved) ? saved : (capUrls[0]?.lang || ""));
     setPlayUrl(url);
+    setCcOpen(false);
   };
+
+  // Toggle textTracks whenever activeCc changes.
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    const tracks = v.textTracks;
+    for (let i = 0; i < tracks.length; i++) {
+      const t = tracks[i];
+      t.mode = t.language === activeCc && activeCc ? "showing" : "disabled";
+    }
+    if (activeCc) localStorage.setItem("nowanime-offline-cc", activeCc);
+  }, [activeCc, playUrl, playCaptions]);
 
   const closePlayer = () => {
     if (playUrl) URL.revokeObjectURL(playUrl);
     playCaptions.forEach((c) => URL.revokeObjectURL(c.url));
     setPlayCaptions([]);
     setPlayUrl(null);
+    setCcOpen(false);
   };
+
 
   const refresh = async () => {
     try { setOffline(await getAllDownloads()); } catch { setOffline([]); }
