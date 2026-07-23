@@ -242,17 +242,26 @@ const TVDetailPage = () => {
             </section>
           )}
 
-          {recs.length > 0 && (
-            <div className="mt-10 -mx-[5%]">
-              <TmdbRow title="More Like This" items={recs} type="tv" />
-            </div>
-          )}
-          <div className="-mx-[5%] space-y-0.5">
-            <TmdbRow title="You May Also Like" items={similar.data} isLoading={similar.isLoading} type="tv" />
-            <TmdbRow title="Recommended" items={recommendations.data} isLoading={recommendations.isLoading} type="tv" />
-            <TmdbRow title="Fan Favorites" items={topRated.data} isLoading={topRated.isLoading} type="tv" ranked />
-            <TmdbRow title="Trending Now" items={trending.data} isLoading={trending.isLoading} type="tv" />
-            <TmdbRow title="Popular Shows" items={popular.data} isLoading={popular.isLoading} type="tv" />
+          {/* Anime-only recommendation rails: exactly 3 rows below */}
+          <div className="mt-10 -mx-[5%] space-y-0.5">
+            <TmdbRow
+              title="More Like This"
+              items={(recs || []).filter((r: any) => (r.genre_ids || []).includes(16))}
+              type="tv"
+            />
+            <TmdbRow
+              title="Fan Favorites"
+              items={(topRated.data || []).filter((r: any) => (r.genre_ids || []).includes(16) || r.original_language === "ja")}
+              isLoading={topRated.isLoading}
+              type="tv"
+              ranked
+            />
+            <TmdbRow
+              title="Trending Anime"
+              items={(trending.data || []).filter((r: any) => (r.genre_ids || []).includes(16) || r.original_language === "ja")}
+              isLoading={trending.isLoading}
+              type="tv"
+            />
           </div>
         </div>
       </div>

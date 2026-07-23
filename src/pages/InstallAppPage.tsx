@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
 import SEO from "@/components/SEO";
 import logoAsset from "@/assets/nowanime-logo.png.asset.json";
-import apkAsset from "@/assets/nowanime-app.apk.asset.json";
+
 
 const SCREENSHOTS = [
   "https://image.tmdb.org/t/p/w300/49WJfeN0moxb9IPfGn8AIqMGskD.jpg",
@@ -18,11 +18,12 @@ const InstallAppPage = () => {
   const [done, setDone] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
 
+  const INSTALL_URL = "https://nowanimeapp.lovable.app";
+
   const handleInstall = () => {
     setDownloading(true);
     const a = document.createElement("a");
-    a.href = apkAsset.url;
-    a.download = "NowAnime.apk";
+    a.href = INSTALL_URL;
     a.rel = "noopener";
     a.target = "_blank";
     document.body.appendChild(a);

@@ -1,44 +1,49 @@
-# NowAnime — 5 Task Plan
 
-## Task 1 — Autoplay engine (TV + Movies)
-- Add `src/lib/autoplay.ts` with:
-  - `getNextEpisode(tvId, season, episode)` — uses TMDB `/tv/{id}/season/{n}` to check total episodes; rolls to next season when needed; returns `null` at series end.
-  - `getNextMovie(movieId)` — uses TMDB `/movie/{id}/similar`, returns the first anime‑tagged result.
-- Add `useAutoplay` hook that:
-  - Reads `localStorage.nowanime_autoplay` (default `true`).
-  - Preloads the next stream via existing `resolve-stream` edge function while the current one is still playing (last 30s) so playback is instant.
-  - Emits a 5‑second countdown overlay on `ended` with **Play now / Cancel** buttons.
-- Wire the `ended` event in `MoviePlayer.tsx` (native player) and via `postMessage` for iframe servers where supported; fallback: show a manual "Play Next" button after 100% progress or when iframe reports end.
+# Full implementation plan
 
-## Task 2 — YouTube/MovieBox‑style player controls bar
-Redesign the bar under the player (in `WatchMoviePage` / `WatchTVPage`):
-- Left cluster: **Play/Pause · Previous · Next** (Next/Prev use the autoplay resolver; on movies, Previous = last watched from history).
-- Middle cluster: **Subtitles** picker (fetch tracks from resolver payload; user selects language, applied to `<track>` on native, appended as query param on iframe servers that support it).
-- Right cluster: **Quality** selector (uses resolver `qualities[]`, persists choice), **Download**, **Fullscreen**.
-- Fullscreen on mobile: request `screen.orientation.lock('landscape')` after `requestFullscreen()`; unlock on exit. Desktop keeps current constrained size.
+## 1. Offline player: subtitle button
+- In `src/pages/MyDownloadsPage.tsx`, replace the plain `<video>` with a wrapper that shows a "CC" button (bottom-right overlay) opening a small popover listing available captions (from stored `OfflineCaption` blobs).
+- Toggling a track calls `video.textTracks[i].mode = "showing"` / `"disabled"`. Persist last-used lang in localStorage.
+- Ensure `offlineDownloads.ts` still stores captions as VTT blobs (already done) — verify decode + `<track>` load path.
 
-## Task 3 — Bottom nav restructure
-Update `src/components/BottomNav.tsx` to exactly: **Home · Explore · Trending · My List · Downloads**.
-- Add `/trending` route pulling TMDB `/trending/tv/week` filtered to anime (genre 16 + `original_language=ja`).
-- `My List` = existing likes/watchlist page (rename route to `/my-list`).
-- Remove any leftover Movies tab; redirect `/movies*` → `/home`.
+## 2. Moon favicon / app icon
+- Generate a clean, high-contrast red crescent-moon icon (transparent PNG) via imagegen premium, from the uploaded reference.
+- Produce: `public/favicon.png` (32/192), `public/pwa-192x192.png`, `public/pwa-512x512.png`, `public/apple-touch-icon.png`.
+- Update `index.html` `<link rel="icon">` and `manifest.json` icon entries. Delete `public/favicon.ico`.
 
-## Task 4 — Movies purge + Movie details cleanup
-- Investigate `MovieDetailPage.tsx` and any movie rails; remove non‑working movie sections and any residual "Movies" navigation, since the app is anime‑only.
-- Keep the file only if reused for anime films (TMDB movie genre 16 + `original_language=ja`); otherwise delete route and imports.
-- Grep for `movie` UI strings and align to anime terminology; keep backend `resolve-stream` movie path (used by anime films).
+## 3. SUB/DUB labeling for known anime
+- Extend `TmdbCard.tsx` label logic: maintain a curated slug/id list of known SUB titles (Jujutsu Kaisen, Death Note, +others) forcing "SUB" regardless of `original_language`.
+- Store list in `src/lib/animeSubDub.ts` keyed by TMDB id.
 
-## Task 5 — SEO, favicon & indexing
-- Generate a bold NowAnime app icon (red/orange gradient bg, phoenix mark, high‑contrast) at 512/192/apple‑touch/favicon.ico, wired in `index.html` and `manifest.webmanifest`.
-- `public/robots.txt`: `User-agent: *` / `Allow: /` / `Sitemap: https://nowanime.lovable.app/sitemap.xml`.
-- Ensure `scripts/generate-sitemap.ts` emits dynamic anime routes and runs on `prebuild`/`predev`.
-- Confirm Google Search Console META token is live (already in `index.html`), then via the connector: verify site, submit sitemap, request indexing on key routes.
-- Add IndexNow: generate key file at `public/{key}.txt` and ping `https://www.bing.com/indexnow` from a tiny post‑build script for the top routes.
-- Verify `<meta name="robots">` is not `noindex` anywhere and canonical/og:url self‑reference each route via `react-helmet-async`.
+## 4. Desktop top nav redesign
+- `src/components/TopBar.tsx`: on `md+`, layout = [logo left] · [centered nav pills] · [inline 4-in-row ad slot] · [visible search input] · [profile].
+- Search input becomes always-visible (not icon-only) on desktop, submits to `/search?q=`.
+- Add a compact `AdSlot` (banner 4-in-row Adsterra key) between nav and search.
+
+## 5. Downloads player = app player shell
+- Replace fullscreen overlay in `MyDownloadsPage.tsx` with the same layout used on Watch pages: video left, `PlayerRecommendations` sidebar on desktop, stacked on mobile.
+- Feed recommendations from TMDB by tmdbId of the offline item (anime-only filter).
+
+## 6. Anime detail page cleanup
+- In `src/pages/AnimeDetailPage.tsx`, keep exactly 3 recommendation rows below; filter out any TMDB result not classified as animation/anime (keyword 210024 or `original_language==='ja'` + animation genre). No movies-only rails.
+
+## 7. Sitemap: 250 pages + images + video
+- Rewrite `scripts/generate-sitemap.ts` to:
+  - Static routes (~15).
+  - Fetch top anime from TMDB discover (genre 16, lang ja) across pages until ~230 dynamic entries — mix of `/anime/:id` and `/tv/:id`.
+  - Use image + video sitemap namespaces: for each entry include `<image:image><image:loc>` (TMDB poster) and `<video:video>` (embed URL, thumbnail, title, description).
+  - Output `public/sitemap.xml` (single file, ≥250 `<url>`).
+- Keep `predev`/`prebuild` hooks.
+- After deploy, ping Google Search Console `sitemaps` submit via connector gateway.
+
+## 8. Install page link
+- `src/pages/InstallAppPage.tsx`: primary install/download button → `https://nowanimeapp.lovable.app`.
+
+## 9. robots.txt
+- Ensure `Allow: /` for all agents and `Sitemap: https://nowanime.lovable.app/sitemap.xml` (already present).
 
 ## Technical notes
-- Autoplay preloading uses an off‑screen `<video preload="auto">` for native streams and a hidden `<iframe>` warmup for embed servers.
-- Countdown overlay is a small component in `src/components/player/UpNextOverlay.tsx`, reused by TV and movie pages.
-- Setting toggle lives in `SettingsPage` under a new "Playback" row; state stored in `localStorage` and mirrored to a lightweight `useAutoplaySetting` hook.
-- Subtitle tracks: extend `resolve-stream` response type with `subtitles: {lang, url}[]`; UI falls back gracefully when empty.
-- All new UI uses existing semantic tokens (red/orange theme) — no hardcoded colors.
+- Files touched: `MyDownloadsPage.tsx`, `TopBar.tsx`, `TmdbCard.tsx`, `AnimeDetailPage.tsx`, `InstallAppPage.tsx`, `scripts/generate-sitemap.ts`, `index.html`, `public/manifest.json`, new `src/lib/animeSubDub.ts`, new icon assets in `public/`.
+- Use existing `PlayerRecommendations` component for offline sidebar.
+- Sitemap uses `xmlns:image` and `xmlns:video` schemas; each URL entry ≤ Google's limits.
+- GSC submission via `curl` to `/webmasters/v3/sites/<encoded>/sitemaps/<encoded-sitemap-url>` PUT.
