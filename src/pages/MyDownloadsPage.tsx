@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Play, ChevronLeft, Search, Trash2, CloudDownload, X, Pause, Loader2, Folder, ChevronDown } from "lucide-react";
+import { Play, ChevronLeft, Search, Trash2, CloudDownload, X, Pause, Loader2, Folder, ChevronDown, Captions } from "lucide-react";
 import AppLayout from "@/components/AppLayout";
 import SEO from "@/components/SEO";
+import PlayerRecommendations from "@/components/PlayerRecommendations";
 import { getAllDownloads, deleteDownload, getDownload, getDownloadBlobUrl, pauseDownload, type OfflineVideo, type OfflineCaption } from "@/lib/offlineDownloads";
 import { toast } from "sonner";
 
