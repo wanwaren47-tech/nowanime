@@ -88,7 +88,7 @@ const MoviePlayer = ({
   // Wire resume-position handling to the <video>.
   useEffect(() => {
     const v = videoRef.current;
-    if (!v || !proxiedReady) return;
+    if (!v || !selected) return;
     return attachProgress(v, pKey);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pKey, selected]);
