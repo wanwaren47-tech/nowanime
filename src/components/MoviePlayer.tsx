@@ -340,16 +340,29 @@ const MoviePlayer = ({
               {captions.length === 0 && (
                 <div className="px-3 py-2 text-[10.5px] text-white/45">No subtitles available</div>
               )}
-              {captions.map((c) => (
-                <button
-                  key={c.fullName}
-                  onClick={() => { setSelectedCaption(c.fullName); setSubsOpen(false); }}
-                  className="w-full flex items-center justify-between px-3 py-1.5 text-[11px] text-white hover:bg-white/5"
-                >
-                  <span>{c.fullName}</span>
-                  {selectedCaption === c.fullName && <Check className="w-3 h-3" />}
-                </button>
-              ))}
+              {captions.map((c) => {
+                const offlineHas = !!offlineMeta?.captions?.some(
+                  (oc) => oc.label === c.fullName || oc.lang === c.lang,
+                );
+                return (
+                  <button
+                    key={c.fullName}
+                    onClick={() => { setSelectedCaption(c.fullName); setSubsOpen(false); }}
+                    className="w-full flex items-center justify-between gap-2 px-3 py-1.5 text-[11px] text-white hover:bg-white/5"
+                  >
+                    <span className="flex items-center gap-1.5">
+                      {c.fullName}
+                      <span
+                        className={`px-1 py-[1px] rounded text-[8px] font-bold uppercase ${offlineHas ? "bg-emerald-500/20 text-emerald-300" : "bg-white/10 text-white/50"}`}
+                        title={offlineHas ? "Available offline" : "Online only"}
+                      >
+                        {offlineHas ? "Offline" : "Online"}
+                      </span>
+                    </span>
+                    {selectedCaption === c.fullName && <Check className="w-3 h-3" />}
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>
