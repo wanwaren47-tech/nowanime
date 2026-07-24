@@ -92,7 +92,7 @@ const MovieDetailPage = () => {
             "@type": "VideoObject",
             name: data.title,
             description: (data.overview || `Watch ${data.title} on NowAnime.`).slice(0, 500),
-            thumbnailUrl: [img(data.backdrop_path, "w1280"), img(data.poster_path, "w780")].filter(Boolean),
+            thumbnailUrl: [img(data.backdrop_path, "original"), img(data.poster_path, "w780")].filter(Boolean),
             uploadDate: data.release_date || new Date().toISOString().slice(0, 10),
             embedUrl: `https://nowanime.lovable.app/watch/movie/${data.id}`,
             contentUrl: `https://nowanime.lovable.app/watch/movie/${data.id}`,
