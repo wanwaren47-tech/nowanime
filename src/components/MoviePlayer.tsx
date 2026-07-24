@@ -12,6 +12,8 @@ import {
   type MovieboxCaption,
 } from "@/lib/moviebox";
 import { loadCaptionAsVtt, languageName } from "@/lib/subtitles";
+import { getDownload, type OfflineVideo } from "@/lib/offlineDownloads";
+import { attachProgress, progressKey, getProgress, formatTime } from "@/lib/playbackProgress";
 
 // Legacy type kept as a no-op export so existing imports don't break.
 export type ServerId = "moviebox";
@@ -66,14 +68,30 @@ const MoviePlayer = ({
   const videoRef = useRef<HTMLVideoElement>(null);
   const online = useOnlineStatus();
   const [savedOffline, setSavedOffline] = useState(false);
+  const [offlineMeta, setOfflineMeta] = useState<OfflineVideo | null>(null);
+  const [resumeAt, setResumeAt] = useState<number | null>(null);
+
+  const pKey = progressKey({ type, tmdbId, season, episode });
 
   useEffect(() => {
     let active = true;
-    isDownloaded(`${type}-${tmdbId}`).then((d) => {
-      if (active) setSavedOffline(d);
+    getDownload(`${type}-${tmdbId}`).then((d) => {
+      if (!active) return;
+      setOfflineMeta(d || null);
+      setSavedOffline(!!d && d.status === "ready" && !!d.blob);
     });
+    const p = getProgress(pKey);
+    setResumeAt(p && p.position > 5 ? p.position : null);
     return () => { active = false; };
-  }, [type, tmdbId]);
+  }, [type, tmdbId, pKey]);
+
+  // Wire resume-position handling to the <video>.
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v || !proxiedReady) return;
+    return attachProgress(v, pKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pKey, selected]);
 
   const fetchStreams = useCallback(async () => {
     if (!title) return;
