@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Play, ChevronLeft, Search, Trash2, CloudDownload, X, Pause, Loader2, Folder, ChevronDown, Captions } from "lucide-react";
+import { Play, ChevronLeft, Search, CloudDownload, X, Pause, Loader2, Folder, ChevronDown, Captions, CheckCircle2 } from "lucide-react";
 import AppLayout from "@/components/AppLayout";
 import SEO from "@/components/SEO";
 import PlayerRecommendations from "@/components/PlayerRecommendations";
-import { getAllDownloads, deleteDownload, getDownload, getDownloadBlobUrl, pauseDownload, type OfflineVideo, type OfflineCaption } from "@/lib/offlineDownloads";
+import { getAllDownloads, getDownload, getDownloadBlobUrl, pauseDownload, type OfflineVideo, type OfflineCaption } from "@/lib/offlineDownloads";
+import { attachProgress, getProgress, formatTime } from "@/lib/playbackProgress";
 import { toast } from "sonner";
 
 function fmtMB(bytes: number) {
@@ -27,11 +28,12 @@ const MyDownloadsPage = () => {
   const [query, setQuery] = useState("");
   const [playUrl, setPlayUrl] = useState<string | null>(null);
   const [playTitle, setPlayTitle] = useState("");
+  const [playId, setPlayId] = useState<string>("");
   const [playTmdbId, setPlayTmdbId] = useState<string>("");
   const [playType, setPlayType] = useState<"movie" | "tv">("tv");
-  const [playCaptions, setPlayCaptions] = useState<{ label: string; lang: string; url: string }[]>([]);
+  const [playCaptions, setPlayCaptions] = useState<{ label: string; lang: string; url: string; offline: boolean }[]>([]);
   const [ccOpen, setCcOpen] = useState(false);
-  const [activeCc, setActiveCc] = useState<string>(""); // lang currently showing (empty = off)
+  const [activeCc, setActiveCc] = useState<string>("");
   const videoRef = useRef<HTMLVideoElement>(null);
   const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({});
   const navigate = useNavigate();
@@ -44,8 +46,10 @@ const MyDownloadsPage = () => {
       label: c.label,
       lang: c.lang,
       url: URL.createObjectURL(c.blob),
+      offline: true,
     }));
     setPlayTitle(v.title);
+    setPlayId(v.id);
     setPlayTmdbId(v.tmdbId);
     setPlayType(v.type === "movie" ? "movie" : "tv");
     setPlayCaptions(capUrls);
@@ -54,6 +58,13 @@ const MyDownloadsPage = () => {
     setPlayUrl(url);
     setCcOpen(false);
   };
+
+  // Resume-position wiring for the offline player.
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v || !playUrl || !playId) return;
+    return attachProgress(v, `offline-${playId}`);
+  }, [playUrl, playId]);
 
   // Toggle textTracks whenever activeCc changes.
   useEffect(() => {
@@ -72,9 +83,9 @@ const MyDownloadsPage = () => {
     playCaptions.forEach((c) => URL.revokeObjectURL(c.url));
     setPlayCaptions([]);
     setPlayUrl(null);
+    setPlayId("");
     setCcOpen(false);
   };
-
 
   const refresh = async () => {
     try { setOffline(await getAllDownloads()); } catch { setOffline([]); }
@@ -86,25 +97,11 @@ const MyDownloadsPage = () => {
     return () => clearInterval(i);
   }, []);
 
-  const removeOne = async (id: string) => {
-    await deleteDownload(id);
-    toast.success("Removed");
-    refresh();
-  };
-
-  const removeFolder = async (folder: SeriesFolder) => {
-    await Promise.all(folder.episodes.map((e) => deleteDownload(e.id)));
-    toast.success("Series removed");
-    refresh();
-  };
-
-  // Split offline downloads into single movies and grouped series folders.
   const { movies, folders } = useMemo(() => {
     const q = query.trim().toLowerCase();
     const match = (s: string) => (!q ? true : s.toLowerCase().includes(q));
     const movieList: OfflineVideo[] = [];
     const folderMap = new Map<string, SeriesFolder>();
-
     for (const v of offline) {
       if (v.type === "tv") {
         const key = `tv-${v.tmdbId}`;
@@ -117,11 +114,10 @@ const MyDownloadsPage = () => {
         }
         if (!f.poster && v.poster) f.poster = v.poster;
         f.episodes.push(v);
-      } else {
-        if (match(v.title)) movieList.push(v);
+      } else if (match(v.title)) {
+        movieList.push(v);
       }
     }
-
     const folderList = Array.from(folderMap.values());
     folderList.forEach((f) =>
       f.episodes.sort((a, b) => (a.season ?? 0) - (b.season ?? 0) || (a.episode ?? 0) - (b.episode ?? 0)),
@@ -131,65 +127,95 @@ const MyDownloadsPage = () => {
 
   const empty = movies.length === 0 && folders.length === 0;
 
-  const renderRow = (v: OfflineVideo, indent = false) => {
+  const renderCard = (v: OfflineVideo) => {
     const pct = v.size > 0 ? Math.min(100, Math.round((v.downloaded / v.size) * 100)) : 0;
     const ready = v.status === "ready";
     const downloading = v.status === "downloading" || v.status === "queued";
+    const progress = getProgress(`offline-${v.id}`);
     return (
-      <li key={v.id} className={`flex items-center gap-3 p-2 rounded-xl ${indent ? "ml-3" : ""}`} style={{ background: "#141414" }}>
-        <button
-          onClick={() => ready && playOffline(v)}
-          className="relative w-[58px] h-[78px] rounded-lg overflow-hidden bg-black flex-shrink-0 group"
-        >
-          {v.poster && <img src={v.poster} alt={v.title} loading="lazy" className="w-full h-full object-cover" />}
+      <button
+        key={v.id}
+        onClick={() => ready && playOffline(v)}
+        className="w-full text-left rounded-xl overflow-hidden bg-[#141414] hover:bg-[#1a1a1a] transition-colors"
+      >
+        <div className="relative aspect-video bg-black">
+          {v.backdrop || v.poster ? (
+            <img src={v.backdrop || v.poster || ""} alt={v.title} loading="lazy" className="w-full h-full object-cover" />
+          ) : null}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
           {ready && (
-            <span className="absolute inset-0 grid place-items-center bg-black/30">
-              <Play className="w-5 h-5 text-white fill-white" />
+            <span className="absolute inset-0 grid place-items-center">
+              <span className="grid place-items-center w-11 h-11 rounded-full bg-black/60 backdrop-blur-sm">
+                <Play className="w-5 h-5 text-white fill-white" />
+              </span>
             </span>
           )}
           {downloading && (
             <span className="absolute inset-0 grid place-items-center bg-black/50">
-              <Loader2 className="w-4 h-4 text-white animate-spin" />
+              <Loader2 className="w-5 h-5 text-white animate-spin" />
             </span>
           )}
-        </button>
-        <div className="flex-1 min-w-0">
-          <h3 className="text-xs font-bold text-white truncate">
-            {indent && v.episode ? `Episode ${v.episode}` : v.title}
-          </h3>
-          {ready ? (
-            <p className="text-[10px] text-emerald-400 mt-0.5">Available offline · {fmtMB(v.size)}</p>
-          ) : v.status === "error" ? (
-            <p className="text-[10px] text-[hsl(var(--primary))] mt-0.5">Download failed</p>
-          ) : v.status === "paused" ? (
-            <p className="text-[10px] text-white/55 mt-0.5">Paused · {pct}%</p>
-          ) : (
-            <p className="text-[10px] text-white/55 mt-0.5">
-              Downloading · {pct}% {v.size ? `of ${fmtMB(v.size)}` : ""}
-            </p>
+          {ready && (
+            <span className="absolute top-2 left-2 inline-flex items-center gap-1 rounded-md bg-emerald-500/90 px-1.5 py-0.5 text-[9px] font-bold text-white">
+              <CheckCircle2 className="w-2.5 h-2.5" /> OFFLINE
+            </span>
           )}
-          {!ready && v.status !== "error" && (
-            <div className="mt-1.5 h-1 w-full rounded-full bg-white/10 overflow-hidden">
-              <div className="h-full rounded-full bg-[hsl(var(--primary))] transition-all" style={{ width: `${pct}%` }} />
+          {v.episode ? (
+            <span className="absolute top-2 right-2 rounded-md bg-black/70 px-1.5 py-0.5 text-[9px] font-bold text-white">
+              S{v.season} · E{v.episode}
+            </span>
+          ) : null}
+          {progress && progress.duration > 0 && (
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/10">
+              <div
+                className="h-full bg-[hsl(var(--primary))]"
+                style={{ width: `${Math.min(100, (progress.position / progress.duration) * 100)}%` }}
+              />
             </div>
           )}
         </div>
-        {downloading && (
-          <button onClick={() => pauseDownload(v.id)} className="p-2 text-white/55 hover:text-white" aria-label="Pause">
-            <Pause className="w-4 h-4" />
-          </button>
-        )}
-        <button onClick={() => removeOne(v.id)} className="p-2 text-white/55 hover:text-[hsl(var(--primary))]" aria-label="Delete">
-          <Trash2 className="w-4 h-4" />
-        </button>
-      </li>
+        <div className="p-2.5">
+          <h3 className="text-[12px] font-bold text-white line-clamp-1">{v.title}</h3>
+          {ready ? (
+            <p className="text-[10px] text-white/55 mt-0.5">
+              {progress ? `Resume · ${formatTime(progress.position)}` : "Ready"} · {fmtMB(v.size)}
+            </p>
+          ) : v.status === "error" ? (
+            <p className="text-[10px] text-[hsl(var(--primary))] mt-0.5">Download failed</p>
+          ) : v.status === "paused" ? (
+            <div className="flex items-center gap-2 mt-1">
+              <div className="flex-1 h-1 rounded-full bg-white/10 overflow-hidden">
+                <div className="h-full bg-[hsl(var(--primary))]" style={{ width: `${pct}%` }} />
+              </div>
+              <span className="text-[10px] text-white/55">Paused · {pct}%</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 mt-1">
+              <div className="flex-1 h-1 rounded-full bg-white/10 overflow-hidden">
+                <div className="h-full bg-[hsl(var(--primary))] transition-all" style={{ width: `${pct}%` }} />
+              </div>
+              <span className="text-[10px] text-white/55">{pct}%</span>
+              <span
+                role="button"
+                tabIndex={0}
+                onClick={(e) => { e.stopPropagation(); pauseDownload(v.id); }}
+                onKeyDown={(e) => { if (e.key === "Enter") { e.stopPropagation(); pauseDownload(v.id); } }}
+                className="p-1 text-white/55 hover:text-white cursor-pointer"
+                aria-label="Pause"
+              >
+                <Pause className="w-3.5 h-3.5" />
+              </span>
+            </div>
+          )}
+        </div>
+      </button>
     );
   };
 
   return (
     <AppLayout hideFooter>
-      <SEO title="My Downloads – NowAnime" description="Watch your downloaded movies offline anytime on NowAnime." />
-      <div className="px-4 pt-3 pb-8 max-w-2xl mx-auto" style={{ background: "#0e0b18" }}>
+      <SEO title="My Downloads – NowAnime" description="Watch your downloaded anime offline anytime on NowAnime." />
+      <div className="px-4 pt-3 pb-8 max-w-5xl mx-auto">
         <header className="flex items-center justify-between mb-4 pt-1">
           <button onClick={() => navigate(-1)} className="w-8 h-8 grid place-items-center rounded-full hover:bg-white/5 text-white" aria-label="Back">
             <ChevronLeft className="w-4 h-4" />
@@ -222,19 +248,19 @@ const MyDownloadsPage = () => {
         ) : (
           <>
             {folders.length > 0 && (
-              <>
+              <section className="mb-6">
                 <p className="text-[10px] uppercase tracking-widest text-white/45 mb-2">Series</p>
-                <ul className="space-y-2 mb-4">
+                <div className="space-y-3">
                   {folders.map((f) => {
                     const isOpen = openFolders[f.key];
                     const readyCount = f.episodes.filter((e) => e.status === "ready").length;
                     return (
-                      <li key={f.key} className="rounded-xl overflow-hidden" style={{ background: "#141414" }}>
-                        <div className="flex items-center gap-3 p-2">
-                          <button
-                            onClick={() => setOpenFolders((s) => ({ ...s, [f.key]: !s[f.key] }))}
-                            className="relative w-[58px] h-[78px] rounded-lg overflow-hidden bg-black flex-shrink-0"
-                          >
+                      <div key={f.key} className="rounded-xl overflow-hidden bg-[#141414]">
+                        <button
+                          onClick={() => setOpenFolders((s) => ({ ...s, [f.key]: !s[f.key] }))}
+                          className="w-full flex items-center gap-3 p-3 text-left"
+                        >
+                          <div className="relative w-[56px] h-[80px] rounded-lg overflow-hidden bg-black flex-shrink-0">
                             {f.poster ? (
                               <img src={f.poster} alt={f.title} loading="lazy" className="w-full h-full object-cover" />
                             ) : (
@@ -243,40 +269,34 @@ const MyDownloadsPage = () => {
                             <span className="absolute bottom-1 right-1 grid place-items-center w-5 h-5 rounded-full bg-black/70">
                               <Folder className="w-3 h-3 text-white" />
                             </span>
-                          </button>
-                          <button
-                            onClick={() => setOpenFolders((s) => ({ ...s, [f.key]: !s[f.key] }))}
-                            className="flex-1 min-w-0 text-left"
-                          >
+                          </div>
+                          <div className="flex-1 min-w-0">
                             <h3 className="text-xs font-bold text-white truncate">{f.title}</h3>
                             <p className="text-[10px] text-white/55 mt-0.5">
                               {f.episodes.length} episode{f.episodes.length !== 1 ? "s" : ""} · {readyCount} ready offline
                             </p>
-                          </button>
-                          <button onClick={() => removeFolder(f)} className="p-2 text-white/55 hover:text-[hsl(var(--primary))]" aria-label="Delete series">
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                          </div>
                           <ChevronDown className={`w-4 h-4 text-white/45 transition-transform ${isOpen ? "rotate-180" : ""}`} />
-                        </div>
+                        </button>
                         {isOpen && (
-                          <ul className="space-y-2 px-2 pb-2">
-                            {f.episodes.map((e) => renderRow(e, true))}
-                          </ul>
+                          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 p-2 pt-0">
+                            {f.episodes.map((e) => renderCard(e))}
+                          </div>
                         )}
-                      </li>
+                      </div>
                     );
                   })}
-                </ul>
-              </>
+                </div>
+              </section>
             )}
 
             {movies.length > 0 && (
-              <>
+              <section>
                 <p className="text-[10px] uppercase tracking-widest text-white/45 mb-2">Movies</p>
-                <ul className="space-y-2">
-                  {movies.map((v) => renderRow(v))}
-                </ul>
-              </>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                  {movies.map((v) => renderCard(v))}
+                </div>
+              </section>
             )}
           </>
         )}
@@ -318,7 +338,7 @@ const MyDownloadsPage = () => {
                       <Captions className="w-3.5 h-3.5" /> CC
                     </button>
                     {ccOpen && (
-                      <div className="absolute right-0 mt-1 min-w-[160px] rounded-md bg-black/90 border border-white/10 py-1 text-xs text-white shadow-xl">
+                      <div className="absolute right-0 mt-1 min-w-[200px] rounded-md bg-black/95 border border-white/10 py-1 text-xs text-white shadow-xl">
                         <button
                           onClick={() => { setActiveCc(""); setCcOpen(false); }}
                           className={`w-full text-left px-3 py-1.5 hover:bg-white/10 ${!activeCc ? "text-primary font-semibold" : ""}`}
@@ -329,9 +349,12 @@ const MyDownloadsPage = () => {
                           <button
                             key={c.lang}
                             onClick={() => { setActiveCc(c.lang); setCcOpen(false); }}
-                            className={`w-full text-left px-3 py-1.5 hover:bg-white/10 ${activeCc === c.lang ? "text-primary font-semibold" : ""}`}
+                            className={`w-full flex items-center justify-between gap-2 px-3 py-1.5 hover:bg-white/10 ${activeCc === c.lang ? "text-primary font-semibold" : ""}`}
                           >
-                            {c.label}
+                            <span>{c.label}</span>
+                            <span className="inline-flex items-center gap-1 rounded bg-emerald-500/20 text-emerald-300 px-1 py-[1px] text-[8px] font-bold uppercase">
+                              <CheckCircle2 className="w-2.5 h-2.5" /> Offline
+                            </span>
                           </button>
                         ))}
                       </div>
@@ -340,7 +363,17 @@ const MyDownloadsPage = () => {
                 )}
               </div>
 
-              <div className="mt-4 lg:hidden">
+              {playCaptions.length > 0 && (
+                <p className="mt-2 inline-flex items-center gap-1 rounded-md bg-emerald-500/10 border border-emerald-500/30 px-2 py-1 text-[10px] font-semibold text-emerald-300">
+                  <CheckCircle2 className="w-3 h-3" />
+                  {activeCc
+                    ? `Subtitles ready offline · ${playCaptions.find((c) => c.lang === activeCc)?.label || activeCc}`
+                    : `${playCaptions.length} subtitle track${playCaptions.length > 1 ? "s" : ""} available offline`}
+                </p>
+              )}
+
+              {/* Suggestions below the player on all viewports. */}
+              <div className="mt-4">
                 <PlayerRecommendations tmdbId={playTmdbId} type={playType} />
               </div>
             </div>
