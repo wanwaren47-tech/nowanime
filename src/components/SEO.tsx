@@ -10,7 +10,7 @@ interface SEOProps {
   image?: string;
   type?: string;
   canonicalPath?: string;
-  jsonLd?: Record<string, any>;
+  jsonLd?: Record<string, any> | Record<string, any>[];
   noindex?: boolean;
 }
 
@@ -23,9 +23,11 @@ const SEO = ({ title, description = "", image, type = "website", canonicalPath, 
   const desc = description.length > 160 ? description.slice(0, 157) + "..." : description;
   const ogImage = image || DEFAULT_IMAGE;
 
-  const jsonLdScript = jsonLd
-    ? JSON.stringify({ "@context": "https://schema.org", ...jsonLd })
-    : null;
+  const jsonLdList = jsonLd
+    ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]).map((j) =>
+        JSON.stringify({ "@context": "https://schema.org", ...j }),
+      )
+    : [];
 
   return (
     <Helmet>
@@ -42,9 +44,9 @@ const SEO = ({ title, description = "", image, type = "website", canonicalPath, 
       <meta name="twitter:description" content={desc} />
       <meta name="twitter:url" content={url} />
       <meta name="twitter:image" content={ogImage} />
-      {jsonLdScript && (
-        <script type="application/ld+json">{jsonLdScript}</script>
-      )}
+      {jsonLdList.map((s, i) => (
+        <script key={i} type="application/ld+json">{s}</script>
+      ))}
     </Helmet>
   );
 };
