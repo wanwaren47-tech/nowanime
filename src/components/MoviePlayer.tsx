@@ -278,6 +278,20 @@ const MoviePlayer = ({
             </button>
           </div>
         )}
+
+        {resumeAt !== null && selected && !loading && !error && (
+          <button
+            onClick={() => {
+              const v = videoRef.current;
+              if (v) { try { v.currentTime = resumeAt; v.play?.(); } catch { /* ignore */ } }
+              setResumeAt(null);
+            }}
+            className="absolute bottom-3 left-3 z-30 flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[11px] font-semibold text-white shadow-xl"
+            style={{ background: "hsl(var(--primary))" }}
+          >
+            <Play className="w-3 h-3 fill-white" /> Resume from {formatTime(resumeAt)}
+          </button>
+        )}
       </div>
 
       {/* Toolbar: transport · subtitles · quality · download · fullscreen */}
