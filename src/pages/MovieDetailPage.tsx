@@ -72,19 +72,36 @@ const MovieDetailPage = () => {
         description={(data.overview || `Watch ${data.title} streaming on NowAnime. Cast, reviews, trailers and more.`).slice(0, 160)}
         type="video.movie"
         image={img(data.backdrop_path, "w780") || undefined}
-        jsonLd={{
-          "@type": "Movie",
-          name: data.title,
-          description: data.overview || `Watch ${data.title} on NowAnime.`,
-          image: poster || undefined,
-          datePublished: data.release_date || undefined,
-          aggregateRating: data.vote_average > 0 ? {
-            "@type": "AggregateRating",
-            ratingValue: data.vote_average,
-            bestRating: 10,
-          } : undefined,
-          genre: (data.genres || []).map((g: any) => g.name),
-        }}
+        jsonLd={[
+          {
+            "@type": "Movie",
+            name: data.title,
+            description: data.overview || `Watch ${data.title} on NowAnime.`,
+            image: img(data.poster_path, "w500") || undefined,
+            datePublished: data.release_date || undefined,
+            aggregateRating: data.vote_average > 0 ? {
+              "@type": "AggregateRating",
+              ratingValue: data.vote_average,
+              bestRating: 10,
+              ratingCount: data.vote_count || 1,
+            } : undefined,
+            genre: (data.genres || []).map((g: any) => g.name),
+            duration: data.runtime ? `PT${data.runtime}M` : undefined,
+          },
+          {
+            "@type": "VideoObject",
+            name: data.title,
+            description: (data.overview || `Watch ${data.title} on NowAnime.`).slice(0, 500),
+            thumbnailUrl: [img(data.backdrop_path, "original"), img(data.poster_path, "w780")].filter(Boolean),
+            uploadDate: data.release_date || new Date().toISOString().slice(0, 10),
+            embedUrl: `https://nowanime.lovable.app/watch/movie/${data.id}`,
+            contentUrl: `https://nowanime.lovable.app/watch/movie/${data.id}`,
+            duration: data.runtime ? `PT${data.runtime}M` : undefined,
+            genre: (data.genres || []).map((g: any) => g.name),
+            inLanguage: data.original_language || "ja",
+            isFamilyFriendly: true,
+          },
+        ]}
       />
       <div className="relative">
         <div className="relative w-full h-[55vh] md:h-[70vh]">

@@ -2,7 +2,6 @@ import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { Loader2, AlertCircle, RefreshCw, Expand, WifiOff, CloudDownload, Play, SkipBack, SkipForward, Subtitles, Settings2, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
-import { isDownloaded } from "@/lib/offlineDownloads";
 import DownloadButton from "@/components/DownloadButton";
 import {
   resolveMovieboxDownloads,
@@ -12,6 +11,8 @@ import {
   type MovieboxCaption,
 } from "@/lib/moviebox";
 import { loadCaptionAsVtt, languageName } from "@/lib/subtitles";
+import { getDownload, type OfflineVideo } from "@/lib/offlineDownloads";
+import { attachProgress, progressKey, getProgress, formatTime } from "@/lib/playbackProgress";
 
 // Legacy type kept as a no-op export so existing imports don't break.
 export type ServerId = "moviebox";
@@ -66,14 +67,30 @@ const MoviePlayer = ({
   const videoRef = useRef<HTMLVideoElement>(null);
   const online = useOnlineStatus();
   const [savedOffline, setSavedOffline] = useState(false);
+  const [offlineMeta, setOfflineMeta] = useState<OfflineVideo | null>(null);
+  const [resumeAt, setResumeAt] = useState<number | null>(null);
+
+  const pKey = progressKey({ type, tmdbId, season, episode });
 
   useEffect(() => {
     let active = true;
-    isDownloaded(`${type}-${tmdbId}`).then((d) => {
-      if (active) setSavedOffline(d);
+    getDownload(`${type}-${tmdbId}`).then((d) => {
+      if (!active) return;
+      setOfflineMeta(d || null);
+      setSavedOffline(!!d && d.status === "ready" && !!d.blob);
     });
+    const p = getProgress(pKey);
+    setResumeAt(p && p.position > 5 ? p.position : null);
     return () => { active = false; };
-  }, [type, tmdbId]);
+  }, [type, tmdbId, pKey]);
+
+  // Wire resume-position handling to the <video>.
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v || !selected) return;
+    return attachProgress(v, pKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pKey, selected]);
 
   const fetchStreams = useCallback(async () => {
     if (!title) return;
@@ -261,6 +278,20 @@ const MoviePlayer = ({
             </button>
           </div>
         )}
+
+        {resumeAt !== null && selected && !loading && !error && (
+          <button
+            onClick={() => {
+              const v = videoRef.current;
+              if (v) { try { v.currentTime = resumeAt; v.play?.(); } catch { /* ignore */ } }
+              setResumeAt(null);
+            }}
+            className="absolute bottom-3 left-3 z-30 flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[11px] font-semibold text-white shadow-xl"
+            style={{ background: "hsl(var(--primary))" }}
+          >
+            <Play className="w-3 h-3 fill-white" /> Resume from {formatTime(resumeAt)}
+          </button>
+        )}
       </div>
 
       {/* Toolbar: transport · subtitles · quality · download · fullscreen */}
@@ -323,16 +354,29 @@ const MoviePlayer = ({
               {captions.length === 0 && (
                 <div className="px-3 py-2 text-[10.5px] text-white/45">No subtitles available</div>
               )}
-              {captions.map((c) => (
-                <button
-                  key={c.fullName}
-                  onClick={() => { setSelectedCaption(c.fullName); setSubsOpen(false); }}
-                  className="w-full flex items-center justify-between px-3 py-1.5 text-[11px] text-white hover:bg-white/5"
-                >
-                  <span>{c.fullName}</span>
-                  {selectedCaption === c.fullName && <Check className="w-3 h-3" />}
-                </button>
-              ))}
+              {captions.map((c) => {
+                const offlineHas = !!offlineMeta?.captions?.some(
+                  (oc) => oc.label === c.fullName || oc.lang === c.lang,
+                );
+                return (
+                  <button
+                    key={c.fullName}
+                    onClick={() => { setSelectedCaption(c.fullName); setSubsOpen(false); }}
+                    className="w-full flex items-center justify-between gap-2 px-3 py-1.5 text-[11px] text-white hover:bg-white/5"
+                  >
+                    <span className="flex items-center gap-1.5">
+                      {c.fullName}
+                      <span
+                        className={`px-1 py-[1px] rounded text-[8px] font-bold uppercase ${offlineHas ? "bg-emerald-500/20 text-emerald-300" : "bg-white/10 text-white/50"}`}
+                        title={offlineHas ? "Available offline" : "Online only"}
+                      >
+                        {offlineHas ? "Offline" : "Online"}
+                      </span>
+                    </span>
+                    {selectedCaption === c.fullName && <Check className="w-3 h-3" />}
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>

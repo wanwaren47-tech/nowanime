@@ -70,21 +70,45 @@ const TVDetailPage = () => {
         description={(data.overview || `Watch ${data.name} streaming on NowAnime. Episodes, cast, reviews and more.`).slice(0, 160)}
         type="video.tv_show"
         image={img(data.backdrop_path, "w780") || undefined}
-        jsonLd={{
-          "@type": "TVSeries",
-          name: data.name,
-          description: data.overview || `Watch ${data.name} on NowAnime.`,
-          image: poster || undefined,
-          datePublished: data.first_air_date || undefined,
-          aggregateRating: data.vote_average > 0 ? {
-            "@type": "AggregateRating",
-            ratingValue: data.vote_average,
-            bestRating: 10,
-          } : undefined,
-          numberOfSeasons: data.number_of_seasons || undefined,
-          numberOfEpisodes: data.number_of_episodes || undefined,
-          genre: (data.genres || []).map((g: any) => g.name),
-        }}
+        jsonLd={[
+          {
+            "@type": "TVSeries",
+            name: data.name,
+            description: data.overview || `Watch ${data.name} on NowAnime.`,
+            image: img(data.poster_path, "w500") || undefined,
+            datePublished: data.first_air_date || undefined,
+            aggregateRating: data.vote_average > 0 ? {
+              "@type": "AggregateRating",
+              ratingValue: data.vote_average,
+              bestRating: 10,
+              ratingCount: data.vote_count || 1,
+            } : undefined,
+            numberOfSeasons: data.number_of_seasons || undefined,
+            numberOfEpisodes: data.number_of_episodes || undefined,
+            genre: (data.genres || []).map((g: any) => g.name),
+            containsSeason: (data.seasons || [])
+              .filter((s: any) => s.season_number > 0)
+              .slice(0, 5)
+              .map((s: any) => ({
+                "@type": "TVSeason",
+                seasonNumber: s.season_number,
+                numberOfEpisodes: s.episode_count,
+                name: s.name,
+              })),
+          },
+          {
+            "@type": "VideoObject",
+            name: data.name,
+            description: (data.overview || `Watch ${data.name} on NowAnime.`).slice(0, 500),
+            thumbnailUrl: [img(data.backdrop_path, "original"), img(data.poster_path, "w780")].filter(Boolean),
+            uploadDate: data.first_air_date || new Date().toISOString().slice(0, 10),
+            embedUrl: `https://nowanime.lovable.app/watch/tv/${data.id}/1/1`,
+            contentUrl: `https://nowanime.lovable.app/watch/tv/${data.id}/1/1`,
+            genre: (data.genres || []).map((g: any) => g.name),
+            inLanguage: data.original_language || "ja",
+            isFamilyFriendly: true,
+          },
+        ]}
       />
       <div className="relative">
         <div className="relative w-full h-[55vh] md:h-[70vh]">
