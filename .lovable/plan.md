@@ -1,49 +1,59 @@
+## Goals
 
-# Full implementation plan
+Ship six coordinated improvements: offline subtitle availability indicator, sitemap pre-deploy verifier, VideoObject/TVEpisode structured data, resume-position playback, redesigned independent download cards, and reliable cross-device ad loading.
 
-## 1. Offline player: subtitle button
-- In `src/pages/MyDownloadsPage.tsx`, replace the plain `<video>` with a wrapper that shows a "CC" button (bottom-right overlay) opening a small popover listing available captions (from stored `OfflineCaption` blobs).
-- Toggling a track calls `video.textTracks[i].mode = "showing"` / `"disabled"`. Persist last-used lang in localStorage.
-- Ensure `offlineDownloads.ts` still stores captions as VTT blobs (already done) — verify decode + `<track>` load path.
+## 1. Subtitle offline-availability status
 
-## 2. Moon favicon / app icon
-- Generate a clean, high-contrast red crescent-moon icon (transparent PNG) via imagegen premium, from the uploaded reference.
-- Produce: `public/favicon.png` (32/192), `public/pwa-192x192.png`, `public/pwa-512x512.png`, `public/apple-touch-icon.png`.
-- Update `index.html` `<link rel="icon">` and `manifest.json` icon entries. Delete `public/favicon.ico`.
+- In `MyDownloadsPage` player (offline) and `MoviePlayer` (online), compute per-track availability:
+  - Offline: track blob present in IndexedDB `captions` array → "Available offline".
+  - Online with a matching downloaded episode: check `getDownload(id)` for matching lang.
+- Show a small badge next to the selected language in the CC menu and a status pill under the player: green "Subtitles ready offline" / amber "Subtitles online-only".
 
-## 3. SUB/DUB labeling for known anime
-- Extend `TmdbCard.tsx` label logic: maintain a curated slug/id list of known SUB titles (Jujutsu Kaisen, Death Note, +others) forcing "SUB" regardless of `original_language`.
-- Store list in `src/lib/animeSubDub.ts` keyed by TMDB id.
+## 2. Pre-deploy sitemap verifier
 
-## 4. Desktop top nav redesign
-- `src/components/TopBar.tsx`: on `md+`, layout = [logo left] · [centered nav pills] · [inline 4-in-row ad slot] · [visible search input] · [profile].
-- Search input becomes always-visible (not icon-only) on desktop, submits to `/search?q=`.
-- Add a compact `AdSlot` (banner 4-in-row Adsterra key) between nav and search.
+- New script `scripts/verify-sitemap.ts` that:
+  - Parses `public/sitemap.xml` and asserts ≥250 `<url>` entries.
+  - HEADs each `<loc>`, `<image:loc>`, `<video:thumbnail_loc>`, `<video:player_loc>` (concurrency 10, small timeout).
+  - Fails (non-zero exit) on ≥5% failure rate or <250 entries; logs offenders.
+- Wire into `package.json` as `predeploy` and `postbuild` so it runs after `generate-sitemap` during `bun run build`.
 
-## 5. Downloads player = app player shell
-- Replace fullscreen overlay in `MyDownloadsPage.tsx` with the same layout used on Watch pages: video left, `PlayerRecommendations` sidebar on desktop, stacked on mobile.
-- Feed recommendations from TMDB by tmdbId of the offline item (anime-only filter).
+## 3. VideoObject / TVEpisode / Anime schema
 
-## 6. Anime detail page cleanup
-- In `src/pages/AnimeDetailPage.tsx`, keep exactly 3 recommendation rows below; filter out any TMDB result not classified as animation/anime (keyword 210024 or `original_language==='ja'` + animation genre). No movies-only rails.
+- Extend `SEO.tsx` (or add `StructuredData.tsx`) to accept a `jsonLd` prop and inject via react-helmet-async.
+- On `MovieDetailPage`, `TVDetailPage`, `AnimeDetailPage`: emit `VideoObject` (name, description, thumbnailUrl, uploadDate, contentUrl/embedUrl, duration).
+- On TV/Anime: also emit `TVSeries` with `numberOfEpisodes`, `numberOfSeasons`, and per-episode `TVEpisode` list (top 10 to keep size sane).
+- On watch pages: emit `VideoObject` for the current episode/movie.
 
-## 7. Sitemap: 250 pages + images + video
-- Rewrite `scripts/generate-sitemap.ts` to:
-  - Static routes (~15).
-  - Fetch top anime from TMDB discover (genre 16, lang ja) across pages until ~230 dynamic entries — mix of `/anime/:id` and `/tv/:id`.
-  - Use image + video sitemap namespaces: for each entry include `<image:image><image:loc>` (TMDB poster) and `<video:video>` (embed URL, thumbnail, title, description).
-  - Output `public/sitemap.xml` (single file, ≥250 `<url>`).
-- Keep `predev`/`prebuild` hooks.
-- After deploy, ping Google Search Console `sitemaps` submit via connector gateway.
+## 4. Resume playback (online + offline)
 
-## 8. Install page link
-- `src/pages/InstallAppPage.tsx`: primary install/download button → `https://nowanimeapp.lovable.app`.
+- New `src/lib/playbackProgress.ts` — localStorage keyed by `${type}-${tmdbId}-s${season}-e${ep}` or offline id. Stores `{ position, duration, updatedAt }`.
+- Hook `MoviePlayer` `<video>` events: `loadedmetadata` seeks to saved position (if <95% done); `timeupdate` throttled write every 5s; `ended` clears entry.
+- Offline player in `MyDownloadsPage` uses same helper with the download id as key.
+- Show a "Resume from X:XX" toast/inline button when saved position exists.
 
-## 9. robots.txt
-- Ensure `Allow: /` for all agents and `Sitemap: https://nowanime.lovable.app/sitemap.xml` (already present).
+## 5. Downloads page redesign
+
+- Rebuild `MyDownloadsPage` grid: each item is an independent card (poster left, title/progress right, tap-to-play). Remove the delete button entirely; long-press or a subtle overflow menu can keep management, but per request the delete button is removed from the card face.
+- Grouped series stay as expandable folders with the same independent-card style inside.
+- Match spacing/typography of the reference layout (compact rows, rounded surfaces, no destructive buttons visible).
+
+## 6. Cross-device ad reliability
+
+- Wrap Adsterra loader in `AdBanner`/`NativeAd` with:
+  - `requestIdleCallback` fallback to `setTimeout` for slow devices (Redmi/older Android).
+  - Retry once after 4s if the injected `<ins>`/iframe hasn't rendered.
+  - `crossorigin="anonymous"` and `referrerPolicy="no-referrer-when-downgrade"` on script tags for iOS Safari.
+  - Explicit min-height container to avoid CLS-driven unmounts.
+  - Guard for iOS in-app browsers (skip when `navigator.standalone === false && /FBAN|FBAV|Instagram/.test(ua)` blocks scripts — fallback to a static promo).
 
 ## Technical notes
-- Files touched: `MyDownloadsPage.tsx`, `TopBar.tsx`, `TmdbCard.tsx`, `AnimeDetailPage.tsx`, `InstallAppPage.tsx`, `scripts/generate-sitemap.ts`, `index.html`, `public/manifest.json`, new `src/lib/animeSubDub.ts`, new icon assets in `public/`.
-- Use existing `PlayerRecommendations` component for offline sidebar.
-- Sitemap uses `xmlns:image` and `xmlns:video` schemas; each URL entry ≤ Google's limits.
-- GSC submission via `curl` to `/webmasters/v3/sites/<encoded>/sitemaps/<encoded-sitemap-url>` PUT.
+
+- react-helmet-async already installed; JSON-LD injected as `<script type="application/ld+json">`.
+- Progress storage uses a single localStorage namespace `nowanime:progress:v1` to allow future migration.
+- Verifier uses `node:fetch` with `AbortController`; concurrency via a small pool, no extra deps.
+- Ad retry keyed by a random id to avoid duplicate script tags.
+
+## Out of scope
+
+- No changes to auth, DB schema, or streaming resolver logic.
+- Series-folder navigation stays as-is aside from the card visual refresh.
