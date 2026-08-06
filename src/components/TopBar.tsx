@@ -135,11 +135,14 @@ const TopBar = () => {
           <div className="flex items-center gap-1.5 md:gap-2 flex-shrink-0">
             <Link
               to="/install"
-              className="md:hidden inline-flex items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-primary-foreground"
-              aria-label="Install App"
+              className="inline-flex items-center gap-1 md:gap-1.5 rounded-full bg-primary px-2.5 md:px-3.5 py-1 md:py-2 text-[10px] md:text-[12px] font-bold uppercase tracking-wide text-primary-foreground whitespace-nowrap"
+              aria-label="Download App"
             >
-              <Download className="h-3 w-3" /> Install
+              <Download className="h-3 w-3 md:h-4 md:w-4" />
+              <span className="md:hidden">Install</span>
+              <span className="hidden md:inline">Download App</span>
             </Link>
+
             <Link
               to="/search"
               aria-label="Search"
