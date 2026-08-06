@@ -52,7 +52,7 @@ const MyListPage = () => {
                 <div className="relative aspect-[2/3] bg-white/5">
                   {v.poster_path ? (
                     <img
-                      src={img(v.poster_path, "w342") || undefined}
+                      src={img(v.poster_path, "w500") || undefined}
                       alt={v.title}
                       loading="lazy"
                       className="w-full h-full object-cover"
