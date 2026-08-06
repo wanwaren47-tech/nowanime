@@ -1,5 +1,8 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { Loader2, AlertCircle, RefreshCw, Expand, WifiOff, CloudDownload, Play, SkipBack, SkipForward, Subtitles, Settings2, Check } from "lucide-react";
+import {
+  Loader2, AlertCircle, RefreshCw, Expand, WifiOff, CloudDownload, Play, Pause,
+  SkipBack, SkipForward, RotateCcw, RotateCw, Subtitles, Settings2, Check, Volume2, VolumeX,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 import DownloadButton from "@/components/DownloadButton";
@@ -70,6 +73,32 @@ const MoviePlayer = ({
   const [offlineMeta, setOfflineMeta] = useState<OfflineVideo | null>(null);
   const [resumeAt, setResumeAt] = useState<number | null>(null);
 
+  // ---- Custom overlay state ----
+  const [playing, setPlaying] = useState(false);
+  const [muted, setMuted] = useState(false);
+  const [current, setCurrent] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [visible, setVisible] = useState(true);
+  const hideTimer = useRef<number | null>(null);
+  const interacting = subsOpen || qualityOpen;
+
+  const showControls = useCallback(() => {
+    setVisible(true);
+    if (hideTimer.current) window.clearTimeout(hideTimer.current);
+    hideTimer.current = window.setTimeout(() => setVisible(false), 3200);
+  }, []);
+
+  useEffect(() => {
+    if (interacting) {
+      if (hideTimer.current) window.clearTimeout(hideTimer.current);
+      setVisible(true);
+    } else {
+      showControls();
+    }
+  }, [interacting, showControls]);
+
+  useEffect(() => () => { if (hideTimer.current) window.clearTimeout(hideTimer.current); }, []);
+
   const pKey = progressKey({ type, tmdbId, season, episode });
 
   useEffect(() => {
@@ -129,14 +158,12 @@ const MoviePlayer = ({
     setDownloads(ordered);
     setSelected(ordered[0] || null);
 
-    // Prepare captions (fetch + convert to VTT lazily via proxy so browser can load them).
     const rawCaps = res.captions || [];
     const prepared: PreparedCaption[] = rawCaps.map((c) => ({
       ...c,
       fullName: languageName(c.lang),
     }));
     setCaptions(prepared);
-    // Default to English if present, otherwise off.
     const en = prepared.find((c) => c.fullName.toLowerCase() === "english");
     if (en) setSelectedCaption(en.fullName);
     setLoading(false);
@@ -188,18 +215,43 @@ const MoviePlayer = ({
     } catch { /* ignore */ }
   }, []);
 
+  const togglePlay = useCallback(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    if (v.paused) v.play?.(); else v.pause();
+    showControls();
+  }, [showControls]);
+
+  const seekBy = useCallback((delta: number) => {
+    const v = videoRef.current;
+    if (!v) return;
+    try { v.currentTime = Math.max(0, Math.min(v.duration || Infinity, v.currentTime + delta)); } catch { /* ignore */ }
+    showControls();
+  }, [showControls]);
+
+  // Keyboard / remote controls
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key !== "f" && e.key !== "F") return;
       const t = document.activeElement;
       const tag = t?.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA" || (t as HTMLElement | null)?.isContentEditable) return;
-      e.preventDefault();
-      toggleFullscreen();
+      showControls();
+      switch (e.key) {
+        case "f": case "F": e.preventDefault(); toggleFullscreen(); break;
+        case " ": case "k": case "K": e.preventDefault(); togglePlay(); break;
+        case "ArrowRight": e.preventDefault(); seekBy(10); break;
+        case "ArrowLeft": e.preventDefault(); seekBy(-10); break;
+        case "m": case "M": {
+          const v = videoRef.current;
+          if (v) { v.muted = !v.muted; setMuted(v.muted); }
+          break;
+        }
+        default: break;
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [toggleFullscreen]);
+  }, [toggleFullscreen, togglePlay, seekBy, showControls]);
 
   const proxied = useMemo(() => (selected ? movieboxProxyUrl(selected.url) : ""), [selected]);
 
@@ -226,21 +278,36 @@ const MoviePlayer = ({
     );
   }
 
+  const overlayShown = visible || !playing || interacting;
+  const pct = duration > 0 ? (current / duration) * 100 : 0;
+
   return (
     <div className="w-full" style={{ background: "hsl(var(--background))" }}>
-      <div ref={containerRef} className="relative w-full aspect-video overflow-hidden bg-black">
+      <div
+        ref={containerRef}
+        onMouseMove={showControls}
+        onMouseLeave={() => { if (!interacting && playing) setVisible(false); }}
+        onTouchStart={showControls}
+        onClick={showControls}
+        className="relative w-full aspect-video overflow-hidden bg-black select-none group/player"
+      >
         {proxied && (
           <video
             key={proxied}
             ref={videoRef}
             src={proxied}
             className="absolute inset-0 w-full h-full bg-black"
-            controls
             autoPlay
             playsInline
             crossOrigin="anonymous"
+            onClick={togglePlay}
+            onPlay={() => { setPlaying(true); showControls(); }}
+            onPause={() => setPlaying(false)}
+            onVolumeChange={(e) => setMuted((e.currentTarget as HTMLVideoElement).muted)}
+            onTimeUpdate={(e) => setCurrent((e.currentTarget as HTMLVideoElement).currentTime)}
+            onLoadedMetadata={(e) => setDuration((e.currentTarget as HTMLVideoElement).duration || 0)}
             onError={() => setError("Playback failed. Try a different quality.")}
-            onEnded={() => onEnded?.()}
+            onEnded={() => { setPlaying(false); onEnded?.(); }}
             poster={backdrop || poster || undefined}
           >
             {captions
@@ -258,15 +325,216 @@ const MoviePlayer = ({
           </video>
         )}
 
+        {/* ===== Premium control overlay ===== */}
+        {!loading && !error && selected && (
+          <div
+            className={`absolute inset-0 z-20 transition-opacity duration-300 ${
+              overlayShown ? "opacity-100" : "opacity-0 pointer-events-none"
+            }`}
+          >
+            {/* Dim */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/25 to-black/75" />
+
+            {/* Center playback cluster */}
+            <div className="absolute inset-0 flex items-center justify-center gap-3 sm:gap-5">
+              <button
+                onClick={() => onPrevious?.()}
+                disabled={!onPrevious}
+                aria-label="Previous episode"
+                title="Previous episode"
+                className="grid place-items-center h-11 w-11 sm:h-12 sm:w-12 rounded-full bg-white/10 backdrop-blur text-white border border-white/15 transition hover:bg-white/20 disabled:opacity-30 disabled:hover:bg-white/10"
+              >
+                <SkipBack className="w-5 h-5" />
+              </button>
+
+              <button
+                onClick={() => seekBy(-10)}
+                aria-label="Skip back 10 seconds"
+                title="Back 10s"
+                className="relative grid place-items-center h-12 w-12 sm:h-14 sm:w-14 rounded-full bg-white/10 backdrop-blur text-white border border-white/15 transition hover:bg-white/20"
+              >
+                <RotateCcw className="w-6 h-6 sm:w-7 sm:h-7" />
+                <span className="absolute text-[8.5px] sm:text-[9px] font-bold tracking-tight">10s</span>
+              </button>
+
+              <button
+                onClick={togglePlay}
+                aria-label={playing ? "Pause" : "Play"}
+                title={playing ? "Pause" : "Play"}
+                className="grid place-items-center h-16 w-16 sm:h-20 sm:w-20 rounded-full text-white shadow-2xl transition active:scale-95"
+                style={{ background: "hsl(var(--primary))" }}
+              >
+                {playing
+                  ? <Pause className="w-7 h-7 sm:w-9 sm:h-9 fill-white" />
+                  : <Play className="w-7 h-7 sm:w-9 sm:h-9 fill-white translate-x-[2px]" />}
+              </button>
+
+              <button
+                onClick={() => seekBy(10)}
+                aria-label="Skip forward 10 seconds"
+                title="Forward 10s"
+                className="relative grid place-items-center h-12 w-12 sm:h-14 sm:w-14 rounded-full bg-white/10 backdrop-blur text-white border border-white/15 transition hover:bg-white/20"
+              >
+                <RotateCw className="w-6 h-6 sm:w-7 sm:h-7" />
+                <span className="absolute text-[8.5px] sm:text-[9px] font-bold tracking-tight">10s</span>
+              </button>
+
+              <button
+                onClick={() => onNext?.()}
+                disabled={!onNext}
+                aria-label="Next episode"
+                title="Next episode"
+                className="grid place-items-center h-11 w-11 sm:h-12 sm:w-12 rounded-full bg-white/10 backdrop-blur text-white border border-white/15 transition hover:bg-white/20 disabled:opacity-30 disabled:hover:bg-white/10"
+              >
+                <SkipForward className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Bottom bar: seek + options */}
+            <div className="absolute bottom-0 left-0 right-0 px-3 sm:px-4 pb-2.5 sm:pb-3">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] sm:text-[11px] font-semibold text-white/80 tabular-nums w-10 text-right">
+                  {formatTime(current)}
+                </span>
+                <input
+                  type="range"
+                  min={0}
+                  max={duration || 0}
+                  step={0.1}
+                  value={Math.min(current, duration || 0)}
+                  aria-label="Seek"
+                  onChange={(e) => {
+                    const v = videoRef.current;
+                    const val = Number(e.target.value);
+                    setCurrent(val);
+                    if (v) { try { v.currentTime = val; } catch { /* ignore */ } }
+                    showControls();
+                  }}
+                  className="flex-1 h-1.5 appearance-none rounded-full cursor-pointer accent-primary"
+                  style={{
+                    background: `linear-gradient(to right, hsl(var(--primary)) ${pct}%, rgba(255,255,255,0.25) ${pct}%)`,
+                  }}
+                />
+                <span className="text-[10px] sm:text-[11px] font-semibold text-white/60 tabular-nums w-10">
+                  {formatTime(duration)}
+                </span>
+              </div>
+
+              <div className="mt-1.5 flex items-center gap-1.5">
+                <button
+                  onClick={() => { const v = videoRef.current; if (v) { v.muted = !v.muted; setMuted(v.muted); } showControls(); }}
+                  aria-label={muted ? "Unmute" : "Mute"}
+                  className="grid place-items-center h-8 w-8 rounded-full bg-white/10 text-white hover:bg-white/20 transition"
+                >
+                  {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                </button>
+
+                <div className="flex-1" />
+
+                {/* Subtitles picker */}
+                <div className="relative flex-shrink-0">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setSubsOpen((s) => !s); setQualityOpen(false); }}
+                    aria-label="Subtitles"
+                    className="inline-flex items-center gap-1 h-8 px-2.5 rounded-full text-white text-[10.5px] font-semibold"
+                    style={{ background: selectedCaption ? "hsl(var(--primary))" : "rgba(255,255,255,0.12)" }}
+                  >
+                    <Subtitles className="w-4 h-4" />
+                    <span className="hidden sm:inline">{selectedCaption || "Subtitles"}</span>
+                  </button>
+                  {subsOpen && (
+                    <div className="absolute right-0 bottom-full mb-2 z-30 min-w-[180px] max-h-[240px] overflow-y-auto rounded-lg border border-white/10 bg-[#141414] py-1 shadow-2xl">
+                      <button
+                        onClick={() => { setSelectedCaption(null); setSubsOpen(false); }}
+                        className="w-full flex items-center justify-between px-3 py-1.5 text-[11px] text-white hover:bg-white/5"
+                      >
+                        <span>Off</span>
+                        {!selectedCaption && <Check className="w-3 h-3" />}
+                      </button>
+                      {captions.length === 0 && (
+                        <div className="px-3 py-2 text-[10.5px] text-white/45">No subtitles available</div>
+                      )}
+                      {captions.map((c) => {
+                        const offlineHas = !!offlineMeta?.captions?.some(
+                          (oc) => oc.label === c.fullName || oc.lang === c.lang,
+                        );
+                        return (
+                          <button
+                            key={c.fullName}
+                            onClick={() => { setSelectedCaption(c.fullName); setSubsOpen(false); }}
+                            className="w-full flex items-center justify-between gap-2 px-3 py-1.5 text-[11px] text-white hover:bg-white/5"
+                          >
+                            <span className="flex items-center gap-1.5">
+                              {c.fullName}
+                              <span
+                                className={`px-1 py-[1px] rounded text-[8px] font-bold uppercase ${offlineHas ? "bg-emerald-500/20 text-emerald-300" : "bg-white/10 text-white/50"}`}
+                                title={offlineHas ? "Available offline" : "Online only"}
+                              >
+                                {offlineHas ? "Offline" : "Online"}
+                              </span>
+                            </span>
+                            {selectedCaption === c.fullName && <Check className="w-3 h-3" />}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                {/* Quality */}
+                <div className="relative flex-shrink-0">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setQualityOpen((s) => !s); setSubsOpen(false); }}
+                    disabled={!downloads.length}
+                    aria-label="Quality"
+                    className="inline-flex items-center gap-1 h-8 px-2.5 rounded-full text-white text-[10.5px] font-semibold disabled:opacity-40"
+                    style={{ background: "rgba(255,255,255,0.12)" }}
+                  >
+                    <Settings2 className="w-4 h-4" />
+                    <span>{selected ? resolutionLabel(selected.resolution) : "Quality"}</span>
+                  </button>
+                  {qualityOpen && downloads.length > 0 && (
+                    <div className="absolute right-0 bottom-full mb-2 z-30 min-w-[160px] rounded-lg border border-white/10 bg-[#141414] py-1 shadow-2xl">
+                      <div className="px-3 py-1 text-[9.5px] uppercase tracking-wider text-white/45 font-bold">Quality</div>
+                      {downloads.map((d) => {
+                        const active = selected?.resolution === d.resolution;
+                        return (
+                          <button
+                            key={d.resolution + d.url}
+                            onClick={() => { setSelected(d); setQualityOpen(false); }}
+                            className="w-full flex items-center justify-between px-3 py-1.5 text-[11px] text-white hover:bg-white/5"
+                          >
+                            <span>{resolutionLabel(d.resolution)}</span>
+                            {active && <Check className="w-3 h-3" />}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                <button
+                  onClick={(e) => { e.stopPropagation(); toggleFullscreen(); }}
+                  aria-label="Fullscreen"
+                  title="Fullscreen (F)"
+                  className="grid place-items-center h-8 w-8 rounded-full bg-white/10 text-white hover:bg-white/20 transition"
+                >
+                  <Expand className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {loading && (
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center pointer-events-none" style={{ background: "hsl(var(--background))" }}>
+          <div className="absolute inset-0 z-30 flex flex-col items-center justify-center pointer-events-none" style={{ background: "hsl(var(--background))" }}>
             <Loader2 className="w-9 h-9 animate-spin mb-2" style={{ color: "hsl(var(--primary))" }} />
             <p className="text-white text-xs font-medium">Finding stream…</p>
           </div>
         )}
 
         {error && !loading && (
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-2 px-6 text-center" style={{ background: "hsl(var(--background))" }}>
+          <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-2 px-6 text-center" style={{ background: "hsl(var(--background))" }}>
             <AlertCircle className="w-8 h-8" style={{ color: "hsl(var(--primary))" }} />
             <p className="text-white text-xs font-medium">{error}</p>
             <button
@@ -281,12 +549,13 @@ const MoviePlayer = ({
 
         {resumeAt !== null && selected && !loading && !error && (
           <button
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               const v = videoRef.current;
               if (v) { try { v.currentTime = resumeAt; v.play?.(); } catch { /* ignore */ } }
               setResumeAt(null);
             }}
-            className="absolute bottom-3 left-3 z-30 flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[11px] font-semibold text-white shadow-xl"
+            className="absolute top-3 left-3 z-40 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold text-white shadow-xl"
             style={{ background: "hsl(var(--primary))" }}
           >
             <Play className="w-3 h-3 fill-white" /> Resume from {formatTime(resumeAt)}
@@ -294,127 +563,9 @@ const MoviePlayer = ({
         )}
       </div>
 
-      {/* Toolbar: transport · subtitles · quality · download · fullscreen */}
-      <div className="relative flex items-center gap-1.5 px-3 py-2" style={{ background: "hsl(var(--background))", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
-        <div className="flex items-center gap-1 flex-shrink-0">
-          <button
-            onClick={() => onPrevious?.()}
-            disabled={!onPrevious}
-            title="Previous"
-            aria-label="Previous"
-            className="grid place-items-center h-7 w-7 rounded-md text-white disabled:opacity-30"
-            style={{ background: "rgba(255,255,255,0.08)" }}
-          >
-            <SkipBack className="w-3.5 h-3.5" />
-          </button>
-          <button
-            onClick={() => videoRef.current?.play()}
-            title="Play"
-            aria-label="Play"
-            className="grid place-items-center h-7 w-7 rounded-md text-white"
-            style={{ background: "hsl(var(--primary))" }}
-          >
-            <Play className="w-3.5 h-3.5 fill-white" />
-          </button>
-          <button
-            onClick={() => onNext?.()}
-            disabled={!onNext}
-            title="Next"
-            aria-label="Next"
-            className="grid place-items-center h-7 w-7 rounded-md text-white disabled:opacity-30"
-            style={{ background: "rgba(255,255,255,0.08)" }}
-          >
-            <SkipForward className="w-3.5 h-3.5" />
-          </button>
-        </div>
-
-        <div className="flex-1" />
-
-        {/* Subtitles picker */}
-        <div className="relative flex-shrink-0">
-          <button
-            onClick={() => { setSubsOpen((s) => !s); setQualityOpen(false); }}
-            title="Subtitles"
-            aria-label="Subtitles"
-            className="inline-flex items-center gap-1 h-7 px-2 rounded-md text-white text-[10.5px] font-semibold"
-            style={{ background: selectedCaption ? "hsl(var(--primary))" : "rgba(255,255,255,0.08)" }}
-          >
-            <Subtitles className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">{selectedCaption || "Subtitles"}</span>
-          </button>
-          {subsOpen && (
-            <div className="absolute right-0 bottom-full mb-2 z-30 min-w-[180px] max-h-[240px] overflow-y-auto rounded-lg border border-white/10 bg-[#141414] py-1 shadow-2xl">
-              <button
-                onClick={() => { setSelectedCaption(null); setSubsOpen(false); }}
-                className="w-full flex items-center justify-between px-3 py-1.5 text-[11px] text-white hover:bg-white/5"
-              >
-                <span>Off</span>
-                {!selectedCaption && <Check className="w-3 h-3" />}
-              </button>
-              {captions.length === 0 && (
-                <div className="px-3 py-2 text-[10.5px] text-white/45">No subtitles available</div>
-              )}
-              {captions.map((c) => {
-                const offlineHas = !!offlineMeta?.captions?.some(
-                  (oc) => oc.label === c.fullName || oc.lang === c.lang,
-                );
-                return (
-                  <button
-                    key={c.fullName}
-                    onClick={() => { setSelectedCaption(c.fullName); setSubsOpen(false); }}
-                    className="w-full flex items-center justify-between gap-2 px-3 py-1.5 text-[11px] text-white hover:bg-white/5"
-                  >
-                    <span className="flex items-center gap-1.5">
-                      {c.fullName}
-                      <span
-                        className={`px-1 py-[1px] rounded text-[8px] font-bold uppercase ${offlineHas ? "bg-emerald-500/20 text-emerald-300" : "bg-white/10 text-white/50"}`}
-                        title={offlineHas ? "Available offline" : "Online only"}
-                      >
-                        {offlineHas ? "Offline" : "Online"}
-                      </span>
-                    </span>
-                    {selectedCaption === c.fullName && <Check className="w-3 h-3" />}
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </div>
-
-        {/* Single Quality button + dropdown */}
-        <div className="relative flex-shrink-0">
-          <button
-            onClick={() => { setQualityOpen((s) => !s); setSubsOpen(false); }}
-            disabled={!downloads.length}
-            title="Quality"
-            aria-label="Quality"
-            className="inline-flex items-center gap-1 h-7 px-2 rounded-md text-white text-[10.5px] font-semibold disabled:opacity-40"
-            style={{ background: "rgba(255,255,255,0.08)" }}
-          >
-            <Settings2 className="w-3.5 h-3.5" />
-            <span>{selected ? resolutionLabel(selected.resolution) : "Quality"}</span>
-          </button>
-          {qualityOpen && downloads.length > 0 && (
-            <div className="absolute right-0 bottom-full mb-2 z-30 min-w-[160px] rounded-lg border border-white/10 bg-[#141414] py-1 shadow-2xl">
-              <div className="px-3 py-1 text-[9.5px] uppercase tracking-wider text-white/45 font-bold">Quality</div>
-              {downloads.map((d) => {
-                const active = selected?.resolution === d.resolution;
-                return (
-                  <button
-                    key={d.resolution + d.url}
-                    onClick={() => { setSelected(d); setQualityOpen(false); }}
-                    className="w-full flex items-center justify-between px-3 py-1.5 text-[11px] text-white hover:bg-white/5"
-                  >
-                    <span>{resolutionLabel(d.resolution)}</span>
-                    {active && <Check className="w-3 h-3" />}
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </div>
-
-        {title && (
+      {/* Secondary bar: download only (playback controls live on the player) */}
+      {title && (
+        <div className="flex items-center justify-end px-3 py-2" style={{ background: "hsl(var(--background))", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
           <DownloadButton
             size="sm"
             type={type}
@@ -426,18 +577,8 @@ const MoviePlayer = ({
             season={type === "tv" ? season : undefined}
             episode={type === "tv" ? episode : undefined}
           />
-        )}
-
-        <button
-          onClick={toggleFullscreen}
-          title="Fullscreen (F)"
-          aria-label="Fullscreen"
-          className="flex-shrink-0 grid place-items-center h-7 w-7 rounded-md text-white"
-          style={{ background: "rgba(255,255,255,0.08)" }}
-        >
-          <Expand className="w-3.5 h-3.5" />
-        </button>
-      </div>
+        </div>
+      )}
     </div>
   );
 };
