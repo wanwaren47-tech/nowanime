@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import {
   Loader2, AlertCircle, RefreshCw, Expand, WifiOff, CloudDownload, Play, Pause,
-  SkipBack, SkipForward, RotateCcw, RotateCw, Subtitles, Settings2, Check, Volume2, VolumeX,
+  SkipBack, SkipForward, RotateCcw, RotateCw, Subtitles, Settings2, Check, Volume2, VolumeX, Share2,
 } from "lucide-react";
+import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 import DownloadButton from "@/components/DownloadButton";
