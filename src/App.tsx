@@ -19,7 +19,7 @@ import ProfilePage from "./pages/ProfilePage";
 import MyListPage from "./pages/MyListPage";
 import LibraryPage from "./pages/LibraryPage";
 import LikedVideosPage from "./pages/LikedVideosPage";
-import RegisterPage from "./pages/RegisterPage";
+
 import AnimePage from "./pages/AnimePage";
 import AnimeDetailPage from "./pages/AnimeDetailPage";
 import SettingsPage from "./pages/SettingsPage";
@@ -29,12 +29,9 @@ import TrendingPage from "./pages/TrendingPage";
 import MyDownloadsPage from "./pages/MyDownloadsPage";
 import DownloadPage from "./pages/DownloadPage";
 import InstallAppPage from "./pages/InstallAppPage";
-import Welcome from "./pages/Welcome";
-import OnboardingGenres from "./pages/OnboardingGenres";
-import OnboardingTitles from "./pages/OnboardingTitles";
-import OnboardingDone from "./pages/OnboardingDone";
+import AuthPage from "./pages/AuthPage";
 import Contact from "./pages/Contact";
-import AuthGuard from "./components/AuthGuard";
+
 import NotFound from "./pages/NotFound";
 
 import FAQ from "./pages/FAQ";
@@ -72,19 +69,20 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <AuthGuard>
-          <Routes>
-            <Route path="/welcome" element={<Welcome />} />
-            <Route path="/signin" element={<Navigate to="/welcome" replace />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/onboarding/phone" element={<Navigate to="/onboarding/genres" replace />} />
-            <Route path="/onboarding/genres" element={<OnboardingGenres />} />
-            <Route path="/onboarding/titles" element={<OnboardingTitles />} />
-            <Route path="/onboarding/social" element={<Navigate to="/onboarding/done" replace />} />
-            <Route path="/onboarding/done" element={<OnboardingDone />} />
+        <Routes>
+          <Route path="/welcome" element={<Navigate to="/home" replace />} />
+          <Route path="/signin" element={<Navigate to="/auth" replace />} />
+          <Route path="/register" element={<Navigate to="/auth" replace />} />
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/onboarding/phone" element={<Navigate to="/home" replace />} />
+          <Route path="/onboarding/genres" element={<Navigate to="/home" replace />} />
+          <Route path="/onboarding/titles" element={<Navigate to="/home" replace />} />
+          <Route path="/onboarding/social" element={<Navigate to="/home" replace />} />
+          <Route path="/onboarding/done" element={<Navigate to="/home" replace />} />
 
-            <Route path="/" element={<HomePage />} />
-            <Route path="/home" element={<HomePage />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/home" element={<HomePage />} />
+
             <Route path="/follow-us" element={<FollowUsPage />} />
             <Route path="/movie/:id" element={<MovieDetailPage />} />
             <Route path="/tv/:id" element={<TVDetailPage />} />
@@ -142,8 +140,8 @@ const App = () => (
             <Route path="/legal-guarantee" element={<Navigate to="/legal-notices" replace />} />
 
             <Route path="*" element={<NotFound />} />
-          </Routes>
-        </AuthGuard>
+        </Routes>
+
       </BrowserRouter>
     </TooltipProvider>
   </PersistQueryClientProvider>

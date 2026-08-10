@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import {
   Loader2, AlertCircle, RefreshCw, Expand, WifiOff, CloudDownload, Play, Pause,
-  SkipBack, SkipForward, RotateCcw, RotateCw, Subtitles, Settings2, Check, Volume2, VolumeX,
+  SkipBack, SkipForward, RotateCcw, RotateCw, Subtitles, Settings2, Check, Volume2, VolumeX, Share2,
 } from "lucide-react";
+import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 import DownloadButton from "@/components/DownloadButton";
@@ -430,6 +431,41 @@ const MoviePlayer = ({
                 </button>
 
                 <div className="flex-1" />
+
+                {/* Download */}
+                <Link
+                  to={
+                    type === "tv"
+                      ? `/download/tv/${tmdbId}/${season}/${episode}`
+                      : `/download/movie/${tmdbId}`
+                  }
+                  onClick={(e) => e.stopPropagation()}
+                  aria-label="Download"
+                  title="Download"
+                  className="grid place-items-center h-8 w-8 rounded-full bg-white/10 text-white hover:bg-white/20 transition flex-shrink-0"
+                >
+                  <CloudDownload className="w-4 h-4" />
+                </Link>
+
+                {/* Share — copies a deep link to this title */}
+                <button
+                  onClick={async (e) => {
+                    e.stopPropagation();
+                    const link = `${window.location.origin}${type === "tv" ? `/anime/${tmdbId}` : `/movie/${tmdbId}`}`;
+                    try {
+                      await navigator.clipboard.writeText(link);
+                      toast.success("Link copied — share it anywhere");
+                    } catch {
+                      toast.error(link);
+                    }
+                  }}
+                  aria-label="Share"
+                  title="Copy link"
+                  className="grid place-items-center h-8 w-8 rounded-full bg-white/10 text-white hover:bg-white/20 transition flex-shrink-0"
+                >
+                  <Share2 className="w-4 h-4" />
+                </button>
+
 
                 {/* Subtitles picker */}
                 <div className="relative flex-shrink-0">

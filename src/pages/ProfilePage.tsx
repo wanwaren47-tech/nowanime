@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import { User, Heart, Clock, Settings, ChevronRight, Film, Eye, CloudDownload, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import AppLayout from "@/components/AppLayout";
 import SEO from "@/components/SEO";
 import DailyChallenge from "@/components/DailyChallenge";
@@ -18,6 +20,15 @@ const ProfilePage = () => {
   const likedVideos = useLikedVideos();
   const myList = useMyList();
   const continueWatching = useContinueWatching();
+  const [authEmail, setAuthEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) =>
+      setAuthEmail(session?.user?.email ?? null),
+    );
+    supabase.auth.getUser().then(({ data }) => setAuthEmail(data.user?.email ?? null));
+    return () => sub.subscription.unsubscribe();
+  }, []);
 
   const stats = [
     { label: "Watched", value: continueWatching.length, icon: Eye },
@@ -43,7 +54,21 @@ const ProfilePage = () => {
               <User className="w-8 h-8 text-primary-foreground" />
             </div>
             <div className="flex-1">
-              {user ? (
+              {authEmail ? (
+                <>
+                  <h1 className="text-xl font-bold text-foreground">{authEmail.split("@")[0]}</h1>
+                  <p className="text-xs text-muted-foreground mb-2">{authEmail}</p>
+                  <button
+                    onClick={async () => {
+                      await supabase.auth.signOut();
+                      toast.success("Signed out");
+                    }}
+                    className="inline-flex items-center rounded-xl border border-border px-4 py-2 text-xs font-medium text-foreground"
+                  >
+                    Sign out
+                  </button>
+                </>
+              ) : user ? (
                 <>
                   <h1 className="text-xl font-bold text-foreground">{user.firstName} {user.lastName}</h1>
                   <p className="text-xs text-muted-foreground">{user.email}</p>
@@ -52,12 +77,13 @@ const ProfilePage = () => {
                 <>
                   <h1 className="text-xl font-bold text-foreground">Guest User</h1>
                   <p className="text-xs text-muted-foreground mb-2">Create a free account</p>
-                  <Link to="/register" className="inline-flex gradient-bb text-primary-foreground text-xs font-medium px-4 py-2 rounded-xl">
+                  <Link to="/auth" className="inline-flex gradient-bb text-primary-foreground text-xs font-medium px-4 py-2 rounded-xl">
                     Sign Up Free
                   </Link>
                 </>
               )}
             </div>
+
           </div>
 
           <div className="flex gap-6 mt-5 pt-5 border-t border-border/50">
