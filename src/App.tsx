@@ -30,6 +30,7 @@ import MyDownloadsPage from "./pages/MyDownloadsPage";
 import DownloadPage from "./pages/DownloadPage";
 import InstallAppPage from "./pages/InstallAppPage";
 import AuthPage from "./pages/AuthPage";
+import Contact from "./pages/Contact";
 
 import NotFound from "./pages/NotFound";
 
