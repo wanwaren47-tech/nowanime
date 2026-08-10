@@ -72,19 +72,20 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <AuthGuard>
-          <Routes>
-            <Route path="/welcome" element={<Welcome />} />
-            <Route path="/signin" element={<Navigate to="/welcome" replace />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/onboarding/phone" element={<Navigate to="/onboarding/genres" replace />} />
-            <Route path="/onboarding/genres" element={<OnboardingGenres />} />
-            <Route path="/onboarding/titles" element={<OnboardingTitles />} />
-            <Route path="/onboarding/social" element={<Navigate to="/onboarding/done" replace />} />
-            <Route path="/onboarding/done" element={<OnboardingDone />} />
+        <Routes>
+          <Route path="/welcome" element={<Navigate to="/home" replace />} />
+          <Route path="/signin" element={<Navigate to="/auth" replace />} />
+          <Route path="/register" element={<Navigate to="/auth" replace />} />
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/onboarding/phone" element={<Navigate to="/home" replace />} />
+          <Route path="/onboarding/genres" element={<Navigate to="/home" replace />} />
+          <Route path="/onboarding/titles" element={<Navigate to="/home" replace />} />
+          <Route path="/onboarding/social" element={<Navigate to="/home" replace />} />
+          <Route path="/onboarding/done" element={<Navigate to="/home" replace />} />
 
-            <Route path="/" element={<HomePage />} />
-            <Route path="/home" element={<HomePage />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/home" element={<HomePage />} />
+
             <Route path="/follow-us" element={<FollowUsPage />} />
             <Route path="/movie/:id" element={<MovieDetailPage />} />
             <Route path="/tv/:id" element={<TVDetailPage />} />
