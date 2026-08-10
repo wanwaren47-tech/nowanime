@@ -1,11 +1,11 @@
 {
-  "asset_id": "5cdafcaf-25fe-4480-83e4-65626baef053",
-  "content_type": "image/png",
-  "created_at": "2026-07-16T18:03:20Z",
-  "original_filename": "nowanime-official.png",
+  "version": 1,
+  "asset_id": "d764585b-dc5a-4958-a8b5-5220c46f1938",
   "project_id": "d16d8728-5374-4a39-b636-0c8ad892d8da",
-  "r2_key": "a/v1/d16d8728-5374-4a39-b636-0c8ad892d8da/5cdafcaf-25fe-4480-83e4-65626baef053/nowanime-official.png",
+  "url": "/__l5e/assets-v1/d764585b-dc5a-4958-a8b5-5220c46f1938/nowanime-logo.png",
+  "r2_key": "a/v1/d16d8728-5374-4a39-b636-0c8ad892d8da/d764585b-dc5a-4958-a8b5-5220c46f1938/nowanime-logo.png",
+  "original_filename": "nowanime-logo.png",
   "size": 593420,
-  "url": "/__l5e/assets-v1/5cdafcaf-25fe-4480-83e4-65626baef053/nowanime-official.png",
-  "version": 1
+  "content_type": "image/png",
+  "created_at": "2026-08-10T18:10:02Z"
 }
