@@ -30,29 +30,9 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://nowanime.lovable.app/welcome</loc>
+    <loc>https://nowanime.lovable.app/auth</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://nowanime.lovable.app/register</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://nowanime.lovable.app/onboarding/genres</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>https://nowanime.lovable.app/onboarding/titles</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>https://nowanime.lovable.app/onboarding/done</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
   </url>
   <url>
     <loc>https://nowanime.lovable.app/profile</loc>
@@ -2237,6 +2217,42 @@
   </url>
   <url>
     <loc>https://nowanime.lovable.app/watch/tv/110316/1/1</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://nowanime.lovable.app/tv/112470</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <video:video>
+      <video:thumbnail_loc>https://image.tmdb.org/t/p/w1280/49WJfeN0moxb9IPfGn8AIqMGskD.jpg</video:thumbnail_loc>
+      <video:title>Anime TMDB 112470</video:title>
+      <video:description>Watch on NowAnime.</video:description>
+      <video:player_loc>https://nowanime.lovable.app/watch/tv/112470/1/1</video:player_loc>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:live>no</video:live>
+    </video:video>
+  </url>
+  <url>
+    <loc>https://nowanime.lovable.app/watch/tv/112470/1/1</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://nowanime.lovable.app/tv/113962</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <video:video>
+      <video:thumbnail_loc>https://image.tmdb.org/t/p/w1280/49WJfeN0moxb9IPfGn8AIqMGskD.jpg</video:thumbnail_loc>
+      <video:title>Anime TMDB 113962</video:title>
+      <video:description>Watch on NowAnime.</video:description>
+      <video:player_loc>https://nowanime.lovable.app/watch/tv/113962/1/1</video:player_loc>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:live>no</video:live>
+    </video:video>
+  </url>
+  <url>
+    <loc>https://nowanime.lovable.app/watch/tv/113962/1/1</loc>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
