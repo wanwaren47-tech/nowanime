@@ -143,8 +143,8 @@ const App = () => (
             <Route path="/legal-guarantee" element={<Navigate to="/legal-notices" replace />} />
 
             <Route path="*" element={<NotFound />} />
-          </Routes>
-        </AuthGuard>
+        </Routes>
+
       </BrowserRouter>
     </TooltipProvider>
   </PersistQueryClientProvider>
