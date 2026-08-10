@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import { User, Heart, Clock, Settings, ChevronRight, Film, Eye, CloudDownload, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import AppLayout from "@/components/AppLayout";
 import SEO from "@/components/SEO";
 import DailyChallenge from "@/components/DailyChallenge";
