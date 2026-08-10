@@ -18,6 +18,15 @@ const ProfilePage = () => {
   const likedVideos = useLikedVideos();
   const myList = useMyList();
   const continueWatching = useContinueWatching();
+  const [authEmail, setAuthEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) =>
+      setAuthEmail(session?.user?.email ?? null),
+    );
+    supabase.auth.getUser().then(({ data }) => setAuthEmail(data.user?.email ?? null));
+    return () => sub.subscription.unsubscribe();
+  }, []);
 
   const stats = [
     { label: "Watched", value: continueWatching.length, icon: Eye },
