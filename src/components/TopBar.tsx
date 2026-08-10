@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import ThemeToggle from "./ThemeToggle";
 import CategoriesMenu from "./CategoriesMenu";
 import logoAsset from "@/assets/nowanime-logo.png.asset.json";
+import { supabase } from "@/integrations/supabase/client";
 
 const primaryNav = [
   { to: "/home", label: "Home", icon: Home },
