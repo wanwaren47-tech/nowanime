@@ -29,12 +29,8 @@ import TrendingPage from "./pages/TrendingPage";
 import MyDownloadsPage from "./pages/MyDownloadsPage";
 import DownloadPage from "./pages/DownloadPage";
 import InstallAppPage from "./pages/InstallAppPage";
-import Welcome from "./pages/Welcome";
-import OnboardingGenres from "./pages/OnboardingGenres";
-import OnboardingTitles from "./pages/OnboardingTitles";
-import OnboardingDone from "./pages/OnboardingDone";
-import Contact from "./pages/Contact";
-import AuthGuard from "./components/AuthGuard";
+import AuthPage from "./pages/AuthPage";
+
 import NotFound from "./pages/NotFound";
 
 import FAQ from "./pages/FAQ";
