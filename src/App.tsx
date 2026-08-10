@@ -19,7 +19,7 @@ import ProfilePage from "./pages/ProfilePage";
 import MyListPage from "./pages/MyListPage";
 import LibraryPage from "./pages/LibraryPage";
 import LikedVideosPage from "./pages/LikedVideosPage";
-import RegisterPage from "./pages/RegisterPage";
+
 import AnimePage from "./pages/AnimePage";
 import AnimeDetailPage from "./pages/AnimeDetailPage";
 import SettingsPage from "./pages/SettingsPage";
