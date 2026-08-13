@@ -13,14 +13,21 @@ export interface PlayerServer {
 const shortLabel = (label: string) =>
   label.replace(/\.(pro|to|cc|pm|skin|net|xyz|su|me)$/i, "").slice(0, 10);
 
+const seen = new Map<string, number>();
+
 export const PLAYER_SERVERS: PlayerServer[] = listProviders({ tiers: ["core", "extras"] })
-  .map((p) => ({
-    id: p.id,
-    label: p.label,
-    short: shortLabel(p.label),
-    buildMovieUrl: p.buildMovieUrl,
-    buildTvUrl: p.buildTvUrl,
-  }));
+  .map((p) => {
+    const base = shortLabel(p.label);
+    const n = (seen.get(base) ?? 0) + 1;
+    seen.set(base, n);
+    return {
+      id: p.id,
+      label: p.label,
+      short: n > 1 ? `${base} ${n}` : base,
+      buildMovieUrl: p.buildMovieUrl,
+      buildTvUrl: p.buildTvUrl,
+    };
+  });
 
 export type ServerId = string;
 
