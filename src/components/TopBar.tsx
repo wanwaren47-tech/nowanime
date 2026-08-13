@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import ThemeToggle from "./ThemeToggle";
 import CategoriesMenu from "./CategoriesMenu";
 import logoAsset from "@/assets/nowanime-logo.png.asset.json";
-import { supabase } from "@/integrations/supabase/client";
 
 const primaryNav = [
   { to: "/home", label: "Home", icon: Home },
@@ -29,14 +28,6 @@ const TopBar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [signedIn, setSignedIn] = useState(false);
-
-  useEffect(() => {
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => setSignedIn(!!session));
-    supabase.auth.getUser().then(({ data }) => setSignedIn(!!data.user));
-    return () => sub.subscription.unsubscribe();
-  }, []);
-
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -159,25 +150,13 @@ const TopBar = () => {
               <Search className="h-4 w-4" />
             </Link>
 
-            {signedIn ? (
-              <Link
-                to="/profile"
-                aria-label="Profile"
-                className="grid place-items-center h-8 w-8 rounded-full bg-secondary/70 text-foreground/80 hover:text-primary"
-              >
-                <User className="h-4 w-4" />
-              </Link>
-            ) : (
-              <Link
-                to="/auth"
-                className="inline-flex items-center gap-1.5 rounded-full bg-white/[0.06] border border-white/[0.08] pl-1 pr-2.5 md:pr-3 py-1 text-[11px] md:text-[12px] font-semibold text-foreground whitespace-nowrap hover:bg-white/[0.1]"
-              >
-                <span className="grid place-items-center h-6 w-6 rounded-full bg-secondary/80">
-                  <User className="h-3.5 w-3.5" />
-                </span>
-                Sign in
-              </Link>
-            )}
+            <Link
+              to="/profile"
+              aria-label="Profile"
+              className="grid place-items-center h-8 w-8 rounded-full bg-secondary/70 text-foreground/80 hover:text-primary"
+            >
+              <User className="h-4 w-4" />
+            </Link>
             <div className="hidden md:block"><ThemeToggle /></div>
           </div>
 
