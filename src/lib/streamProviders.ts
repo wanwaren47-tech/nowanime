@@ -1,32 +1,41 @@
-// Central registry of stream providers used by MoviePlayer.
-// Order: FastStreams (#1 default) → HD (MovieBox direct) → Mirror (NetMirror).
-// All three resolve through the `resolve-stream` edge function.
+// Client-side stream provider registry, backed by `tmdb-embed-providers`.
+// No backend: embed URLs are built from the TMDB id right in the browser.
+import { listProviders } from "tmdb-embed-providers";
 
-export type ServerId = "faststreams" | "hd" | "mirror";
-
-export interface ProviderCtx {
-  tmdbId: string;
-  imdbId?: string | null;
-  type: "movie" | "tv";
-  season?: number;
-  episode?: number;
-  title?: string;
-  year?: string;
-}
-
-export interface Provider {
-  id: ServerId;
+export interface PlayerServer {
+  id: string;
   label: string;
   short: string;
-  /** Passed as `provider` to the resolve-stream edge function. */
-  resolveProvider: ServerId;
+  buildMovieUrl: (tmdbId: number | string) => string | null;
+  buildTvUrl: (tmdbId: number | string, season: number, episode: number) => string | null;
 }
 
-export const PROVIDERS: Provider[] = [
-  { id: "faststreams", label: "FastStreams", short: "Fast", resolveProvider: "faststreams" },
-  { id: "hd", label: "HD", short: "HD", resolveProvider: "hd" },
-  { id: "mirror", label: "Mirror", short: "Mirror", resolveProvider: "mirror" },
-];
+const shortLabel = (label: string) =>
+  label.replace(/\.(pro|to|cc|pm|skin|net|xyz|su|me)$/i, "").slice(0, 10);
 
-export const getProvider = (id: ServerId) =>
-  PROVIDERS.find((p) => p.id === id) || PROVIDERS[0];
+export const PLAYER_SERVERS: PlayerServer[] = listProviders({ tiers: ["core", "extras"] })
+  .map((p) => ({
+    id: p.id,
+    label: p.label,
+    short: shortLabel(p.label),
+    buildMovieUrl: p.buildMovieUrl,
+    buildTvUrl: p.buildTvUrl,
+  }));
+
+export type ServerId = string;
+
+export const getServer = (id?: ServerId): PlayerServer =>
+  PLAYER_SERVERS.find((p) => p.id === id) || PLAYER_SERVERS[0];
+
+/** Build the embed URL for a title on a given server. */
+export function buildEmbedUrl(
+  server: PlayerServer,
+  type: "movie" | "tv",
+  tmdbId: string,
+  season = 1,
+  episode = 1,
+): string | null {
+  return type === "tv"
+    ? server.buildTvUrl(tmdbId, season, episode)
+    : server.buildMovieUrl(tmdbId);
+}
