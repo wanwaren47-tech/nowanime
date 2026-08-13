@@ -48,14 +48,13 @@ const normalize = (raw: any, fallbackType?: "movie" | "tv"): TmdbItem => ({
 
 export async function tmdb<T = any>(path: string, params: Record<string, string | number> = {}): Promise<T> {
   const normalized = path.startsWith("/") ? path : `/${path}`;
-  const search = new URLSearchParams(
-    Object.fromEntries(Object.entries(params).map(([k, v]) => [k, String(v)])),
-  );
-  const qs = search.toString();
-  const url = `${PROXY_BASE}${normalized}${qs ? `?${qs}` : ""}`;
-  const res = await fetch(url, {
-    headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY}` },
-  });
+  const [pathname, existing = ""] = normalized.split("?");
+  const search = new URLSearchParams(existing);
+  for (const [k, v] of Object.entries(params)) search.set(k, String(v));
+  search.set("api_key", TMDB_API_KEY);
+  if (!search.has("language")) search.set("language", "en-US");
+  const res = await fetch(`${API_BASE}${pathname}?${search.toString()}`);
+
   if (!res.ok) throw new Error(`TMDB ${res.status}`);
   return res.json();
 }
