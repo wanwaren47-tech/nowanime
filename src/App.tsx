@@ -9,6 +9,7 @@ import OfflineBanner from "@/components/OfflineBanner";
 import HomePage from "./pages/HomePage";
 import FollowUsPage from "./pages/FollowUsPage";
 import SearchPage from "./pages/SearchPage";
+import WatchPage from "./pages/WatchPage";
 import MovieDetailPage from "./pages/MovieDetailPage";
 import TVDetailPage from "./pages/TVDetailPage";
 import MovieWatchPage from "./pages/MovieWatchPage";
@@ -28,6 +29,7 @@ import TrendingPage from "./pages/TrendingPage";
 import MyDownloadsPage from "./pages/MyDownloadsPage";
 import DownloadPage from "./pages/DownloadPage";
 import InstallAppPage from "./pages/InstallAppPage";
+import AuthPage from "./pages/AuthPage";
 import Contact from "./pages/Contact";
 
 import NotFound from "./pages/NotFound";
@@ -69,9 +71,9 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/welcome" element={<Navigate to="/home" replace />} />
-          <Route path="/signin" element={<Navigate to="/home" replace />} />
-          <Route path="/register" element={<Navigate to="/home" replace />} />
-          <Route path="/auth" element={<Navigate to="/home" replace />} />
+          <Route path="/signin" element={<Navigate to="/auth" replace />} />
+          <Route path="/register" element={<Navigate to="/auth" replace />} />
+          <Route path="/auth" element={<AuthPage />} />
           <Route path="/onboarding/phone" element={<Navigate to="/home" replace />} />
           <Route path="/onboarding/genres" element={<Navigate to="/home" replace />} />
           <Route path="/onboarding/titles" element={<Navigate to="/home" replace />} />
@@ -91,7 +93,7 @@ const App = () => (
             <Route path="/anime" element={<AnimePage />} />
             <Route path="/anime/:id" element={<AnimeDetailPage />} />
             <Route path="/search" element={<SearchPage />} />
-            <Route path="/watch/:videoId" element={<Navigate to="/home" replace />} />
+            <Route path="/watch/:videoId" element={<WatchPage />} />
             <Route path="/trending" element={<TrendingPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/my-list" element={<MyListPage />} />

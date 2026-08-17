@@ -30,6 +30,11 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://nowanime.lovable.app/auth</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://nowanime.lovable.app/profile</loc>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>

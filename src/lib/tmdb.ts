@@ -1,9 +1,9 @@
-// Centralized TMDB API client — 100% client-side, direct calls to TMDB v3.
-// No backend / edge functions involved.
+// Centralized TMDB API client. Routes through the `tmdb-proxy` edge function
+// so the TMDB_API_KEY stays server-side. Returns normalized shapes.
 
-const TMDB_API_KEY = "166a2e4d2ced5762795a715ff393d39a";
-const API_BASE = "https://api.themoviedb.org/3";
+import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/integrations/supabase/client";
 
+const PROXY_BASE = `${SUPABASE_URL}/functions/v1/tmdb-proxy`;
 
 export const TMDB_IMG = "https://image.tmdb.org/t/p";
 
@@ -48,13 +48,14 @@ const normalize = (raw: any, fallbackType?: "movie" | "tv"): TmdbItem => ({
 
 export async function tmdb<T = any>(path: string, params: Record<string, string | number> = {}): Promise<T> {
   const normalized = path.startsWith("/") ? path : `/${path}`;
-  const [pathname, existing = ""] = normalized.split("?");
-  const search = new URLSearchParams(existing);
-  for (const [k, v] of Object.entries(params)) search.set(k, String(v));
-  search.set("api_key", TMDB_API_KEY);
-  if (!search.has("language")) search.set("language", "en-US");
-  const res = await fetch(`${API_BASE}${pathname}?${search.toString()}`);
-
+  const search = new URLSearchParams(
+    Object.fromEntries(Object.entries(params).map(([k, v]) => [k, String(v)])),
+  );
+  const qs = search.toString();
+  const url = `${PROXY_BASE}${normalized}${qs ? `?${qs}` : ""}`;
+  const res = await fetch(url, {
+    headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY}` },
+  });
   if (!res.ok) throw new Error(`TMDB ${res.status}`);
   return res.json();
 }
