@@ -82,6 +82,10 @@ const App = () => (
 
           <Route path="/" element={<HomePage />} />
           <Route path="/home" element={<HomePage />} />
+          <Route path="/discover" element={<Navigate to="/anime" replace />} />
+          <Route path="/films" element={<Navigate to="/home" replace />} />
+          <Route path="/series" element={<Navigate to="/home" replace />} />
+          <Route path="/watchlist" element={<Navigate to="/my-list" replace />} />
 
             <Route path="/follow-us" element={<FollowUsPage />} />
             <Route path="/movie/:id" element={<MovieDetailPage />} />
