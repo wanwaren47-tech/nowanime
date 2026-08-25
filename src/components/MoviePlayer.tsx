@@ -17,7 +17,6 @@ import {
 import { loadCaptionAsVtt, languageName } from "@/lib/subtitles";
 import { getDownload, type OfflineVideo } from "@/lib/offlineDownloads";
 import { attachProgress, progressKey, getProgress, formatTime } from "@/lib/playbackProgress";
-import { EMBED_SERVERS, getEmbedServer } from "@/lib/embedServers";
 
 // Legacy type kept as a no-op export so existing imports don't break.
 export type ServerId = "moviebox";
@@ -74,12 +73,11 @@ const MoviePlayer = ({
   const [savedOffline, setSavedOffline] = useState(false);
   const [offlineMeta, setOfflineMeta] = useState<OfflineVideo | null>(null);
   const [resumeAt, setResumeAt] = useState<number | null>(null);
-  // null = MovieBox direct stream; otherwise an embed server id.
-  const [embedId, setEmbedId] = useState<string | null>(null);
-  const embed = embedId ? getEmbedServer(embedId) : null;
-  const embedSrc = embed
-    ? embed.url({ tmdbId, type, season, episode })
-    : "";
+  // Only the MovieBox HD direct stream is supported.
+  const embedId: string | null = null;
+  const embed: null = null;
+  const embedSrc = "";
+
 
   // ---- Custom overlay state ----
   const [playing, setPlaying] = useState(false);
@@ -619,32 +617,8 @@ const MoviePlayer = ({
         )}
       </div>
 
-      {/* Server picker: MovieBox direct + every embed server */}
-      <div
-        className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide px-3 py-2"
-        style={{ background: "hsl(var(--background))", borderTop: "1px solid rgba(255,255,255,0.05)" }}
-      >
-        <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 flex-shrink-0 pr-1">
-          Servers
-        </span>
-        <button
-          onClick={() => setEmbedId(null)}
-          className="flex-shrink-0 h-7 px-3 rounded-full text-[10.5px] font-semibold text-white transition"
-          style={{ background: !embedId ? "hsl(var(--primary))" : "rgba(255,255,255,0.10)" }}
-        >
-          HD (MovieBox)
-        </button>
-        {EMBED_SERVERS.map((sv) => (
-          <button
-            key={sv.id}
-            onClick={() => setEmbedId(sv.id)}
-            className="flex-shrink-0 h-7 px-3 rounded-full text-[10.5px] font-semibold text-white transition"
-            style={{ background: embedId === sv.id ? "hsl(var(--primary))" : "rgba(255,255,255,0.10)" }}
-          >
-            {sv.label}
-          </button>
-        ))}
-      </div>
+
+
 
       {/* Secondary bar: download only (playback controls live on the player) */}
       {title && (

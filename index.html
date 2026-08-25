@@ -92,5 +92,28 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <!-- Push notification ad, scaled down to look like a native phone notification -->
+    <script src="https://5gvci.com/act/files/tag.min.js?z=11249492" data-cfasync="false" async></script>
+    <style>
+      /* Keep the injected notification widget compact, like a system notification */
+      body > div[id*="notification"],
+      body > div[class*="notification"],
+      body > div[id^="ntfc"],
+      body > div[id^="push"] {
+        max-width: 340px !important;
+        font-size: 12px !important;
+        transform: scale(0.82);
+        transform-origin: top center;
+        border-radius: 14px !important;
+        overflow: hidden !important;
+      }
+      body > div[id*="notification"] img,
+      body > div[class*="notification"] img {
+        max-width: 40px !important;
+        max-height: 40px !important;
+        border-radius: 8px !important;
+      }
+    </style>
+
   </body>
 </html>
