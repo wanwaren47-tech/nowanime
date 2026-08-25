@@ -74,12 +74,11 @@ const MoviePlayer = ({
   const [savedOffline, setSavedOffline] = useState(false);
   const [offlineMeta, setOfflineMeta] = useState<OfflineVideo | null>(null);
   const [resumeAt, setResumeAt] = useState<number | null>(null);
-  // null = MovieBox direct stream; otherwise an embed server id.
-  const [embedId, setEmbedId] = useState<string | null>(null);
-  const embed = embedId ? getEmbedServer(embedId) : null;
-  const embedSrc = embed
-    ? embed.url({ tmdbId, type, season, episode })
-    : "";
+  // Only the MovieBox HD direct stream is supported.
+  const embedId: string | null = null;
+  const embed: null = null;
+  const embedSrc = "";
+
 
   // ---- Custom overlay state ----
   const [playing, setPlaying] = useState(false);
