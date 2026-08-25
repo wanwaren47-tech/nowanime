@@ -176,16 +176,6 @@ function embedUrl(
   season?: string,
   episode?: string,
   domain: string = "vidsrc.pm",
-  "vidsrc.su",
-  "vsrc.su",
-  "vidsrcme.ru",
-  "vidsrcme.su",
-  "vidsrc-me.ru",
-  "vidsrc-me.su",
-  "vidsrc-embed.ru",
-  "vidsrc-embed.su",
-  "111movies.com",
-  "nontongo.win",
 ): string {
   // 2embed and autoembed have different URL shapes
   if (domain === "2embed.cc") {
