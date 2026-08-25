@@ -619,32 +619,8 @@ const MoviePlayer = ({
         )}
       </div>
 
-      {/* Server picker: MovieBox direct + every embed server */}
-      <div
-        className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide px-3 py-2"
-        style={{ background: "hsl(var(--background))", borderTop: "1px solid rgba(255,255,255,0.05)" }}
-      >
-        <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 flex-shrink-0 pr-1">
-          Servers
-        </span>
-        <button
-          onClick={() => setEmbedId(null)}
-          className="flex-shrink-0 h-7 px-3 rounded-full text-[10.5px] font-semibold text-white transition"
-          style={{ background: !embedId ? "hsl(var(--primary))" : "rgba(255,255,255,0.10)" }}
-        >
-          HD (MovieBox)
-        </button>
-        {EMBED_SERVERS.map((sv) => (
-          <button
-            key={sv.id}
-            onClick={() => setEmbedId(sv.id)}
-            className="flex-shrink-0 h-7 px-3 rounded-full text-[10.5px] font-semibold text-white transition"
-            style={{ background: embedId === sv.id ? "hsl(var(--primary))" : "rgba(255,255,255,0.10)" }}
-          >
-            {sv.label}
-          </button>
-        ))}
-      </div>
+
+
 
       {/* Secondary bar: download only (playback controls live on the player) */}
       {title && (
