@@ -17,6 +17,7 @@ import {
 import { loadCaptionAsVtt, languageName } from "@/lib/subtitles";
 import { getDownload, type OfflineVideo } from "@/lib/offlineDownloads";
 import { attachProgress, progressKey, getProgress, formatTime } from "@/lib/playbackProgress";
+import { EMBED_SERVERS, getEmbedServer } from "@/lib/embedServers";
 
 // Legacy type kept as a no-op export so existing imports don't break.
 export type ServerId = "moviebox";
@@ -73,6 +74,12 @@ const MoviePlayer = ({
   const [savedOffline, setSavedOffline] = useState(false);
   const [offlineMeta, setOfflineMeta] = useState<OfflineVideo | null>(null);
   const [resumeAt, setResumeAt] = useState<number | null>(null);
+  // null = MovieBox direct stream; otherwise an embed server id.
+  const [embedId, setEmbedId] = useState<string | null>(null);
+  const embed = embedId ? getEmbedServer(embedId) : null;
+  const embedSrc = embed
+    ? embed.url({ tmdbId, type, season, episode })
+    : "";
 
   // ---- Custom overlay state ----
   const [playing, setPlaying] = useState(false);
@@ -170,7 +177,7 @@ const MoviePlayer = ({
     setLoading(false);
   }, [title, year, type, season, episode]);
 
-  useEffect(() => { fetchStreams(); }, [fetchStreams]);
+  useEffect(() => { if (!embedId) fetchStreams(); }, [fetchStreams, embedId]);
 
   // Materialize the selected caption to a same-origin VTT blob URL when needed.
   useEffect(() => {
@@ -292,7 +299,20 @@ const MoviePlayer = ({
         onClick={showControls}
         className="relative w-full aspect-video overflow-hidden bg-black select-none group/player"
       >
-        {proxied && (
+        {embed && (
+          <iframe
+            key={embedSrc}
+            src={embedSrc}
+            title={title ? `${title} player` : "Player"}
+            className="absolute inset-0 w-full h-full bg-black"
+            allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+            allowFullScreen
+            referrerPolicy="origin"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-presentation"
+          />
+        )}
+
+        {!embed && proxied && (
           <video
             key={proxied}
             ref={videoRef}
@@ -327,7 +347,7 @@ const MoviePlayer = ({
         )}
 
         {/* ===== Premium control overlay ===== */}
-        {!loading && !error && selected && (
+        {!embed && !loading && !error && selected && (
           <div
             className={`absolute inset-0 z-20 transition-opacity duration-300 ${
               overlayShown ? "opacity-100" : "opacity-0 pointer-events-none"
@@ -562,14 +582,14 @@ const MoviePlayer = ({
           </div>
         )}
 
-        {loading && (
+        {!embed && loading && (
           <div className="absolute inset-0 z-30 flex flex-col items-center justify-center pointer-events-none" style={{ background: "hsl(var(--background))" }}>
             <Loader2 className="w-9 h-9 animate-spin mb-2" style={{ color: "hsl(var(--primary))" }} />
             <p className="text-white text-xs font-medium">Finding stream…</p>
           </div>
         )}
 
-        {error && !loading && (
+        {!embed && error && !loading && (
           <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-2 px-6 text-center" style={{ background: "hsl(var(--background))" }}>
             <AlertCircle className="w-8 h-8" style={{ color: "hsl(var(--primary))" }} />
             <p className="text-white text-xs font-medium">{error}</p>
@@ -583,7 +603,7 @@ const MoviePlayer = ({
           </div>
         )}
 
-        {resumeAt !== null && selected && !loading && !error && (
+        {!embed && resumeAt !== null && selected && !loading && !error && (
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -597,6 +617,33 @@ const MoviePlayer = ({
             <Play className="w-3 h-3 fill-white" /> Resume from {formatTime(resumeAt)}
           </button>
         )}
+      </div>
+
+      {/* Server picker: MovieBox direct + every embed server */}
+      <div
+        className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide px-3 py-2"
+        style={{ background: "hsl(var(--background))", borderTop: "1px solid rgba(255,255,255,0.05)" }}
+      >
+        <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 flex-shrink-0 pr-1">
+          Servers
+        </span>
+        <button
+          onClick={() => setEmbedId(null)}
+          className="flex-shrink-0 h-7 px-3 rounded-full text-[10.5px] font-semibold text-white transition"
+          style={{ background: !embedId ? "hsl(var(--primary))" : "rgba(255,255,255,0.10)" }}
+        >
+          HD (MovieBox)
+        </button>
+        {EMBED_SERVERS.map((sv) => (
+          <button
+            key={sv.id}
+            onClick={() => setEmbedId(sv.id)}
+            className="flex-shrink-0 h-7 px-3 rounded-full text-[10.5px] font-semibold text-white transition"
+            style={{ background: embedId === sv.id ? "hsl(var(--primary))" : "rgba(255,255,255,0.10)" }}
+          >
+            {sv.label}
+          </button>
+        ))}
       </div>
 
       {/* Secondary bar: download only (playback controls live on the player) */}
