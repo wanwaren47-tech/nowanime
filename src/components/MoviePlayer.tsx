@@ -17,7 +17,6 @@ import {
 import { loadCaptionAsVtt, languageName } from "@/lib/subtitles";
 import { getDownload, type OfflineVideo } from "@/lib/offlineDownloads";
 import { attachProgress, progressKey, getProgress, formatTime } from "@/lib/playbackProgress";
-import { EMBED_SERVERS, getEmbedServer } from "@/lib/embedServers";
 
 // Legacy type kept as a no-op export so existing imports don't break.
 export type ServerId = "moviebox";
