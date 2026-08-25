@@ -196,23 +196,6 @@ const DownloadSourceSheet = ({
                 </span>
                 <ChevronRight className="w-4 h-4 text-white/40" />
               </button>
-              <button
-                onClick={() => void resolve("external")}
-                className="w-full flex items-center gap-3 p-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-left transition"
-              >
-                <span className="w-9 h-9 grid place-items-center rounded-lg bg-sky-400/15 text-sky-400">
-                  <ExternalLink className="w-4 h-4" />
-                </span>
-                <span className="flex-1">
-                  <span className="block text-[12.5px] font-bold text-white">
-                    External Downloader
-                  </span>
-                  <span className="block text-[10.5px] text-white/55">
-                    Open the file in your browser or download manager
-                  </span>
-                </span>
-                <ChevronRight className="w-4 h-4 text-white/40" />
-              </button>
             </div>
           </div>
         )}
