@@ -20,16 +20,16 @@ const InlineAdRow = ({ count = 4 }: { count?: number }) => {
   const offset = Math.floor(tick / 2) % 4;
 
   return (
-    <div className="px-[4%] my-0 py-1">
+    <div className="px-[4%] my-0 py-1 min-h-[88px]">
       <span className="block text-[9px] uppercase tracking-widest text-muted-foreground/60 mb-0.5">
         Sponsored
       </span>
       {showCurated ? (
         <CuratedAdGrid count={count} offset={offset} />
       ) : (
-        <div className="grid grid-cols-4 gap-1">
+        <div className="grid grid-cols-4 gap-1 h-16">
           {Array.from({ length: count }).map((_, i) => (
-            <div key={i} className="min-h-[56px] rounded-md overflow-hidden bg-surface-2/40">
+            <div key={i} className="h-16 rounded-md overflow-hidden bg-surface-2/40">
               <NativeAd inline />
             </div>
           ))}
