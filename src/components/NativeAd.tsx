@@ -66,8 +66,8 @@ const NativeAd = ({
 
   if (inline) {
     return (
-      <div role="complementary" aria-label="Sponsored" className={`w-full ${className}`}>
-        <div ref={ref} className="w-full min-h-[60px] rounded-md overflow-hidden bg-surface-2/40" />
+      <div role="complementary" aria-label="Sponsored" className={`w-full h-16 ${className}`}>
+        <div ref={ref} className="w-full h-16 rounded-md overflow-hidden bg-surface-2/40" />
       </div>
     );
   }

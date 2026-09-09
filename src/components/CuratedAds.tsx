@@ -23,7 +23,7 @@ export const CURATED_ADS: CuratedAd[] = [
 
 /** 4-across grid of small curated image ads. */
 const CuratedAdGrid = ({ count = 4, offset = 0 }: { count?: number; offset?: number }) => (
-  <div className="grid grid-cols-4 gap-1">
+  <div className="grid grid-cols-4 gap-1 h-16">
     {Array.from({ length: count }).map((_, i) => {
       const ad = CURATED_ADS[(i + offset) % CURATED_ADS.length];
       return (
@@ -32,7 +32,7 @@ const CuratedAdGrid = ({ count = 4, offset = 0 }: { count?: number; offset?: num
           href={ad.href}
           target="_blank"
           rel="noopener noreferrer"
-          className="block min-h-[56px] rounded-md overflow-hidden bg-surface-2/40"
+          className="block h-16 rounded-md overflow-hidden bg-surface-2/40"
         >
           <img
             src={ad.img}
@@ -40,7 +40,7 @@ const CuratedAdGrid = ({ count = 4, offset = 0 }: { count?: number; offset?: num
             loading="lazy"
             width={816}
             height={816}
-            className="w-full h-full object-cover aspect-square"
+            className="w-full h-full object-cover"
           />
         </a>
       );
