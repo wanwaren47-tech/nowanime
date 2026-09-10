@@ -1,4 +1,4 @@
-import { Home, Compass, Flame, Bookmark, CloudDownload } from "lucide-react";
+import { Home, Compass, Flame, Bookmark, User } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 const tabs = [
@@ -6,7 +6,7 @@ const tabs = [
   { to: "/search", icon: Compass, label: "Explore", match: (p: string) => p.startsWith("/search") || p.startsWith("/anime") },
   { to: "/trending", icon: Flame, label: "Trending", match: (p: string) => p.startsWith("/trending") },
   { to: "/my-list", icon: Bookmark, label: "My List", match: (p: string) => p.startsWith("/my-list") || p.startsWith("/library") || p.startsWith("/liked") },
-  { to: "/my-downloads", icon: CloudDownload, label: "Downloads", match: (p: string) => p.startsWith("/my-downloads") || p.startsWith("/download") },
+  { to: "/profile", icon: User, label: "Profile", match: (p: string) => p.startsWith("/profile") || p.startsWith("/my-downloads") || p.startsWith("/download") || p.startsWith("/settings") },
 ];
 
 const BottomNav = () => {
