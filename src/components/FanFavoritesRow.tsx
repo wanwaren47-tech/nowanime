@@ -30,7 +30,6 @@ const FanFavoritesRow = () => {
       isLoading={isLoading}
       type="tv"
       viewAll="/anime"
-      ranked
     />
   );
 };
