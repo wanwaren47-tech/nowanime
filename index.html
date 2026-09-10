@@ -32,7 +32,12 @@
             "@type": "WebSite",
             "name": "NowAnime",
             "url": "https://nowanime.lovable.app/",
-            "description": "NowAnime — free HD anime streaming and downloads. Subbed and dubbed, no signup."
+            "description": "NowAnime — free HD anime streaming and downloads. Subbed and dubbed, no signup.",
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": "https://nowanime.lovable.app/search?q={search_term_string}",
+              "query-input": "required name=search_term_string"
+            }
           },
           {
             "@type": "Organization",
