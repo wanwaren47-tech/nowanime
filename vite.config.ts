@@ -20,7 +20,7 @@ export default defineConfig(({ mode }) => ({
       includeAssets: ["favicon.ico", "pwa-192x192.png", "pwa-512x512.png"],
       workbox: {
         globPatterns: ["**/*.{js,css,html,ico,png,svg,webp,jpg,jpeg}"],
-        navigateFallbackDenylist: [/^\/~oauth/],
+        navigateFallbackDenylist: [/^\/~oauth/, /^\/sitemap\.xml$/, /^\/robots\.txt$/, /^\/llms\.txt$/, /^\/manifest\.json$/, /^\/sw\.js$/],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -40,18 +40,19 @@ export default defineConfig(({ mode }) => ({
         ],
       },
       manifest: {
-        name: "Kenya Netflix",
-        short_name: "KenyaFlix",
-        description: "Kenyan Movies, Music & Shows. One app. Zero ads. Pure local vibes.",
-        theme_color: "#0D0D0D",
-        background_color: "#0D0D0D",
+        name: "NowAnime — Watch & Download Anime",
+        short_name: "NowAnime",
+        description: "Stream and download subbed & dubbed anime in HD — free.",
+        theme_color: "#ff4d2e",
+        background_color: "#0e0b18",
         display: "standalone",
         orientation: "portrait",
         scope: "/",
         start_url: "/",
         categories: ["entertainment", "video"],
         icons: [
-          { src: "/pwa-192x192.png", sizes: "192x192", type: "image/png" },
+          { src: "/icon-192.png", sizes: "192x192", type: "image/png" },
+          { src: "/icon-512.png", sizes: "512x512", type: "image/png" },
           { src: "/pwa-512x512.png", sizes: "512x512", type: "image/png" },
           { src: "/pwa-512x512.png", sizes: "512x512", type: "image/png", purpose: "any maskable" },
         ],
