@@ -194,6 +194,7 @@ const MovieDetailPage = () => {
           )}
           <div className="-mx-[5%] space-y-0.5">
             <TmdbRow title="You May Also Like" items={similar.data} isLoading={similar.isLoading} type="movie" />
+            <InlineAdRow />
             <TmdbRow title="Recommended Anime" items={recommendations.data} isLoading={recommendations.isLoading} type="movie" />
           </div>
         </div>
