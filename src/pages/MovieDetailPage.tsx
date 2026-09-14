@@ -143,7 +143,7 @@ const MovieDetailPage = () => {
                 ))}
               </div>
               <p className="text-xs md:text-sm text-foreground/80 leading-relaxed mb-5 max-w-3xl">{data.overview}</p>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-nowrap items-center gap-2 overflow-x-auto scrollbar-hide">
                 <Link
                   to={`/watch/movie/${data.id}`}
                   className="flex items-center gap-2 font-bold px-7 py-3 rounded-lg text-sm transition-transform hover:scale-105 shadow-xl"
