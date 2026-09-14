@@ -171,6 +171,10 @@ const TVDetailPage = () => {
             </div>
           </div>
 
+          <div className="mt-8 -mx-[5%]">
+            <InlineAdRow />
+          </div>
+
           {/* Season selector + episode grid */}
           {seasons.length > 0 && (
             <section className="mt-10">
