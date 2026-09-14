@@ -37,39 +37,53 @@ const useDebounced = <T,>(value: T, delay = 250) => {
   return v;
 };
 
-const ResultRow = ({ item, onClick }: { item: TmdbItem; onClick: () => void }) => {
+/** Small poster card — 4 fit across on mobile. */
+const ResultCard = ({ item, onClick }: { item: TmdbItem; onClick: () => void }) => {
   const title = (item as any).name || item.title || "Untitled";
   const date = (item as any).first_air_date || item.release_date || "";
   const poster = item.poster_path || item.backdrop_path;
   return (
-    <button
-      onClick={onClick}
-      className="w-full flex items-center gap-3 p-2 rounded-xl text-left hover:bg-white/5 transition-colors"
-      style={{ background: "#141414", border: "1px solid rgba(255,255,255,0.06)" }}
-    >
-      <div className="relative w-[58px] h-[82px] rounded-lg overflow-hidden bg-black flex-shrink-0">
+    <button onClick={onClick} className="text-left group">
+      <div className="relative w-full aspect-[2/3] rounded-lg overflow-hidden bg-black border border-white/8">
         {poster ? (
           <img src={img(poster, "w200") || ""} alt={title} loading="lazy" className="w-full h-full object-cover" />
         ) : (
-          <div className="w-full h-full grid place-items-center text-white/25 text-[9px]">No art</div>
+          <div className="w-full h-full grid place-items-center text-white/25 text-[8px]">No art</div>
         )}
-        <span className="absolute bottom-1 right-1 grid place-items-center w-5 h-5 rounded-full bg-[hsl(var(--primary))]">
-          <Play className="w-2.5 h-2.5 text-white fill-white" />
+        {!!item.vote_average && (
+          <span className="absolute top-1 left-1 flex items-center gap-0.5 px-1 py-[1px] rounded bg-black/70 text-[8px] text-amber-400 font-bold">
+            <Star className="w-2 h-2 fill-amber-400" /> {item.vote_average.toFixed(1)}
+          </span>
+        )}
+        <span className="absolute bottom-1 right-1 grid place-items-center w-4 h-4 rounded-full bg-[hsl(var(--primary))]">
+          <Play className="w-2 h-2 text-white fill-white" />
         </span>
       </div>
-      <div className="flex-1 min-w-0">
-        <h3 className="text-[13px] font-bold text-white truncate">{title}</h3>
-        <p className="text-[10.5px] text-white/55 mt-0.5">Anime{date ? ` · ${date.slice(0, 4)}` : ""}</p>
-        {!!item.vote_average && (
-          <p className="text-[10.5px] text-amber-400 mt-0.5 flex items-center gap-1">
-            <Star className="w-3 h-3 fill-amber-400" /> {item.vote_average.toFixed(1)}
-          </p>
-        )}
-        {item.overview && (
-          <p className="text-[10px] text-white/40 mt-1 line-clamp-2">{item.overview}</p>
-        )}
-      </div>
+      <h3 className="text-[10px] font-semibold text-white truncate mt-1">{title}</h3>
+      <p className="text-[9px] text-white/45">{date ? date.slice(0, 4) : "Anime"}</p>
     </button>
+  );
+};
+
+/** Grid of 4-across cards with a sponsored slot after every 3 rows. */
+const ResultGrid = ({ items, onOpen }: { items: TmdbItem[]; onOpen: (i: TmdbItem) => void }) => {
+  const chunks: TmdbItem[][] = [];
+  for (let i = 0; i < items.length; i += 12) chunks.push(items.slice(i, i + 12));
+  return (
+    <div className="pb-4">
+      {chunks.map((chunk, ci) => (
+        <div key={ci}>
+          <div className="grid grid-cols-4 gap-2">
+            {chunk.map((m) => (
+              <ResultCard key={m.id} item={m} onClick={() => onOpen(m)} />
+            ))}
+          </div>
+          <div className="-mx-5 my-3">
+            <InlineAdRow />
+          </div>
+        </div>
+      ))}
+    </div>
   );
 };
 
