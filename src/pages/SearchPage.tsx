@@ -206,21 +206,7 @@ const SearchPage = () => {
                 <Loader2 className="w-4 h-4 animate-spin" style={{ color: "hsl(var(--primary))" }} />
               </div>
             ) : (
-              <div className="space-y-2 pb-4">
-                {results.slice(0, 24).map((m, i) => (
-                  <div key={m.id}>
-                    <ResultRow item={m} onClick={() => openItem(m)} />
-                    {(i === 4 || i === 9 || i === 14 || i === 19) && (
-                      <div className="-mx-5 my-3">
-                        <p className="text-[9px] uppercase tracking-[0.18em] text-white/45 font-semibold mb-1.5">
-                          Sponsored · Featured placements
-                        </p>
-                        <InlineAdRow count={4} />
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
+              <ResultGrid items={results.slice(0, 24)} onOpen={openItem} />
             )}
           </>
         ) : (
