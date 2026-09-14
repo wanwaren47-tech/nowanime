@@ -234,18 +234,7 @@ const SearchPage = () => {
                 <p className="text-[10px] text-white/50 mb-2">
                   {results.length} anime result{results.length === 1 ? "" : "s"} for "{searchQuery}"
                 </p>
-                <div className="space-y-2 pb-4">
-                  {results.map((item, i) => (
-                    <div key={item.id}>
-                      <ResultRow item={item} onClick={() => openItem(item)} />
-                      {(i + 1) % 6 === 0 && i < results.length - 1 && (
-                        <div className="-mx-5 my-2">
-                          <InlineAdRow count={4} />
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
+                <ResultGrid items={results} onOpen={openItem} />
               </>
             )}
           </>
