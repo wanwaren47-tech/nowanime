@@ -253,6 +253,10 @@ const TVDetailPage = () => {
             </section>
           )}
 
+          <div className="mt-6 -mx-[5%]">
+            <InlineAdRow />
+          </div>
+
           {cast.length > 0 && (
             <section className="mt-10">
               <h2 className="text-sm md:text-base font-semibold text-foreground mb-3">Top Cast</h2>
