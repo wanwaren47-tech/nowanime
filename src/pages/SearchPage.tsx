@@ -221,9 +221,9 @@ const SearchPage = () => {
                 {trending.length > 0 && (
                   <div className="text-left">
                     <h3 className="text-[11px] font-semibold text-white/80 mb-2">You might like</h3>
-                    <div className="space-y-2">
+                    <div className="grid grid-cols-4 gap-2">
                       {(trending as TmdbItem[]).slice(0, 8).map((m) => (
-                        <ResultRow key={m.id} item={m} onClick={() => navigate(`/tv/${m.id}`)} />
+                        <ResultCard key={m.id} item={m} onClick={() => navigate(`/tv/${m.id}`)} />
                       ))}
                     </div>
                   </div>
