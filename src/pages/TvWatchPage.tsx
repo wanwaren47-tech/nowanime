@@ -174,6 +174,10 @@ const TvWatchPage = () => {
               </section>
             )}
 
+            <div className="mt-3 -mx-4">
+              <InlineAdRow />
+            </div>
+
             {cast.length > 0 && (
               <div className="mt-4">
                 <h3 className="text-[12px] font-semibold text-white mb-1.5">Cast</h3>
