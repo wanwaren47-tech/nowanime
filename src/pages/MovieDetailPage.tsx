@@ -9,6 +9,7 @@ import { useMovieDetail, useMovieSimilar, useMovieRecommendations, useTrendingMo
 import { img } from "@/lib/tmdb";
 import DownloadButton from "@/components/DownloadButton";
 import WatchlistButton from "@/components/WatchlistButton";
+import InlineAdRow from "@/components/InlineAdRow";
 
 const MovieDetailPage = () => {
   const { id } = useParams<{ id: string }>();
