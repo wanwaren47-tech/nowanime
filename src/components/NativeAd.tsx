@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react";
 
-// Adsterra native ad rendered inside a sandboxed iframe. Uses idle scheduling
-// and a one-shot retry so it loads reliably on low-end Android (Redmi/Samsung)
-// and iOS Safari. Skipped in FB/IG in-app browsers that block ad scripts.
+// Adsterra native ad. Rendered inside an isolated iframe document (no sandbox)
+// so several placements can live on one page without clashing over the
+// container id. Skipped in FB/IG in-app browsers that block ad scripts.
 
 const AD_KEY = "ba3fd22b78c6d97f709385e2e0894584";
 const AD_SRC = `https://disturbknockedcaterpillar.com/${AD_KEY}/invoke.js`;
@@ -45,7 +45,7 @@ const NativeAd = ({
       iframe.frameBorder = "0";
       iframe.title = "Sponsored";
       iframe.referrerPolicy = "no-referrer-when-downgrade";
-      iframe.setAttribute("sandbox", "allow-scripts allow-popups allow-same-origin");
+      iframe.setAttribute("allow", "autoplay; clipboard-write");
       iframe.style.cssText =
         "border:0;display:block;width:100%;height:100%;background:transparent;";
       iframe.srcdoc = HTML;
@@ -64,27 +64,20 @@ const NativeAd = ({
     return () => { host.innerHTML = ""; };
   }, []);
 
-  if (inline) {
-    return (
-      <div role="complementary" aria-label="Sponsored" className={`w-full h-16 ${className}`}>
-        <div ref={ref} className="w-full h-16 rounded-md overflow-hidden bg-surface-2/40" />
-      </div>
-    );
-  }
+  const h = inline ? "h-24" : compact ? "h-28" : "h-[180px]";
 
   return (
     <div
       role="complementary"
       aria-label="Sponsored"
-      className={`w-full px-[5%] ${compact ? "my-2" : "my-5"} ${className}`}
+      className={`w-full ${inline ? "" : "px-[4%] my-3"} ${className}`}
     >
-      <span className="block text-[9px] uppercase tracking-widest text-muted-foreground/60 mb-1">
-        Sponsored
-      </span>
-      <div
-        ref={ref}
-        className={`w-full ${compact ? "min-h-[60px]" : "min-h-[100px]"} rounded-md overflow-hidden`}
-      />
+      {!inline && (
+        <span className="block text-[9px] uppercase tracking-widest text-muted-foreground/60 mb-1">
+          Sponsored
+        </span>
+      )}
+      <div ref={ref} className={`w-full ${h} rounded-md overflow-hidden bg-surface-2/30`} />
     </div>
   );
 };

@@ -133,6 +133,10 @@ const TvWatchPage = () => {
               )}
             </div>
 
+            <div className="mt-4 -mx-4">
+              <InlineAdRow />
+            </div>
+
             <section className="mt-4">
               <h3 className="text-[12px] font-semibold text-white mb-2">Episodes</h3>
               <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mx-4 px-4">
@@ -169,6 +173,10 @@ const TvWatchPage = () => {
                 <p className="text-[11px] leading-relaxed text-white/65 line-clamp-3">{data.overview}</p>
               </section>
             )}
+
+            <div className="mt-3 -mx-4">
+              <InlineAdRow />
+            </div>
 
             {cast.length > 0 && (
               <div className="mt-4">
