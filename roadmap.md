@@ -9,3 +9,5 @@
 - [x] Place four native ads below titles on movie, TV, and anime player pages
 - [x] Match Watch, Download, and Watchlist button styling on detail pages
 - [x] Verify native ad sizing on phone and desktop
+- [x] Increase desktop native-ad height so full creatives remain visible
+- [x] Remove the native row above Explore search while keeping the 468 × 60 banner
