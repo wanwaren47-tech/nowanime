@@ -15,6 +15,7 @@ import { useLikeCount } from "@/hooks/useLikes";
 import { toast } from "@/components/ui/sonner";
 import { shortenTitle } from "@/lib/titleUtils";
 import PageBannerAd from "@/components/PageBannerAd";
+import InlineAdRow from "@/components/InlineAdRow";
 
 function buildNormalizedVideo(videoId: string, stream: PipedStream): NormalizedVideo {
   return {
@@ -196,6 +197,9 @@ const WatchPage = () => {
           ) : (
             <div className="animate-fade-in">
               <h1 className="text-lg md:text-xl font-bold text-foreground leading-tight">{shortenTitle(stream?.title || "Now Playing", 80)}</h1>
+              <div className="-mx-5 mt-3">
+                <InlineAdRow count={4} />
+              </div>
               <div className="flex items-center gap-3 mt-2 flex-wrap">
                 {stream?.views != null && <span className="flex items-center gap-1 text-xs text-muted-foreground"><Eye className="w-3 h-3" />{formatCount(stream.views)}</span>}
                 {stream?.duration != null && <span className="flex items-center gap-1 text-xs text-muted-foreground"><Clock className="w-3 h-3" />{Math.floor(stream.duration / 60)}m</span>}

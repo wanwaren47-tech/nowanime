@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Download } from "lucide-react";
 import DownloadSourceSheet from "./DownloadSourceSheet";
+import { Button } from "@/components/ui/button";
 
 interface Props {
   type: "movie" | "tv" | "anime";
@@ -38,32 +39,34 @@ const DownloadButton = ({ type, tmdbId, title, year, season, episode, poster, ba
   if (size === "icon") {
     return (
       <>
-        <button
+        <Button
           type="button"
+          variant="secondary"
+          size="icon"
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSourceOpen(true); }}
-          className="w-6 h-6 grid place-items-center rounded-full bg-black/70 hover:bg-[hsl(var(--primary))] transition-colors"
+          className="h-6 w-6 rounded-full"
           aria-label="Download episode"
         >
-          <Download className="w-3 h-3 text-white" strokeWidth={2.5} />
-        </button>
+          <Download className="h-3 w-3" strokeWidth={2.5} />
+        </Button>
         {sheet}
       </>
     );
   }
 
-  const padding = size === "sm" ? "px-3 py-1.5 text-xs" : "px-4 py-2 text-sm";
+  const padding = size === "sm" ? "h-9 px-3 text-xs" : "h-11 px-3 text-xs md:px-5 md:text-sm";
   const icon = size === "sm" ? "w-3.5 h-3.5" : "w-4 h-4";
 
   return (
     <>
-      <button
+      <Button
+        type="button"
         onClick={() => setSourceOpen(true)}
-        className={`inline-flex items-center gap-2 rounded-lg font-semibold text-white transition-all hover:scale-[1.02] ${padding}`}
-        style={{ background: "hsl(var(--primary))" }}
+        className={`min-w-0 flex-1 rounded-md font-semibold ${padding}`}
       >
         <Download className={icon} />
         Download
-      </button>
+      </Button>
       {sheet}
     </>
   );

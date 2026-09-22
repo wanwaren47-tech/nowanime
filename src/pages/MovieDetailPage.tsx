@@ -10,6 +10,7 @@ import { img } from "@/lib/tmdb";
 import DownloadButton from "@/components/DownloadButton";
 import WatchlistButton from "@/components/WatchlistButton";
 import InlineAdRow from "@/components/InlineAdRow";
+import { Button } from "@/components/ui/button";
 
 const MovieDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -143,14 +144,12 @@ const MovieDetailPage = () => {
                 ))}
               </div>
               <p className="text-xs md:text-sm text-foreground/80 leading-relaxed mb-5 max-w-3xl">{data.overview}</p>
-              <div className="flex flex-nowrap items-center gap-2 overflow-x-auto scrollbar-hide">
-                <Link
-                  to={`/watch/movie/${data.id}`}
-                  className="flex items-center gap-2 font-bold px-7 py-3 rounded-lg text-sm transition-transform hover:scale-105 shadow-xl"
-                  style={{ background: "hsl(var(--primary))", color: "#fff" }}
-                >
-                  <Play className="w-4 h-4 fill-current" /> Watch Now
-                </Link>
+              <div className="flex w-full max-w-xl flex-nowrap items-center gap-2">
+                <Button asChild className="h-11 min-w-0 flex-1 rounded-md px-3 text-xs font-semibold md:px-5 md:text-sm">
+                  <Link to={`/watch/movie/${data.id}`}>
+                    <Play className="w-4 h-4 fill-current" /> Watch Now
+                  </Link>
+                </Button>
                 <DownloadButton
                   id={`movie-${data.id}`}
                   type="movie"
@@ -164,6 +163,10 @@ const MovieDetailPage = () => {
               </div>
             </div>
 
+          </div>
+
+          <div className="mt-8 -mx-[5%]">
+            <InlineAdRow count={4} />
           </div>
 
           {cast.length > 0 && (
