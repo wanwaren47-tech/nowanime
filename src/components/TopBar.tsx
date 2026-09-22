@@ -1,14 +1,22 @@
 import { Link, useLocation, useNavigate, NavLink } from "react-router-dom";
-import { Search, X, Menu, Home, Flame, Clapperboard, User, Bookmark, Heart, Settings, Shield, Download, TrendingUp } from "lucide-react";
+import { Search, X, Menu, Home, Flame, Clapperboard, User, Bookmark, Heart, Settings, Shield, Download, TrendingUp, Tv } from "lucide-react";
 import { useState, useEffect } from "react";
 import ThemeToggle from "./ThemeToggle";
 import CategoriesMenu from "./CategoriesMenu";
-import logoAsset from "@/assets/nowanime-logo.png.asset.json";
+import logoMark from "@/assets/nowanime-noir-mark.png";
 import { supabase } from "@/integrations/supabase/client";
 
 const primaryNav = [
   { to: "/home", label: "Home", icon: Home },
-  { to: "/anime", label: "Anime", icon: Clapperboard },
+  { to: "/movies", label: "Movies", icon: Clapperboard },
+  { to: "/tv", label: "TV Shows", icon: TrendingUp },
+  { to: "/anime", label: "Anime", icon: Flame },
+  { to: "/live-tv", label: "Live TV", icon: Tv },
+];
+
+const mobileNav = [
+  { to: "/home", label: "Home", icon: Home },
+  { to: "/anime", label: "Anime", icon: Flame },
   { to: "/search", label: "Trending", icon: TrendingUp },
   { to: "/my-list", label: "My List", icon: Bookmark },
   { to: "/my-downloads", label: "Downloads", icon: Download },
@@ -74,8 +82,8 @@ const TopBar = () => {
 
           {/* Logo — left */}
           <Link to="/home" className="flex items-center gap-2 flex-shrink-0">
-            <img src={logoAsset.url} alt="NowAnime" className="h-8 w-8 md:h-10 md:w-10" />
-            <span className="hidden md:inline text-sm font-black tracking-wide text-foreground">NowAnime</span>
+            <img src={logoMark} alt="NowAnime" className="h-8 w-8 md:h-10 md:w-10" />
+            <span className="hidden md:inline font-serif text-lg tracking-tight text-foreground">NowAnime</span>
           </Link>
 
           {/* Centered pill nav — desktop */}
@@ -191,7 +199,7 @@ const TopBar = () => {
           <aside className="fixed top-0 left-0 bottom-0 z-[70] w-[82%] max-w-[300px] bg-card shadow-2xl flex flex-col">
             <div className="flex items-center justify-between px-4 h-14 border-b border-border">
               <Link to="/home" onClick={() => setDrawerOpen(false)} className="flex items-center gap-2">
-                <img src={logoAsset.url} alt="" className="w-9 h-9" />
+                <img src={logoMark} alt="" className="w-9 h-9" />
               </Link>
               <button
                 onClick={() => setDrawerOpen(false)}
@@ -202,7 +210,7 @@ const TopBar = () => {
               </button>
             </div>
             <nav className="flex-1 overflow-y-auto p-2.5 flex flex-col gap-0.5">
-              {primaryNav.map(({ to, label, icon: Icon }) => {
+              {mobileNav.map(({ to, label, icon: Icon }) => {
                 const active = location.pathname === to;
                 return (
                   <Link
