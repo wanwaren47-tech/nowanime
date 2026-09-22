@@ -141,9 +141,6 @@ const SearchPage = () => {
         description={searchQuery ? `Anime search results for "${searchQuery}" on NowAnime.` : "Explore trending, popular and top-rated anime on NowAnime."}
       />
       <div className="px-5 pt-4" style={{ background: "#000" }}>
-        <div className="-mx-5 mb-3">
-          <InlineAdRow />
-        </div>
         <div ref={wrapRef} className="relative flex items-center gap-2 mb-4">
           <button onClick={() => navigate(-1)} className="p-1.5 rounded-lg hover:bg-white/5">
             <ArrowLeft className="w-4 h-4 text-white" />
