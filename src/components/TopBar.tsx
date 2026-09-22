@@ -1,26 +1,35 @@
 import { Link, useLocation, useNavigate, NavLink } from "react-router-dom";
-import { Search, X, Menu, Home, Flame, Clapperboard, User, Bookmark, Heart, Settings, Shield, Download, TrendingUp, Tv } from "lucide-react";
+import { Search, X, Menu, Home, Flame, Library, User, Bookmark, Heart, Settings, Shield, Download } from "lucide-react";
 import { useState, useEffect } from "react";
 import ThemeToggle from "./ThemeToggle";
-import CategoriesMenu from "./CategoriesMenu";
 import logoMark from "@/assets/nowanime-noir-mark.png";
 import { supabase } from "@/integrations/supabase/client";
 
 const primaryNav = [
   { to: "/home", label: "Home", icon: Home },
-  { to: "/movies", label: "Movies", icon: Clapperboard },
-  { to: "/tv", label: "TV Shows", icon: TrendingUp },
-  { to: "/anime", label: "Anime", icon: Flame },
-  { to: "/live-tv", label: "Live TV", icon: Tv },
+  { to: "/search", label: "Explore", icon: ExploreSquares },
+  { to: "/trending", label: "Trending", icon: Flame },
+  { to: "/library", label: "Library", icon: Library },
+  { to: "/profile", label: "Profile", icon: User },
 ];
 
 const mobileNav = [
   { to: "/home", label: "Home", icon: Home },
-  { to: "/anime", label: "Anime", icon: Flame },
-  { to: "/search", label: "Trending", icon: TrendingUp },
-  { to: "/my-list", label: "My List", icon: Bookmark },
-  { to: "/my-downloads", label: "Downloads", icon: Download },
+  { to: "/search", label: "Explore", icon: ExploreSquares },
+  { to: "/trending", label: "Trending", icon: Flame },
+  { to: "/library", label: "Library", icon: Library },
+  { to: "/profile", label: "Profile", icon: User },
 ];
+
+function ExploreSquares({ className = "" }: { className?: string }) {
+  return (
+    <span className={`grid grid-cols-2 gap-[3px] ${className}`} aria-hidden="true">
+      {Array.from({ length: 4 }).map((_, index) => (
+        <span key={index} className="block h-[6px] w-[6px] rounded-[1px] border border-current" />
+      ))}
+    </span>
+  );
+}
 
 const drawerExtras = [
   { to: "/my-downloads", label: "Downloads", icon: Download },
@@ -107,7 +116,6 @@ const TopBar = () => {
                 {label}
               </NavLink>
             ))}
-            <CategoriesMenu />
           </nav>
 
           {/* Inline ad slot — desktop only, between nav and search */}

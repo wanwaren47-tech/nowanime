@@ -8,6 +8,7 @@ import SEO from "@/components/SEO";
 import InlineAdRow from "@/components/InlineAdRow";
 import TmdbRow from "@/components/TmdbRow";
 import Footer from "@/components/Footer";
+import PageBannerAd from "@/components/PageBannerAd";
 import { useTvDetail, useTvSeason, useTvExternalIds } from "@/hooks/useTmdb";
 import { useTrendingAnime, usePopularAnime, useTopRatedAnime } from "@/hooks/useAnimeContent";
 import { img } from "@/lib/tmdb";
@@ -78,6 +79,7 @@ const TvWatchPage = () => {
             {data ? `${data.name} · S${seasonNum} E${episodeNum}` : "Watch"}
           </h1>
         </header>
+        <PageBannerAd />
 
         <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-4 lg:px-4 lg:py-3">
           <div className="min-w-0">

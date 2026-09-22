@@ -1,11 +1,19 @@
-import { Home, Compass, Flame, Bookmark, User } from "lucide-react";
+import { Home, Flame, Library, User } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+
+const ExploreSquares = ({ className = "" }: { className?: string }) => (
+  <span className={`grid grid-cols-2 gap-[3px] ${className}`} aria-hidden="true">
+    {Array.from({ length: 4 }).map((_, index) => (
+      <span key={index} className="block h-[8px] w-[8px] rounded-[2px] border-[1.5px] border-current" />
+    ))}
+  </span>
+);
 
 const tabs = [
   { to: "/home", icon: Home, label: "Home", match: (p: string) => p === "/" || p === "/home" },
-  { to: "/search", icon: Compass, label: "Explore", match: (p: string) => p.startsWith("/search") || p.startsWith("/anime") },
+  { to: "/search", icon: ExploreSquares, label: "Explore", match: (p: string) => p.startsWith("/search") || p.startsWith("/anime") },
   { to: "/trending", icon: Flame, label: "Trending", match: (p: string) => p.startsWith("/trending") },
-  { to: "/my-list", icon: Bookmark, label: "My List", match: (p: string) => p.startsWith("/my-list") || p.startsWith("/library") || p.startsWith("/liked") },
+  { to: "/library", icon: Library, label: "Library", match: (p: string) => p.startsWith("/my-list") || p.startsWith("/library") || p.startsWith("/liked") },
   { to: "/profile", icon: User, label: "Profile", match: (p: string) => p.startsWith("/profile") || p.startsWith("/my-downloads") || p.startsWith("/download") || p.startsWith("/settings") },
 ];
 

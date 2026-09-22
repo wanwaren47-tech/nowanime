@@ -14,6 +14,7 @@ import { toggleLike, isLiked } from "@/hooks/useLikedVideos";
 import { useLikeCount } from "@/hooks/useLikes";
 import { toast } from "@/components/ui/sonner";
 import { shortenTitle } from "@/lib/titleUtils";
+import PageBannerAd from "@/components/PageBannerAd";
 
 function buildNormalizedVideo(videoId: string, stream: PipedStream): NormalizedVideo {
   return {
@@ -161,6 +162,7 @@ const WatchPage = () => {
         image={stream?.thumbnailUrl || undefined}
         canonicalPath={`/watch/${videoId}`}
       />
+      <PageBannerAd />
       {/* Player */}
       <div ref={playerContainerRef} onTouchStart={handleDoubleTap}
         className={`relative w-full bg-card ${isFullscreen ? "fixed inset-0 z-[100] flex items-center justify-center" : "aspect-video md:max-h-[70vh]"}`}>

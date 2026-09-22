@@ -4,6 +4,7 @@ import TopBar from "./TopBar";
 import BottomNav from "./BottomNav";
 import Footer from "./Footer";
 import InlineAdRow from "./InlineAdRow";
+import PageBannerAd from "./PageBannerAd";
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -30,12 +31,14 @@ const AppLayout = ({ children, hideNav, hideFooter }: AppLayoutProps) => {
   if (hideNav) return <>{children}</>;
 
   const showEndAd = !NO_END_AD.some((p) => pathname.startsWith(p));
+  const showTopAd = pathname === "/" || pathname === "/home" || pathname === "/search" || pathname.startsWith("/movie/") || pathname.startsWith("/tv/") || pathname.startsWith("/anime/");
 
   return (
     <div className="min-h-screen bg-nowanime-app">
       <TopBar />
       <div className="pt-12 md:pt-14" />
       <main className="pb-16 md:pb-0 max-w-[1600px] mx-auto">
+        {showTopAd && <PageBannerAd />}
         {children}
         {showEndAd && (
           <section aria-label="Advertisement" className="m-0 p-0 leading-none">
