@@ -9,6 +9,7 @@ import SEO from "@/components/SEO";
 import InlineAdRow from "@/components/InlineAdRow";
 import TmdbRow from "@/components/TmdbRow";
 import Footer from "@/components/Footer";
+import PageBannerAd from "@/components/PageBannerAd";
 import {
   useMovieDetail,
   useMovieExternalIds,
@@ -67,6 +68,7 @@ const MovieWatchPage = () => {
           </Link>
           <h1 className="text-[13px] font-semibold text-foreground truncate">{data?.title || "Watch"}</h1>
         </header>
+        <PageBannerAd />
 
         <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-4 lg:px-4 lg:py-3">
           {/* LEFT: player + content */}

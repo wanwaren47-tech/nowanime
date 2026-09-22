@@ -12,14 +12,6 @@ function isBlockedInApp(): boolean {
   if (typeof navigator === "undefined") return false;
   return /FBAN|FBAV|Instagram|Line\//.test(navigator.userAgent || "");
 }
-function schedule(cb: () => void) {
-  const ric = (window as any).requestIdleCallback as
-    | ((cb: () => void, opts?: { timeout: number }) => number)
-    | undefined;
-  if (ric) ric(cb, { timeout: 1500 });
-  else setTimeout(cb, 250);
-}
-
 const NativeAd = ({
   className = "",
   compact = false,
@@ -50,7 +42,7 @@ const NativeAd = ({
         "border:0;display:block;width:100%;height:100%;background:transparent;";
       iframe.srcdoc = HTML;
       host.appendChild(iframe);
-      // Retry once if empty after 4s.
+      // Retry once if empty after 2.5s on slow connections.
       window.setTimeout(() => {
         if (retried) return;
         try {
@@ -58,13 +50,13 @@ const NativeAd = ({
           const hasAd = doc?.querySelector("iframe, ins, a, img");
           if (!hasAd) { retried = true; iframe.srcdoc = HTML; }
         } catch { /* cross-origin child */ }
-      }, 4000);
+      }, 2500);
     };
-    schedule(build);
+    build();
     return () => { host.innerHTML = ""; };
   }, []);
 
-  const h = inline ? "h-[72px] sm:h-[88px]" : compact ? "h-[84px] sm:h-28" : "h-[96px] sm:h-[140px]";
+  const h = inline ? "h-[96px] sm:h-[128px]" : compact ? "h-[112px] sm:h-36" : "h-[128px] sm:h-[168px]";
 
   return (
     <div
