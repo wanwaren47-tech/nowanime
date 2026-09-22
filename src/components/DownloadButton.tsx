@@ -54,7 +54,7 @@ const DownloadButton = ({ type, tmdbId, title, year, season, episode, poster, ba
     );
   }
 
-  const padding = size === "sm" ? "h-9 px-3 text-xs" : "h-11 px-5 text-sm";
+  const padding = size === "sm" ? "h-9 px-3 text-xs" : "h-11 px-3 text-xs md:px-5 md:text-sm";
   const icon = size === "sm" ? "w-3.5 h-3.5" : "w-4 h-4";
 
   return (
@@ -62,7 +62,7 @@ const DownloadButton = ({ type, tmdbId, title, year, season, episode, poster, ba
       <Button
         type="button"
         onClick={() => setSourceOpen(true)}
-        className={`shrink-0 rounded-md font-semibold ${padding}`}
+        className={`min-w-0 flex-1 rounded-md font-semibold ${padding}`}
       >
         <Download className={icon} />
         Download

@@ -33,11 +33,11 @@ const WatchlistButton = ({ item }: Props) => {
     <Button
       type="button"
       onClick={onClick}
-      className="h-11 shrink-0 rounded-md px-5 text-sm font-semibold"
+      className="h-11 min-w-0 flex-1 rounded-md px-3 text-xs font-semibold md:px-5 md:text-sm"
       aria-pressed={saved}
     >
       {saved ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
-      {saved ? "In Watchlist" : "Add to Watchlist"}
+      {saved ? "Saved" : "Watchlist"}
     </Button>
   );
 };

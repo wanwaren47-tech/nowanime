@@ -144,8 +144,8 @@ const MovieDetailPage = () => {
                 ))}
               </div>
               <p className="text-xs md:text-sm text-foreground/80 leading-relaxed mb-5 max-w-3xl">{data.overview}</p>
-              <div className="flex flex-nowrap items-center gap-2 overflow-x-auto scrollbar-hide">
-                <Button asChild className="h-11 shrink-0 rounded-md px-5 text-sm font-semibold">
+              <div className="flex w-full max-w-xl flex-nowrap items-center gap-2">
+                <Button asChild className="h-11 min-w-0 flex-1 rounded-md px-3 text-xs font-semibold md:px-5 md:text-sm">
                   <Link to={`/watch/movie/${data.id}`}>
                     <Play className="w-4 h-4 fill-current" /> Watch Now
                   </Link>
