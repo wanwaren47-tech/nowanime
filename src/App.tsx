@@ -4,7 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import OfflineBanner from "@/components/OfflineBanner";
 import HomePage from "./pages/HomePage";
 import FollowUsPage from "./pages/FollowUsPage";
@@ -68,7 +68,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
+      <HashRouter>
         <Routes>
           <Route path="/welcome" element={<Navigate to="/home" replace />} />
           <Route path="/signin" element={<Navigate to="/auth" replace />} />
@@ -146,7 +146,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
         </Routes>
 
-      </BrowserRouter>
+      </HashRouter>
     </TooltipProvider>
   </PersistQueryClientProvider>
 );
