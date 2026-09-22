@@ -9,6 +9,7 @@ import DownloadButton from "@/components/DownloadButton";
 import WatchlistButton from "@/components/WatchlistButton";
 import { useTvDetail, useTvSeason, useTvSimilar, useTvRecommendations, useTrendingTv, usePopularTv, useTopRatedTv } from "@/hooks/useTmdb";
 import { img } from "@/lib/tmdb";
+import { Button } from "@/components/ui/button";
 
 const TVDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -149,13 +150,11 @@ const TVDetailPage = () => {
               </div>
               <p className="text-xs md:text-sm text-foreground/80 leading-relaxed mb-5 max-w-3xl">{data.overview}</p>
               <div className="flex flex-nowrap items-center gap-2 overflow-x-auto scrollbar-hide">
-                <Link
-                  to={`/watch/tv/${data.id}/${activeSeason}/1`}
-                  className="flex items-center gap-2 font-bold px-7 py-3 rounded-lg text-sm transition-transform hover:scale-105 shadow-xl"
-                  style={{ background: "hsl(var(--primary))", color: "#fff" }}
-                >
-                  <Play className="w-4 h-4 fill-current" /> Play S{activeSeason} E1
-                </Link>
+                <Button asChild className="h-11 shrink-0 rounded-md px-5 text-sm font-semibold">
+                  <Link to={`/watch/tv/${data.id}/${activeSeason}/1`}>
+                    <Play className="w-4 h-4 fill-current" /> Watch Now
+                  </Link>
+                </Button>
                 <DownloadButton
                   id={`tv-${data.id}-s${activeSeason}-e1`}
                   type="tv"

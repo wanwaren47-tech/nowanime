@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Bookmark, BookmarkCheck } from "lucide-react";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import {
   isInWatchlist,
   toggleWatchlist,
@@ -29,19 +30,15 @@ const WatchlistButton = ({ item }: Props) => {
   };
 
   return (
-    <button
+    <Button
+      type="button"
       onClick={onClick}
-      className="flex items-center gap-2 font-semibold px-5 py-3 rounded-lg text-sm border transition-colors"
-      style={{
-        background: saved ? "hsl(var(--primary) / 0.15)" : "rgba(255,255,255,0.06)",
-        borderColor: saved ? "hsl(var(--primary))" : "rgba(255,255,255,0.14)",
-        color: saved ? "hsl(var(--primary))" : "#fff",
-      }}
+      className="h-11 shrink-0 rounded-md px-5 text-sm font-semibold"
       aria-pressed={saved}
     >
       {saved ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
       {saved ? "In Watchlist" : "Add to Watchlist"}
-    </button>
+    </Button>
   );
 };
 

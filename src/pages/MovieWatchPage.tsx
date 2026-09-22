@@ -106,6 +106,10 @@ const MovieWatchPage = () => {
               </p>
             </div>
 
+            <div className="mt-3 -mx-4">
+              <InlineAdRow count={4} />
+            </div>
+
             {/* Mobile-only horizontal suggestions (desktop uses sidebar) */}
             <section className="mt-4 lg:hidden">
               <h3 className="text-[12px] font-semibold text-foreground mb-2">More Anime</h3>
@@ -133,10 +137,6 @@ const MovieWatchPage = () => {
                 <p className="text-[11px] leading-relaxed text-white/65 line-clamp-3">{data.overview}</p>
               </section>
             )}
-
-            <div className="mt-3 -mx-4">
-              <InlineAdRow />
-            </div>
 
             {cast.length > 0 && (
               <div className="mt-4">
