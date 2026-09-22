@@ -56,7 +56,7 @@ const NativeAd = ({
     return () => { host.innerHTML = ""; };
   }, []);
 
-  const h = inline ? "h-[96px] sm:h-[128px] lg:h-[150px]" : compact ? "h-[112px] sm:h-36 lg:h-40" : "h-[128px] sm:h-[168px] lg:h-[180px]";
+  const h = inline ? "h-[96px] sm:h-[128px] lg:h-[250px]" : compact ? "h-[112px] sm:h-36 lg:h-[220px]" : "h-[128px] sm:h-[168px] lg:h-[280px]";
 
   return (
     <div
