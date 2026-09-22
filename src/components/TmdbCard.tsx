@@ -64,8 +64,8 @@ const TmdbCard = ({ item, type, width, fill, rank }: TmdbCardProps) => {
     <div className="flex items-end flex-shrink-0 snap-start">
       <span
         aria-hidden
-        className="font-serif leading-none select-none text-transparent -mr-3 md:-mr-5 text-[72px] md:text-[110px]"
-        style={{ WebkitTextStroke: "1.5px hsl(var(--primary) / 0.55)" }}
+        className="font-serif leading-none select-none text-transparent -mr-2 md:-mr-4 text-[76px] md:text-[118px]"
+        style={{ WebkitTextStroke: "1.5px hsl(var(--primary) / 0.75)" }}
       >
         {rank}
       </span>

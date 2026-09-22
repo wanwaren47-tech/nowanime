@@ -25,7 +25,7 @@ const TmdbRow = ({ title, items, isLoading, type, viewAll, ranked }: TmdbRowProp
           </Link>
         )}
       </div>
-      <div className="flex gap-2.5 md:gap-4 px-[4%] overflow-x-auto scrollbar-hide pb-2 snap-x snap-mandatory">
+      <div className="flex gap-2.5 md:gap-4 px-[4%] overflow-x-auto scrollbar-hide pb-2 snap-x snap-proximity">
         {isLoading
           ? Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="flex-shrink-0 w-[104px] sm:w-[124px] md:w-[146px] aspect-[2/3] rounded-xl bg-card animate-pulse" />
