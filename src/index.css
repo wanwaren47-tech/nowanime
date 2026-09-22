@@ -1,16 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Work+Sans:wght@400;500;600;700;800&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ==========================================
-   NowAnime — bold red/orange anime theme
+   NowAnime — solar red, orange and magenta noir
    ========================================== */
 :root {
   --bg-pure: #0d0d0e;
   --bg-card: #17171a;
-  --accent: #c9808c;
+  --accent: #f04430;
   --text-main: #f7f3f1;
   --text-muted: #9a9497;
 }
@@ -23,44 +21,44 @@
     --card-foreground: 20 15% 95%;
     --popover: 240 5% 9%;
     --popover-foreground: 20 15% 95%;
-    --primary: 351 38% 64%;
-    --primary-foreground: 240 10% 6%;
+    --primary: 7 86% 56%;
+    --primary-foreground: 20 20% 98%;
     --secondary: 240 5% 14%;
     --secondary-foreground: 20 15% 95%;
     --muted: 240 5% 13%;
-    --muted-foreground: 340 6% 63%;
-    --accent: 351 30% 74%;
-    --accent-foreground: 240 10% 6%;
+    --muted-foreground: 345 7% 65%;
+    --accent: 328 72% 55%;
+    --accent-foreground: 20 20% 98%;
     --destructive: 0 62% 50%;
     --destructive-foreground: 0 0% 100%;
     --border: 240 5% 18%;
     --input: 240 5% 16%;
-    --ring: 351 38% 64%;
+    --ring: 7 86% 56%;
     --radius: 0.875rem;
 
     --surface: 240 5% 9%;
     --surface-2: 240 5% 14%;
 
-    --bb-purple: 351 38% 64%;
-    --bb-cyan: 351 30% 74%;
-    --bb-pink: 351 38% 64%;
-    --bb-gold: 30 25% 72%;
-    --bb-indigo: 351 38% 64%;
-    --bb-emerald: 351 30% 74%;
-    --bb-rose: 351 38% 64%;
-    --bb-amber: 30 25% 72%;
+    --bb-purple: 328 72% 55%;
+    --bb-cyan: 20 92% 56%;
+    --bb-pink: 328 72% 55%;
+    --bb-gold: 31 96% 55%;
+    --bb-indigo: 345 82% 56%;
+    --bb-emerald: 7 86% 56%;
+    --bb-rose: 345 82% 56%;
+    --bb-amber: 31 96% 55%;
 
     --sidebar-background: 240 6% 4%;
     --sidebar-foreground: 20 15% 95%;
-    --sidebar-primary: 351 38% 64%;
+    --sidebar-primary: 7 86% 56%;
     --sidebar-primary-foreground: 240 10% 6%;
     --sidebar-accent: 240 5% 14%;
     --sidebar-accent-foreground: 20 15% 95%;
     --sidebar-border: 240 5% 18%;
-    --sidebar-ring: 351 38% 64%;
+    --sidebar-ring: 7 86% 56%;
 
-    --gradient-primary: linear-gradient(135deg, hsl(351 38% 64%), hsl(20 30% 70%));
-    --shadow-primary: 0 18px 40px -18px hsl(351 38% 64% / 0.5);
+    --gradient-primary: linear-gradient(135deg, hsl(328 72% 55%), hsl(7 86% 56%) 58%, hsl(31 96% 55%));
+    --shadow-primary: 0 18px 40px -18px hsl(7 86% 56% / 0.5);
   }
 
   .light {
@@ -103,7 +101,7 @@
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Instrument Serif', Georgia, serif;
     font-weight: 400;
-    letter-spacing: -0.015em;
+    letter-spacing: 0;
   }
   ::-webkit-scrollbar { width: 8px; height: 8px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -120,8 +118,8 @@
   .bg-nowanime-app,
   .bg-nowanime-app {
     background:
-      radial-gradient(ellipse at top, hsla(351, 38%, 64%, 0.10), transparent 60%),
-      radial-gradient(ellipse at bottom left, hsla(275, 60%, 60%, 0.08), transparent 55%),
+      radial-gradient(ellipse at top, hsl(var(--primary) / 0.10), transparent 60%),
+      radial-gradient(ellipse at bottom left, hsl(var(--accent) / 0.07), transparent 55%),
       hsl(var(--background));
   }
   .bg-surface { background-color: hsl(var(--surface)); }
@@ -141,20 +139,20 @@
   }
 
   .poster-hover-glow:hover {
-    box-shadow: 0 15px 30px hsla(351, 38%, 64%, 0.35);
+    box-shadow: 0 15px 30px hsl(var(--primary) / 0.35);
     border-color: hsl(var(--primary));
   }
 
   .card-hover { transition: transform 200ms ease, box-shadow 200ms ease; }
-  .card-hover:hover { transform: scale(1.04); box-shadow: 0 8px 24px hsla(351, 38%, 64%, 0.30); z-index: 10; }
+  .card-hover:hover { transform: scale(1.04); box-shadow: 0 8px 24px hsl(var(--primary) / 0.30); z-index: 10; }
   .gradient-bb,
   .gradient-bb-warm,
   .gradient-bb-gold,
   .gradient-bb-emerald,
-  .gradient-na { background: linear-gradient(135deg, hsl(var(--primary)), hsl(20 30% 70%)); }
+  .gradient-na { background: var(--gradient-primary); }
   .text-gradient-bb,
   .text-gradient-na {
-    background: linear-gradient(135deg, #ffffff 0%, hsl(var(--primary)) 100%);
+    background: var(--gradient-primary);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
