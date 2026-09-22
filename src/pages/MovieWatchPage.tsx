@@ -27,7 +27,7 @@ const MovieWatchPage = () => {
   const topRated = useTopRatedAnime();
   const suggestions = trending.data || [];
   const cast = (data?.credits?.cast || []).slice(0, 15);
-  const [server, setServer] = useState<ServerId>("moviebox");
+  const [server, setServer] = useState<ServerId>("vidbolt");
   const [upNext, setUpNext] = useState<{ id: number; title: string } | null>(null);
 
   const handleEnded = async () => {
