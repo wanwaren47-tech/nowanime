@@ -1,8 +1,7 @@
 import { useEffect, useRef } from "react";
 
-// Adsterra native ad. Rendered inside an isolated iframe document (no sandbox)
-// so several placements can live on one page without clashing over the
-// container id. Skipped in FB/IG in-app browsers that block ad scripts.
+// Adsterra native ad. Each placement has its own document so four compact
+// placements can coexist without duplicate container ids.
 
 const AD_KEY = "ba3fd22b78c6d97f709385e2e0894584";
 const AD_SRC = `https://disturbknockedcaterpillar.com/${AD_KEY}/invoke.js`;
@@ -46,6 +45,7 @@ const NativeAd = ({
       iframe.title = "Sponsored";
       iframe.referrerPolicy = "no-referrer-when-downgrade";
       iframe.setAttribute("allow", "autoplay; clipboard-write");
+      iframe.setAttribute("sandbox", "allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms");
       iframe.style.cssText =
         "border:0;display:block;width:100%;height:100%;background:transparent;";
       iframe.srcdoc = HTML;
