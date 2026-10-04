@@ -36,7 +36,10 @@ const BottomNav = () => {
                   active ? "text-primary" : "text-muted-foreground"
                 }`}
               >
-                <Icon className="h-[22px] w-[22px]" strokeWidth={active ? 2.4 : 1.9} />
+                <Icon
+                  className={`h-[22px] w-[22px] ${t.label === "Trending" ? "burning-flame" : ""}`}
+                  strokeWidth={active ? 2.4 : 1.9}
+                />
                 <span className="truncate max-w-full">{t.label}</span>
                 {active && (
                   <span className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[2.5px] w-7 rounded-full bg-primary" />
