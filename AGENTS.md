@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Use `/logo.png` as the single source for all visible app branding; derived browser and install icons must match it so branding stays consistent.
