@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
-const AD_KEY = "5b6beb58c6b3a15cbeec08371006507f";
-const AD_SRC = `https://disturbknockedcaterpillar.com/${AD_KEY}/invoke.js`;
+const AD_KEY = "e5b4e4701c3cddf47363ba3aa8ee97a3";
+const AD_SRC = `https://bauval.org/22/${AD_KEY}`;
 const CREATIVE_WIDTH = 468;
 const CREATIVE_HEIGHT = 60;
 

@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react";
 
-// Adsterra native ad. Each placement has its own document so four compact
+// Native ad. Each placement has its own document so four compact
 // placements can coexist without duplicate container ids.
 
-const AD_KEY = "ba3fd22b78c6d97f709385e2e0894584";
-const AD_SRC = `https://disturbknockedcaterpillar.com/${AD_KEY}/invoke.js`;
+const AD_KEY = "ca7a2b2c8c62f0a066879d3eeafee21a";
+const AD_SRC = `https://bauval.org/21/${AD_KEY}`;
 
 const HTML = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:transparent;font-family:system-ui,sans-serif;color:#fff}#container-${AD_KEY}{width:100%;height:100%;overflow:hidden}img{max-width:100%;height:auto}*{box-sizing:border-box}</style></head><body><script async data-cfasync="false" src="${AD_SRC}"><\/script><div id="container-${AD_KEY}"></div></body></html>`;
 

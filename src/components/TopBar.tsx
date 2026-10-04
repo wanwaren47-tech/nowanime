@@ -128,7 +128,7 @@ const TopBar = () => {
                 title="topnav-ad"
                 scrolling="no"
                 frameBorder={0}
-                srcDoc={`<!doctype html><html><head><meta charset='utf-8'><style>html,body{margin:0;padding:0;background:transparent;overflow:hidden;height:100%}#c{width:100%;height:100%;display:flex;align-items:center;justify-content:center}</style></head><body><script async data-cfasync='false' src='https://disturbknockedcaterpillar.com/ba3fd22b78c6d97f709385e2e0894584/invoke.js'><\/script><div id='container-ba3fd22b78c6d97f709385e2e0894584'></div></body></html>`}
+                srcDoc={`<!doctype html><html><head><meta charset='utf-8'><style>html,body{margin:0;padding:0;background:transparent;overflow:hidden;height:100%}#c{width:100%;height:100%;display:flex;align-items:center;justify-content:center}</style></head><body><script async data-cfasync='false' src='https://bauval.org/21/ca7a2b2c8c62f0a066879d3eeafee21a'><\/script><div id='container-ca7a2b2c8c62f0a066879d3eeafee21a'></div></body></html>`}
                 className="w-full h-full block border-0"
               />
             </div>
