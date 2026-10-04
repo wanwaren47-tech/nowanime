@@ -1,11 +1,11 @@
 import { useEffect, useRef } from "react";
 
-// Adsterra native container. Rendered inside a sandboxed iframe (srcdoc) so
+// Native ad container. Rendered inside a sandboxed iframe (srcdoc) so
 // third-party script errors can't crash the app. Retries once if the iframe
 // hasn't rendered any ad content after 4s (common on low-end Redmi/Samsung).
 
-const AD_KEY = "ba3fd22b78c6d97f709385e2e0894584";
-const AD_SRC = `https://disturbknockedcaterpillar.com/${AD_KEY}/invoke.js`;
+const AD_KEY = "ca7a2b2c8c62f0a066879d3eeafee21a";
+const AD_SRC = `https://bauval.org/21/${AD_KEY}`;
 
 function isBlockedInApp(): boolean {
   if (typeof navigator === "undefined") return false;
