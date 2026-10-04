@@ -1,5 +1,3 @@
-import logoAsset from "@/assets/nowanime-logo.png.asset.json";
-
 interface Props {
   size?: number;
   withWordmark?: boolean;
@@ -13,7 +11,7 @@ const BrandLogo = ({ size = 96, className = "" }: Props) => {
   return (
     <div className={`flex items-center justify-center ${className}`}>
       <img
-        src={logoAsset.url}
+        src="/logo.png"
         alt="NowAnime"
         style={{ width: size, height: size, objectFit: "contain" }}
       />

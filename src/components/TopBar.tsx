@@ -2,7 +2,6 @@ import { Link, useLocation, useNavigate, NavLink } from "react-router-dom";
 import { Search, X, Menu, Home, Flame, Library, User, Bookmark, Heart, Settings, Shield, Download } from "lucide-react";
 import { useState, useEffect } from "react";
 import ThemeToggle from "./ThemeToggle";
-import logoMark from "@/assets/nowanime-noir-mark.png";
 import { supabase } from "@/integrations/supabase/client";
 
 const primaryNav = [
@@ -91,7 +90,7 @@ const TopBar = () => {
 
           {/* Logo — left */}
           <Link to="/home" className="flex items-center gap-2 flex-shrink-0">
-            <img src={logoMark} alt="NowAnime" className="h-8 w-8 md:h-10 md:w-10" />
+            <img src="/logo.png" alt="NowAnime" className="h-8 w-8 object-contain md:h-10 md:w-10" />
             <span className="hidden md:inline font-serif text-lg tracking-tight text-foreground">NowAnime</span>
           </Link>
 
@@ -207,7 +206,7 @@ const TopBar = () => {
           <aside className="fixed top-0 left-0 bottom-0 z-[70] w-[82%] max-w-[300px] bg-card shadow-2xl flex flex-col">
             <div className="flex items-center justify-between px-4 h-14 border-b border-border">
               <Link to="/home" onClick={() => setDrawerOpen(false)} className="flex items-center gap-2">
-                <img src={logoMark} alt="" className="w-9 h-9" />
+                <img src="/logo.png" alt="NowAnime" className="h-9 w-9 object-contain" />
               </Link>
               <button
                 onClick={() => setDrawerOpen(false)}

@@ -3,7 +3,6 @@ import { ChevronLeft, Download, Star, Share2, Shield, Smartphone, Check, Chevron
 import { Link } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
 import SEO from "@/components/SEO";
-import logoAsset from "@/assets/nowanime-logo.png.asset.json";
 
 
 const SCREENSHOTS = [
@@ -44,7 +43,7 @@ const InstallAppPage = () => {
         </Link>
 
         <div className="flex items-start gap-3 mb-4">
-          <img src={logoAsset.url} alt="NowAnime" className="w-14 h-14 rounded-2xl flex-shrink-0 shadow-lg" style={{ filter: "drop-shadow(0 0 14px rgba(255,186,222,0.45))" }} />
+          <img src="/logo.png" alt="NowAnime" className="h-14 w-14 flex-shrink-0 object-contain" />
           <div className="flex-1 min-w-0">
             <h1 className="text-base font-bold text-foreground leading-tight">NowAnime</h1>
             <p className="text-[11px] text-primary font-medium">Bing Bloom Studios</p>
