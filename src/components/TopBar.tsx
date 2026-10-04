@@ -111,7 +111,7 @@ const TopBar = () => {
                   isActive ? { background: "var(--gradient-primary)" } : undefined
                 }
               >
-                <Icon className="w-3.5 h-3.5" />
+                <Icon className={`w-3.5 h-3.5 ${label === "Trending" ? "burning-flame" : ""}`} />
                 {label}
               </NavLink>
             ))}
@@ -228,7 +228,7 @@ const TopBar = () => {
                       active ? "bg-primary/15 text-primary" : "text-foreground/80 hover:bg-secondary"
                     }`}
                   >
-                    <Icon className="w-[18px] h-[18px]" />
+                    <Icon className={`w-[18px] h-[18px] ${label === "Trending" ? "burning-flame" : ""}`} />
                     {label}
                   </Link>
                 );
