@@ -143,8 +143,9 @@ const MoviePlayer = ({
         />
       </div>
 
-      <div className="flex items-center gap-2 border-b border-border bg-card px-3 py-2">
-        <span className="shrink-0 text-[10px] font-semibold uppercase text-muted-foreground">Source</span>
+      <div className="flex flex-wrap items-center gap-2 border-t border-border/60 bg-background px-3 py-1.5">
+        <span className="md:hidden shrink-0 text-[10px] font-semibold uppercase text-muted-foreground">Source</span>
+        <div className="md:hidden">
         <Select value={server.id} onValueChange={selectServer}>
           <SelectTrigger className="h-8 w-[126px] border-border bg-secondary text-xs font-semibold">
             <SelectValue />
@@ -155,7 +156,17 @@ const MoviePlayer = ({
             ))}
           </SelectContent>
         </Select>
-        <div className="flex-1" />
+        </div>
+        <div className="hidden md:flex flex-wrap gap-1.5">
+          {PLAYER_SERVERS.map((item) => (
+            <Button key={item.id} variant={item.id === server.id ? "default" : "outline"}
+              onClick={() => selectServer(item.id)} aria-pressed={item.id === server.id}
+              className="h-8 px-2.5 text-[11px] font-semibold rounded-md">
+              {item.label}
+            </Button>
+          ))}
+        </div>
+        <div className="ml-auto flex items-center gap-1.5">
         <Button
           type="button"
           variant="ghost"
@@ -201,6 +212,7 @@ const MoviePlayer = ({
         >
           <Expand className="w-4 h-4" />
         </Button>
+        </div>
       </div>
     </div>
   );

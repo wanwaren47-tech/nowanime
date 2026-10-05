@@ -10,3 +10,5 @@
 <!-- LOVABLE:END -->
 
 - Use `/logo.png` as the single source for all visible app branding; derived browser and install icons must match it so branding stays consistent.
+- Watch pages use a shared sponsored sidebar and independent iframe documents for fixed-format ads, preventing third-party configuration collisions and preserving layout space.
+- Keep movie and series watch pages in the same reference-derived three-column desktop grid; phones retain their single-column player flow.

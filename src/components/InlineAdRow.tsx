@@ -1,4 +1,5 @@
 import NativeAd from "./NativeAd";
+import RectangleAd from "./RectangleAd";
 
 /** Four larger fixed-size native placements that stay stable on phones. */
 const InlineAdRow = ({ count = 4, compact = false }: { count?: number; compact?: boolean }) => (
@@ -7,7 +8,10 @@ const InlineAdRow = ({ count = 4, compact = false }: { count?: number; compact?:
       <span className="mb-1 block text-[8px] font-medium uppercase text-muted-foreground/60">Sponsored</span>
       <div className="grid min-h-[96px] grid-cols-4 gap-2 sm:min-h-[128px] sm:gap-3 lg:min-h-[250px] lg:gap-4">
         {Array.from({ length: Math.min(4, Math.max(1, count)) }).map((_, index) => (
-          <NativeAd key={index} compact={compact} inline />
+          <div key={index} className="min-w-0 space-y-2">
+            <RectangleAd />
+            <NativeAd compact={compact} inline />
+          </div>
         ))}
       </div>
     </div>
