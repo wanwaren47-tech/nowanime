@@ -10,6 +10,7 @@ import InlineAdRow from "@/components/InlineAdRow";
 import TmdbRow from "@/components/TmdbRow";
 import Footer from "@/components/Footer";
 import PageBannerAd from "@/components/PageBannerAd";
+import WatchAdSidebar from "@/components/WatchAdSidebar";
 import {
   useMovieDetail,
   useMovieExternalIds,
@@ -61,19 +62,19 @@ const MovieWatchPage = () => {
         description={data?.overview?.slice(0, 160) || "Stream anime in HD on NowAnime."}
         type="video.movie"
       />
-      <div className="flex-1 max-w-[1600px] mx-auto w-full">
-        <header className="sticky top-0 z-30 flex items-center gap-3 px-3 h-11 bg-background/95 backdrop-blur border-b border-border">
+      <div className="flex-1 max-w-[1480px] mx-auto w-full">
+        <header className="sticky top-0 z-30 flex items-center gap-3 px-4 h-12 bg-background/95 backdrop-blur border-b border-border">
           <Link to={tmdbId ? `/movie/${tmdbId}` : "/home"} className="p-1.5 -ml-1 rounded-full hover:bg-white/10">
             <ArrowLeft className="w-4 h-4 text-foreground" />
           </Link>
           <h1 className="text-[13px] font-semibold text-foreground truncate">{data?.title || "Watch"}</h1>
         </header>
-        <PageBannerAd />
-
-        <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-4 lg:px-4 lg:py-3">
+        <div className="md:grid md:grid-cols-[150px_minmax(0,1fr)_220px] xl:grid-cols-[190px_minmax(0,1fr)_300px] md:gap-4 xl:gap-6 md:px-4 md:pt-5">
+          <WatchAdSidebar />
           {/* LEFT: player + content */}
           <div className="min-w-0">
-            <div className="w-full lg:rounded-lg lg:overflow-hidden relative">
+            <PageBannerAd />
+            <div className="w-full relative">
               <MoviePlayer
                 tmdbId={tmdbId || ""}
                 imdbId={ext.data?.imdb_id || null}
@@ -98,7 +99,7 @@ const MovieWatchPage = () => {
             </div>
 
         {data && (
-          <div className="px-4 pb-4">
+          <div className="px-4 pb-4 md:px-0">
             <div className="pt-3">
               <h2 className="text-base font-bold text-foreground tracking-tight">{data.title}</h2>
               <p className="text-[10.5px] text-muted-foreground mt-0.5">
@@ -134,7 +135,7 @@ const MovieWatchPage = () => {
             {data.overview && (
               <section className="mt-4">
                 <h3 className="text-[12px] font-semibold text-white mb-1">Synopsis</h3>
-                <p className="text-[11px] leading-relaxed text-white/65 line-clamp-3">{data.overview}</p>
+                <p className="text-[12px] leading-relaxed text-muted-foreground md:text-[13px] md:leading-6">{data.overview}</p>
               </section>
             )}
 
@@ -171,17 +172,17 @@ const MovieWatchPage = () => {
           </div>
 
           {/* RIGHT: desktop sidebar suggestions (YouTube-style) */}
-          <aside className="hidden lg:block">
-            <div className="sticky top-14">
-              <h3 className="text-[12px] font-semibold text-foreground mb-2 px-1">Up Next</h3>
-              <div className="flex flex-col gap-2">
+          <aside className="hidden md:block min-w-0 pt-1">
+            <div className="sticky top-16 max-h-[calc(100vh-5rem)] overflow-y-auto scrollbar-hide">
+              <h3 className="text-[13px] font-semibold text-foreground mb-2">Recommended</h3>
+              <div className="space-y-3">
                 {suggestions.slice(0, 15).map((m: any) => (
                   <Link
                     key={m.id}
                     to={`/watch/tv/${m.id}/1/1`}
-                    className="flex gap-2 rounded-lg p-1.5 hover:bg-white/5 transition"
+                    className="grid grid-cols-[minmax(88px,1.15fr)_minmax(0,1fr)] gap-2 group"
                   >
-                    <div className="relative flex-shrink-0 w-[150px] aspect-video rounded-md overflow-hidden bg-surface-2">
+                    <div className="relative aspect-video rounded-md overflow-hidden bg-muted border border-border">
                       {(m.backdrop_path || m.poster_path) && (
                         <img src={img(m.backdrop_path || m.poster_path, "w300")} alt={m.name || m.title} loading="lazy" className="w-full h-full object-cover" />
                       )}
@@ -191,7 +192,7 @@ const MovieWatchPage = () => {
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="text-[11.5px] font-semibold text-foreground line-clamp-2 leading-snug">{m.name || m.title}</p>
-                      <p className="text-[10px] text-muted-foreground mt-1">{(m.first_air_date || m.release_date || "").slice(0, 4)}</p>
+                      <p className="text-[10px] text-muted-foreground mt-1">{(m.first_air_date || m.release_date || "").slice(0, 4)}{m.vote_average ? ` · ★ ${m.vote_average.toFixed(1)}` : ""}</p>
                     </div>
                   </Link>
                 ))}
