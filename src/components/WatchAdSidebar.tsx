@@ -8,8 +8,8 @@ const WatchAdSidebar = () => (
       <div className="space-y-3">
         {Array.from({ length: 4 }, (_, index) => (
           <div key={index} className="space-y-2">
-            <RectangleAd />
             <NativeAd inline compact />
+            <RectangleAd />
           </div>
         ))}
       </div>

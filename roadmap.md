@@ -13,6 +13,6 @@
 - [x] Remove the native row above Explore search while keeping the 468 × 60 banner
 - [x] Match desktop watch pages to the uploaded three-column layout
 - [x] Switch all app typography to sans-serif
-- [x] Add independent rectangle ads above four native placements and preserve player banner
+- [x] Restrict rectangle ads to the left watch-page column, below native ads, and preserve player banner
 - [x] Verify desktop and phone layouts and ad requests
 - [ ] Confirm visible ad creatives — blocked because all three Bauval script URLs currently return empty responses
