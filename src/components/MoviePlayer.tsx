@@ -29,10 +29,10 @@ export const PLAYER_SERVERS: Server[] = [
     tv: (id, s, e) => `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}`,
   },
   {
-    id: "autoembed",
-    label: "Autoembed",
-    movie: (id) => `https://player.autoembed.cc/embed/movie/${id}`,
-    tv: (id, s, e) => `https://player.autoembed.cc/embed/tv/${id}/${s}/${e}`,
+    id: "cinesrc",
+    label: "CineSrc",
+    movie: (id) => `https://cinesrc.st/embed/movie/${id}`,
+    tv: (id, s, e) => `https://cinesrc.st/embed/tv/${id}?s=${s}&e=${e}`,
   },
   {
     id: "vidnest",
