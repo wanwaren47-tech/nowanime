@@ -41,12 +41,6 @@ export const PLAYER_SERVERS: Server[] = [
     tv: (id, s, e) => `https://vidnest.fun/tv/${id}/${s}/${e}`,
   },
   {
-    id: "aniwaves",
-    label: "AniWaves",
-    movie: (id) => `https://aniwaves.ru/embed/${id}`,
-    tv: (id, _s, e) => `https://aniwaves.ru/embed/${id}-${e}`,
-  },
-  {
     id: "filmu",
     label: "Lumen",
     movie: (id) => `https://embed.filmu.in/movie/${id}`,
