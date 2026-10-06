@@ -23,28 +23,22 @@ interface Server {
 
 export const PLAYER_SERVERS: Server[] = [
   {
-    id: "animepahe",
-    label: "AnimePahe",
-    movie: (id) => `https://animepahe.su/embed/${id}`,
-    tv: (id, _s, e) => `https://animepahe.su/embed/${id}-${e}`,
+    id: "2embed",
+    label: "2Embed",
+    movie: (id) => `https://www.2embed.cc/embed/${id}`,
+    tv: (id, s, e) => `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}`,
   },
   {
-    id: "animegg",
-    label: "AnimeGG",
-    movie: (id) => `https://www.animegg.org/embed/${id}`,
-    tv: (id, _s, e) => `https://www.animegg.org/embed/${id}-${e}`,
+    id: "autoembed",
+    label: "Autoembed",
+    movie: (id) => `https://player.autoembed.cc/embed/movie/${id}`,
+    tv: (id, s, e) => `https://player.autoembed.cc/embed/tv/${id}/${s}/${e}`,
   },
   {
     id: "vidnest",
     label: "Helix",
     movie: (id) => `https://vidnest.fun/movie/${id}`,
     tv: (id, s, e) => `https://vidnest.fun/tv/${id}/${s}/${e}`,
-  },
-  {
-    id: "aniwaves",
-    label: "AniWaves",
-    movie: (id) => `https://aniwaves.ru/embed/${id}`,
-    tv: (id, _s, e) => `https://aniwaves.ru/embed/${id}-${e}`,
   },
   {
     id: "filmu",
