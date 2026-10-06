@@ -23,16 +23,16 @@ interface Server {
 
 export const PLAYER_SERVERS: Server[] = [
   {
-    id: "dulo",
-    label: "Nova",
-    movie: (id) => `https://dulo.mov/embed/movie/${id}`,
-    tv: (id, s, e) => `https://dulo.mov/embed/tv/${id}/${s}/${e}`,
+    id: "animepahe",
+    label: "AnimePahe",
+    movie: (id) => `https://animepahe.su/embed/${id}`,
+    tv: (id, _s, e) => `https://animepahe.su/embed/${id}-${e}`,
   },
   {
-    id: "cinesrc",
-    label: "Crimson",
-    movie: (id) => `https://cinesrc.st/embed/movie/${id}`,
-    tv: (id, s, e) => `https://cinesrc.st/embed/tv/${id}/${s}/${e}`,
+    id: "animegg",
+    label: "AnimeGG",
+    movie: (id) => `https://www.animegg.org/embed/${id}`,
+    tv: (id, _s, e) => `https://www.animegg.org/embed/${id}-${e}`,
   },
   {
     id: "vidnest",
@@ -41,10 +41,10 @@ export const PLAYER_SERVERS: Server[] = [
     tv: (id, s, e) => `https://vidnest.fun/tv/${id}/${s}/${e}`,
   },
   {
-    id: "vidsrc",
-    label: "Ironclad",
-    movie: (id) => `https://vidsrcme.ru/embed/movie?tmdb=${id}`,
-    tv: (id, s, e) => `https://vidsrcme.ru/embed/tv?tmdb=${id}&season=${s}&episode=${e}`,
+    id: "aniwaves",
+    label: "AniWaves",
+    movie: (id) => `https://aniwaves.ru/embed/${id}`,
+    tv: (id, _s, e) => `https://aniwaves.ru/embed/${id}-${e}`,
   },
   {
     id: "filmu",
