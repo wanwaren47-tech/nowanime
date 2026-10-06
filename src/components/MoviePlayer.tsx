@@ -91,7 +91,7 @@ const MoviePlayer = ({
   const [reloadKey, setReloadKey] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const server = PLAYER_SERVERS[serverIdx];
+  const server = PLAYER_SERVERS[serverIdx] ?? PLAYER_SERVERS[0];
   useEffect(() => {
     const nextIndex = PLAYER_SERVERS.findIndex((item) => item.id === serverId);
     if (nextIndex >= 0) setServerIdx(nextIndex);
