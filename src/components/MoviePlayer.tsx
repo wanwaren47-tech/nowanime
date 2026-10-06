@@ -23,16 +23,16 @@ interface Server {
 
 export const PLAYER_SERVERS: Server[] = [
   {
-    id: "cinesrc",
+    id: "dulo",
     label: "Nova",
-    movie: (id) => `https://cinesrc.st/embed/movie/${id}`,
-    tv: (id, s, e) => `https://cinesrc.st/embed/tv/${id}/${s}/${e}`,
+    movie: (id) => `https://dulo.mov/embed/movie/${id}`,
+    tv: (id, s, e) => `https://dulo.mov/embed/tv/${id}/${s}/${e}`,
   },
   {
-    id: "vidcore",
+    id: "cinesrc",
     label: "Crimson",
-    movie: (id) => `https://vidcore.io/embed/movie/${id}`,
-    tv: (id, s, e) => `https://vidcore.io/embed/tv/${id}/${s}/${e}`,
+    movie: (id) => `https://cinesrc.st/embed/movie/${id}`,
+    tv: (id, s, e) => `https://cinesrc.st/embed/tv/${id}/${s}/${e}`,
   },
   {
     id: "vidnest",
@@ -41,22 +41,10 @@ export const PLAYER_SERVERS: Server[] = [
     tv: (id, s, e) => `https://vidnest.fun/tv/${id}/${s}/${e}`,
   },
   {
-    id: "vidlink",
-    label: "Astra",
-    movie: (id) => `https://vidlink.pro/movie/${id}`,
-    tv: (id, s, e) => `https://vidlink.pro/tv/${id}/${s}/${e}`,
-  },
-  {
     id: "vidsrc",
     label: "Ironclad",
     movie: (id) => `https://vidsrcme.ru/embed/movie?tmdb=${id}`,
     tv: (id, s, e) => `https://vidsrcme.ru/embed/tv?tmdb=${id}&season=${s}&episode=${e}`,
-  },
-  {
-    id: "vidgod",
-    label: "Vale",
-    movie: (id) => `https://vidgod.site/movie/${id}`,
-    tv: (id, s, e) => `https://vidgod.site/tv/${id}/${s}/${e}`,
   },
   {
     id: "filmu",
@@ -103,7 +91,7 @@ const MoviePlayer = ({
   const [reloadKey, setReloadKey] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const server = PLAYER_SERVERS[serverIdx];
+  const server = PLAYER_SERVERS[serverIdx] ?? PLAYER_SERVERS[0];
   useEffect(() => {
     const nextIndex = PLAYER_SERVERS.findIndex((item) => item.id === serverId);
     if (nextIndex >= 0) setServerIdx(nextIndex);
