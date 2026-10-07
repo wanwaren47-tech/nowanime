@@ -29,7 +29,7 @@ const MovieWatchPage = () => {
   const topRated = useTopRatedAnime();
   const suggestions = trending.data || [];
   const cast = (data?.credits?.cast || []).slice(0, 15);
-  const [server, setServer] = useState<ServerId>("vidbolt");
+  const [server, setServer] = useState<ServerId>("cinesrc");
   const [upNext, setUpNext] = useState<{ id: number; title: string } | null>(null);
 
   const handleEnded = async () => {
@@ -73,7 +73,7 @@ const MovieWatchPage = () => {
           <WatchAdSidebar />
           {/* LEFT: player + content */}
           <div className="min-w-0">
-            <PageBannerAd />
+            <PageBannerAd className="md:hidden" />
             <div className="w-full relative">
               <MoviePlayer
                 tmdbId={tmdbId || ""}
@@ -174,6 +174,7 @@ const MovieWatchPage = () => {
           {/* RIGHT: desktop sidebar suggestions (YouTube-style) */}
           <aside className="hidden md:block min-w-0 pt-1">
             <div className="sticky top-16 max-h-[calc(100vh-5rem)] overflow-y-auto scrollbar-hide">
+              <PageBannerAd className="!px-0 !pt-0 mb-3" />
               <h3 className="text-[13px] font-semibold text-foreground mb-2">Recommended</h3>
               <div className="space-y-3">
                 {suggestions.slice(0, 15).map((m: any) => (

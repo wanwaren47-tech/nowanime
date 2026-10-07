@@ -22,7 +22,7 @@ const TvWatchPage = () => {
   const seasonNum = Number(season || 1);
   const episodeNum = Number(episode || 1);
   const [activeSeason, setActiveSeason] = useState<number>(seasonNum);
-  const [server, setServer] = useState<ServerId>("vidbolt");
+  const [server, setServer] = useState<ServerId>("cinesrc");
   useEffect(() => setActiveSeason(seasonNum), [seasonNum]);
   const seasonQuery = useTvSeason(tmdbId, activeSeason);
   const seasons = (data?.seasons || []).filter((s: any) => s.season_number > 0);
@@ -83,7 +83,7 @@ const TvWatchPage = () => {
         <div className="md:grid md:grid-cols-[150px_minmax(0,1fr)_220px] xl:grid-cols-[190px_minmax(0,1fr)_300px] md:gap-4 xl:gap-6 md:px-4 md:pt-5">
           <WatchAdSidebar />
           <div className="min-w-0">
-            <PageBannerAd />
+            <PageBannerAd className="md:hidden" />
             <div className="w-full relative">
               <MoviePlayer
                 tmdbId={tmdbId || ""}
@@ -215,6 +215,7 @@ const TvWatchPage = () => {
 
           <aside className="hidden md:block min-w-0 pt-1">
             <div className="sticky top-16 max-h-[calc(100vh-5rem)] overflow-y-auto scrollbar-hide">
+              <PageBannerAd className="!px-0 !pt-0 mb-3" />
               <h3 className="text-[13px] font-semibold text-foreground mb-2">Recommended</h3>
               <div className="space-y-3">
                 {upNextList.map((m: any) => (
