@@ -1,8 +1,9 @@
 # NowAnime Noir Redesign
 
-- [ ] Move desktop watch banner above recommendations while preserving phone placement
-- [ ] Update embed sources and add CineSrc protection toggle, off by default
-- [ ] Verify source switching, protection, and watch layouts
+- [x] Move desktop watch banner above recommendations while preserving phone placement
+- [x] Update embed sources and add CineSrc protection toggle, off by default
+- [x] Verify source switching, protection, and watch layouts
+- [x] Add Nova and Vale protection toggles, align player actions, and verify next-source switching
 
 - [x] Create and apply the new NowAnime logo and favicon
 - [x] Rebuild the global palette, typography, navigation, hero, rows, and cards
