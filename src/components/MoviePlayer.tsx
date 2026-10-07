@@ -70,8 +70,8 @@ export const PLAYER_SERVERS: Server[] = [
   {
     id: "ironclad",
     label: "Ironclad",
-    movie: (id) => `https://vidsrcme.ru/embed/movie?tmdb=${id}`,
-    tv: (id, s, e) => `https://vidsrcme.ru/embed/tv?tmdb=${id}&season=${s}&episode=${e}`,
+    movie: (id) => `https://vidsrcme.ru/embed/movie/${id}`,
+    tv: (id, s, e) => `https://vidsrcme.ru/embed/tv/${id}/${s}-${e}`,
   },
   {
     id: "filmu",
