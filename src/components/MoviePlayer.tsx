@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useRef, useEffect } from "react";
-import { Expand, RefreshCw, CloudDownload, Share2 } from "lucide-react";
+import { Expand, RefreshCw, CloudDownload, Share2, Shield, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -19,20 +19,41 @@ interface Server {
   label: string;
   movie: (id: string) => string;
   tv: (id: string, s: number, e: number) => string;
+  protected?: boolean;
 }
 
 export const PLAYER_SERVERS: Server[] = [
-  {
-    id: "2embed",
-    label: "2Embed",
-    movie: (id) => `https://www.2embed.cc/embed/${id}`,
-    tv: (id, s, e) => `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}`,
-  },
   {
     id: "cinesrc",
     label: "CineSrc",
     movie: (id) => `https://cinesrc.st/embed/movie/${id}`,
     tv: (id, s, e) => `https://cinesrc.st/embed/tv/${id}?s=${s}&e=${e}`,
+  },
+  {
+    id: "nova",
+    label: "Nova",
+    movie: (id) => `https://moviesapi.to/movie/${id}`,
+    tv: (id, s, e) => `https://moviesapi.to/tv/${id}/${s}/${e}`,
+    protected: true,
+  },
+  {
+    id: "vale",
+    label: "Vale",
+    movie: (id) => `https://vidzen.fun/movie/${id}`,
+    tv: (id, s, e) => `https://vidzen.fun/tv/${id}/${s}/${e}`,
+    protected: true,
+  },
+  {
+    id: "vidbolt",
+    label: "VidBolt",
+    movie: (id) => `https://vidbolt.xyz/movie/${id}?theme=9b5cff`,
+    tv: (id, s, e) => `https://vidbolt.xyz/tv/${id}/${s}/${e}?theme=9b5cff`,
+  },
+  {
+    id: "crimson",
+    label: "Crimson",
+    movie: (id) => `https://vidcore.io/movie/${id}`,
+    tv: (id, s, e) => `https://vidcore.io/tv/${id}/${s}/${e}`,
   },
   {
     id: "vidnest",
@@ -41,18 +62,27 @@ export const PLAYER_SERVERS: Server[] = [
     tv: (id, s, e) => `https://vidnest.fun/tv/${id}/${s}/${e}`,
   },
   {
+    id: "astra",
+    label: "Astra",
+    movie: (id) => `https://vidlink.pro/movie/${id}`,
+    tv: (id, s, e) => `https://vidlink.pro/tv/${id}/${s}/${e}`,
+  },
+  {
+    id: "ironclad",
+    label: "Ironclad",
+    movie: (id) => `https://vidsrcme.ru/embed/movie/${id}`,
+    tv: (id, s, e) => `https://vidsrcme.ru/embed/tv/${id}/${s}-${e}`,
+  },
+  {
     id: "filmu",
     label: "Lumen",
     movie: (id) => `https://embed.filmu.in/movie/${id}`,
     tv: (id, s, e) => `https://embed.filmu.in/tv/${id}/${s}/${e}`,
   },
-  {
-    id: "vidbolt",
-    label: "Cipher",
-    movie: (id) => `https://vidbolt.xyz/movie/${id}?theme=ef3b28`,
-    tv: (id, s, e) => `https://vidbolt.xyz/tv/${id}/${s}/${e}?theme=ef3b28`,
-  },
 ];
+
+// No popup or top-navigation permissions: blocked ad redirects cannot leave the app.
+const PROTECTED_SANDBOX = "allow-scripts allow-same-origin allow-forms allow-presentation";
 
 interface Props {
   tmdbId: string;
@@ -76,16 +106,18 @@ const MoviePlayer = ({
   type = "movie",
   season = 1,
   episode = 1,
-  serverId = "vidbolt",
+  serverId = "cinesrc",
   onServerChange,
   title,
 }: Props) => {
   const initialIndex = PLAYER_SERVERS.findIndex((item) => item.id === serverId);
-  const [serverIdx, setServerIdx] = useState(initialIndex >= 0 ? initialIndex : PLAYER_SERVERS.length - 1);
+  const [serverIdx, setServerIdx] = useState(initialIndex >= 0 ? initialIndex : 0);
+  const [protection, setProtection] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const server = PLAYER_SERVERS[serverIdx] ?? PLAYER_SERVERS[0];
+  const isProtected = server.protected || (server.id === "cinesrc" && protection);
   useEffect(() => {
     const nextIndex = PLAYER_SERVERS.findIndex((item) => item.id === serverId);
     if (nextIndex >= 0) setServerIdx(nextIndex);
@@ -115,19 +147,20 @@ const MoviePlayer = ({
     <div className="w-full bg-background">
       <div ref={containerRef} className="relative w-full aspect-video overflow-hidden bg-card">
         <iframe
-          key={`${src}-${reloadKey}`}
+          key={`${src}-${reloadKey}-${isProtected ? "protected" : "standard"}`}
           src={src}
           title={title ? `${title} player` : "Player"}
           className="absolute inset-0 h-full w-full bg-card"
           allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
           allowFullScreen
           referrerPolicy="origin"
+          sandbox={isProtected ? PROTECTED_SANDBOX : undefined}
         />
       </div>
 
       <div className="flex flex-wrap items-center gap-2 border-t border-border/60 bg-background px-3 py-1.5">
-        <span className="md:hidden shrink-0 text-[10px] font-semibold uppercase text-muted-foreground">Source</span>
-        <div className="md:hidden">
+        <span className="shrink-0 text-[10px] font-semibold uppercase text-muted-foreground">Source</span>
+        <div>
         <Select value={server.id} onValueChange={selectServer}>
           <SelectTrigger className="h-8 w-[126px] border-border bg-secondary text-xs font-semibold">
             <SelectValue />
@@ -139,15 +172,15 @@ const MoviePlayer = ({
           </SelectContent>
         </Select>
         </div>
-        <div className="hidden md:flex flex-wrap gap-1.5">
-          {PLAYER_SERVERS.map((item) => (
-            <Button key={item.id} variant={item.id === server.id ? "default" : "outline"}
-              onClick={() => selectServer(item.id)} aria-pressed={item.id === server.id}
-              className="h-8 px-2.5 text-[11px] font-semibold rounded-md">
-              {item.label}
-            </Button>
-          ))}
-        </div>
+        {server.id === "cinesrc" && (
+          <Button type="button" variant={protection ? "default" : "outline"}
+            aria-pressed={protection} aria-label="Protection" onClick={() => setProtection((value) => !value)}
+            title={protection ? "Turn redirect protection off" : "Turn redirect protection on"}
+            className="h-8 gap-1 px-2 text-[10px] font-semibold">
+            {protection ? <ShieldCheck className="h-3.5 w-3.5" /> : <Shield className="h-3.5 w-3.5" />}
+            Protection
+          </Button>
+        )}
         <div className="ml-auto flex items-center gap-1.5">
         <Button
           type="button"
@@ -196,6 +229,11 @@ const MoviePlayer = ({
         </Button>
         </div>
       </div>
+      {server.id === "cinesrc" && (
+        <p className="border-t border-border/60 px-3 py-2 text-[10px] leading-relaxed text-muted-foreground">
+          Turn on Protection to block popups and redirects away from the app. If playback stops working, turn it off.
+        </p>
+      )}
     </div>
   );
 };

@@ -1,5 +1,9 @@
 # NowAnime Noir Redesign
 
+- [ ] Move desktop watch banner above recommendations while preserving phone placement
+- [ ] Update embed sources and add CineSrc protection toggle, off by default
+- [ ] Verify source switching, protection, and watch layouts
+
 - [x] Create and apply the new NowAnime logo and favicon
 - [x] Rebuild the global palette, typography, navigation, hero, rows, and cards
 - [x] Make native ads four compact fixed-height units across

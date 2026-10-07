@@ -12,3 +12,5 @@
 - Use `/logo.png` as the single source for all visible app branding; derived browser and install icons must match it so branding stays consistent.
 - Watch pages exclusively host rectangle ads in the shared sponsored sidebar; inline ad rows contain native ads only, and fixed-format ads use independent iframe documents to prevent third-party configuration collisions and preserve layout space.
 - Keep movie and series watch pages in the same reference-derived three-column desktop grid; phones retain their single-column player flow.
+- Keep source URL builders and protection capabilities in the shared player registry so movie and episode embeds follow one policy; optional protection never permits popups or top-level navigation.
+- Watch banners use the existing independent fixed-format ad component above desktop recommendations and above the phone player so creative configuration remains isolated.
