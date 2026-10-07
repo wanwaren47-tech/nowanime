@@ -83,7 +83,11 @@ export const PLAYER_SERVERS: Server[] = [
 ];
 
 // No popup or top-navigation permissions: blocked ad redirects cannot leave the app.
-const PROTECTED_SANDBOX = "allow-scripts allow-same-origin allow-forms allow-presentation";
+const PROTECTED_SANDBOX = "allow-scripts allow-same-origin allow-forms allow-presentation allow-orientation-lock";
+
+type LockableOrientation = ScreenOrientation & {
+  lock?: (orientation: "landscape") => Promise<void>;
+};
 
 interface Props {
   tmdbId: string;
@@ -116,6 +120,21 @@ const MoviePlayer = ({
   const [protectionSettings, setProtectionSettings] = useState<Record<string, boolean>>({});
   const [reloadKey, setReloadKey] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  const orientationLocked = useRef(false);
+
+  useEffect(() => {
+    const releaseOrientation = () => {
+      if (document.fullscreenElement !== containerRef.current && orientationLocked.current) {
+        screen.orientation?.unlock?.();
+        orientationLocked.current = false;
+      }
+    };
+    document.addEventListener("fullscreenchange", releaseOrientation);
+    return () => {
+      document.removeEventListener("fullscreenchange", releaseOrientation);
+      if (orientationLocked.current) screen.orientation?.unlock?.();
+    };
+  }, []);
 
   const server = PLAYER_SERVERS[serverIdx] ?? PLAYER_SERVERS[0];
   const supportsProtection = Boolean(server.protection);
@@ -140,8 +159,20 @@ const MoviePlayer = ({
     const el = containerRef.current;
     if (!el) return;
     try {
-      if (!document.fullscreenElement) await el.requestFullscreen?.();
-      else await document.exitFullscreen?.();
+      if (!document.fullscreenElement) {
+        await el.requestFullscreen?.();
+        const orientation = screen.orientation as LockableOrientation | undefined;
+        if (document.fullscreenElement === el && window.matchMedia("(pointer: coarse)").matches && orientation?.lock) {
+          try {
+            await orientation.lock("landscape");
+            orientationLocked.current = true;
+            if (document.fullscreenElement !== el) {
+              orientation.unlock();
+              orientationLocked.current = false;
+            }
+          } catch { /* Orientation locking is unavailable on some phone browsers. */ }
+        }
+      } else await document.exitFullscreen?.();
     } catch { /* ignore */ }
   }, []);
 
@@ -194,7 +225,6 @@ const MoviePlayer = ({
           onClick={() => {
             const nextServer = PLAYER_SERVERS[(serverIdx + 1) % PLAYER_SERVERS.length];
             selectServer(nextServer.id);
-            toast.info(`Trying ${nextServer.label}`);
           }}
           className="h-8 w-8 shrink-0 text-muted-foreground"
         >
