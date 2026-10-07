@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useRef, useEffect } from "react";
-import { Expand, RefreshCw, CloudDownload, Share2, Shield, ShieldCheck } from "lucide-react";
+import { Expand, RefreshCw, CloudDownload, Share2, Shield, ShieldCheck, SkipForward } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -19,13 +19,14 @@ interface Server {
   label: string;
   movie: (id: string) => string;
   tv: (id: string, s: number, e: number) => string;
-  protected?: boolean;
+  protection?: "optional" | "default-on";
 }
 
 export const PLAYER_SERVERS: Server[] = [
   {
     id: "cinesrc",
     label: "CineSrc",
+    protection: "optional",
     movie: (id) => `https://cinesrc.st/embed/movie/${id}`,
     tv: (id, s, e) => `https://cinesrc.st/embed/tv/${id}?s=${s}&e=${e}`,
   },
@@ -34,14 +35,14 @@ export const PLAYER_SERVERS: Server[] = [
     label: "Nova",
     movie: (id) => `https://moviesapi.to/movie/${id}`,
     tv: (id, s, e) => `https://moviesapi.to/tv/${id}/${s}/${e}`,
-    protected: true,
+    protection: "default-on",
   },
   {
     id: "vale",
     label: "Vale",
     movie: (id) => `https://vidzen.fun/movie/${id}`,
     tv: (id, s, e) => `https://vidzen.fun/tv/${id}/${s}/${e}`,
-    protected: true,
+    protection: "default-on",
   },
   {
     id: "vidbolt",
@@ -112,12 +113,13 @@ const MoviePlayer = ({
 }: Props) => {
   const initialIndex = PLAYER_SERVERS.findIndex((item) => item.id === serverId);
   const [serverIdx, setServerIdx] = useState(initialIndex >= 0 ? initialIndex : 0);
-  const [protection, setProtection] = useState(false);
+  const [protectionSettings, setProtectionSettings] = useState<Record<string, boolean>>({});
   const [reloadKey, setReloadKey] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const server = PLAYER_SERVERS[serverIdx] ?? PLAYER_SERVERS[0];
-  const isProtected = server.protected || (server.id === "cinesrc" && protection);
+  const supportsProtection = Boolean(server.protection);
+  const isProtected = supportsProtection && (protectionSettings[server.id] ?? server.protection === "default-on");
   useEffect(() => {
     const nextIndex = PLAYER_SERVERS.findIndex((item) => item.id === serverId);
     if (nextIndex >= 0) setServerIdx(nextIndex);
@@ -158,11 +160,11 @@ const MoviePlayer = ({
         />
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 border-t border-border/60 bg-background px-3 py-1.5">
-        <span className="shrink-0 text-[10px] font-semibold uppercase text-muted-foreground">Source</span>
+      <div className="flex items-center gap-1 border-t border-border/60 bg-background px-2 py-1.5 sm:gap-2 sm:px-3">
+        <span className="hidden sm:inline shrink-0 text-[10px] font-semibold uppercase text-muted-foreground">Source</span>
         <div>
         <Select value={server.id} onValueChange={selectServer}>
-          <SelectTrigger className="h-8 w-[126px] border-border bg-secondary text-xs font-semibold">
+          <SelectTrigger className="h-8 w-[110px] sm:w-[126px] border-border bg-secondary text-xs font-semibold">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -172,16 +174,32 @@ const MoviePlayer = ({
           </SelectContent>
         </Select>
         </div>
-        {server.id === "cinesrc" && (
-          <Button type="button" variant={protection ? "default" : "outline"}
-            aria-pressed={protection} aria-label="Protection" onClick={() => setProtection((value) => !value)}
-            title={protection ? "Turn redirect protection off" : "Turn redirect protection on"}
-            className="h-8 gap-1 px-2 text-[10px] font-semibold">
-            {protection ? <ShieldCheck className="h-3.5 w-3.5" /> : <Shield className="h-3.5 w-3.5" />}
-            Protection
+        <div className="ml-auto flex items-center gap-0.5 sm:gap-1.5">
+        {supportsProtection && (
+          <Button type="button" variant={isProtected ? "default" : "ghost"}
+            aria-pressed={isProtected} aria-label="Protection"
+            onClick={() => setProtectionSettings((settings) => ({ ...settings, [server.id]: !isProtected }))}
+            title={isProtected ? "Turn redirect protection off" : "Turn redirect protection on"}
+            className="h-8 w-8 shrink-0 gap-1 p-0 sm:w-auto sm:px-2 text-[10px] font-semibold">
+            {isProtected ? <ShieldCheck className="h-4 w-4" /> : <Shield className="h-4 w-4" />}
+            <span className="hidden sm:inline">Protection</span>
           </Button>
         )}
-        <div className="ml-auto flex items-center gap-1.5">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          aria-label="Try next source"
+          title="Not playing? Try next source"
+          onClick={() => {
+            const nextServer = PLAYER_SERVERS[(serverIdx + 1) % PLAYER_SERVERS.length];
+            selectServer(nextServer.id);
+            toast.info(`Trying ${nextServer.label}`);
+          }}
+          className="h-8 w-8 shrink-0 text-muted-foreground"
+        >
+          <SkipForward className="h-4 w-4" />
+        </Button>
         <Button
           type="button"
           variant="ghost"
@@ -229,7 +247,7 @@ const MoviePlayer = ({
         </Button>
         </div>
       </div>
-      {server.id === "cinesrc" && (
+      {supportsProtection && (
         <p className="border-t border-border/60 px-3 py-2 text-[10px] leading-relaxed text-muted-foreground">
           Turn on Protection to block popups and redirects away from the app. If playback stops working, turn it off.
         </p>
