@@ -45,10 +45,10 @@ export const PLAYER_SERVERS: Server[] = [
     protection: "default-on",
   },
   {
-    id: "vidbolt",
-    label: "VidBolt",
-    movie: (id) => `https://vidbolt.xyz/movie/${id}?theme=9b5cff`,
-    tv: (id, s, e) => `https://vidbolt.xyz/tv/${id}/${s}/${e}?theme=9b5cff`,
+    id: "smashy",
+    label: "Smashy",
+    movie: (id) => `https://embed.smashystream.com/playere.php?tmdb=${id}`,
+    tv: (id, s, e) => `https://embed.smashystream.com/playere.php?tmdb=${id}&season=${s}&episode=${e}`,
   },
   {
     id: "crimson",
