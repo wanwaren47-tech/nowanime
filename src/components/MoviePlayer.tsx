@@ -49,6 +49,7 @@ export const PLAYER_SERVERS: Server[] = [
     label: "Smashy",
     movie: (id) => `https://embed.smashystream.com/playere.php?tmdb=${id}`,
     tv: (id, s, e) => `https://embed.smashystream.com/playere.php?tmdb=${id}&season=${s}&episode=${e}`,
+    protection: "optional",
   },
   {
     id: "crimson",
@@ -208,12 +209,12 @@ const MoviePlayer = ({
         <div className="ml-auto flex items-center gap-0.5 sm:gap-1.5">
         {supportsProtection && (
           <Button type="button" variant={isProtected ? "default" : "ghost"}
-            aria-pressed={isProtected} aria-label="Protection"
+            aria-pressed={isProtected} aria-label="Turn off ads"
             onClick={() => setProtectionSettings((settings) => ({ ...settings, [server.id]: !isProtected }))}
-            title={isProtected ? "Turn redirect protection off" : "Turn redirect protection on"}
+            title={isProtected ? "Allow ads and redirects" : "Turn off ads and redirects"}
             className="h-8 w-8 shrink-0 gap-1 p-0 sm:w-auto sm:px-2 text-[10px] font-semibold">
             {isProtected ? <ShieldCheck className="h-4 w-4" /> : <Shield className="h-4 w-4" />}
-            <span className="hidden sm:inline">Protection</span>
+            <span className="hidden sm:inline">Turn off ads</span>
           </Button>
         )}
         <Button
@@ -279,7 +280,7 @@ const MoviePlayer = ({
       </div>
       {supportsProtection && (
         <p className="border-t border-border/60 px-3 py-2 text-[10px] leading-relaxed text-muted-foreground">
-          Turn on Protection to block popups and redirects away from the app. If playback stops working, turn it off.
+          Turn off ads to block popups and redirects away from the app. If you see something like "sandboxed" or the video won't play, switch it off to watch normally.
         </p>
       )}
     </div>
