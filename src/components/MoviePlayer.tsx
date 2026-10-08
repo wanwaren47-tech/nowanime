@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 // Embed-only player. No backend / edge functions involved.
 export type ServerId = string;
@@ -212,7 +213,10 @@ const MoviePlayer = ({
             aria-pressed={isProtected} aria-label="Turn off ads"
             onClick={() => setProtectionSettings((settings) => ({ ...settings, [server.id]: !isProtected }))}
             title={isProtected ? "Allow ads and redirects" : "Turn off ads and redirects"}
-            className="h-8 w-8 shrink-0 gap-1 p-0 sm:w-auto sm:px-2 text-[10px] font-semibold">
+            className={cn(
+              "h-8 w-8 shrink-0 gap-1 p-0 sm:w-auto sm:px-2 text-[10px] font-semibold",
+              !isProtected && "ads-glow",
+            )}>
             {isProtected ? <ShieldCheck className="h-4 w-4" /> : <Shield className="h-4 w-4" />}
             <span className="hidden sm:inline">Turn off ads</span>
           </Button>
