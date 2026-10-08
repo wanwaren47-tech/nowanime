@@ -217,3 +217,32 @@
   animation: neonPulse 1.8s ease-in-out infinite;
   border: 1.5px solid hsla(351,38%,64%,0.85);
 }
+
+@keyframes adsGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 hsl(var(--primary) / 0), 0 0 6px 1px hsl(var(--primary) / 0.4);
+    border-color: hsl(var(--primary) / 0.45);
+  }
+  50% {
+    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.16), 0 0 16px 4px hsl(var(--primary) / 0.7);
+    border-color: hsl(var(--primary) / 0.9);
+  }
+}
+
+/* Phones only: the "Turn off ads" button glows while ads are still allowed. */
+@media (max-width: 639px) {
+  .ads-glow {
+    border: 1px solid hsl(var(--primary) / 0.55);
+    color: hsl(var(--primary));
+    animation: adsGlow 1.5s ease-in-out infinite;
+    will-change: box-shadow;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ads-glow {
+    animation: none;
+    box-shadow: 0 0 12px 2px hsl(var(--primary) / 0.45);
+  }
+}
+
