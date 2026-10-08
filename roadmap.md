@@ -20,4 +20,5 @@
 - [x] Switch all app typography to sans-serif
 - [x] Restrict rectangle ads to the left watch-page column, below native ads, and preserve player banner
 - [x] Verify desktop and phone layouts and ad requests
+- [x] Make the phone "Turn off ads" button glow until it is switched on
 - [ ] Confirm visible ad creatives — blocked because all three Bauval script URLs currently return empty responses
